@@ -56,5 +56,10 @@ docker run -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime
 docker build -t alexmass/cff_sniff .
 docker run   --env KAFKA_HOST=kafka --env MODE=$MODE --net=cff_realtime -h cff_sniff -d --name cff_sniff alexmass/cff_sniff
 
+#flume
+# cd components/flume-dump
+docker build -t flume .
+docker run -e FLUME_AGENT_NAME=agent_kafka_dump -e FLUME_CONF_FILE=/var/tmp/flume.conf -h flume --net=cff_realtime  -d --name flume flume
+
 echo "Deployed successfully"
 echo "Connect on : http://$AWS_IP"
