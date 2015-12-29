@@ -16,10 +16,13 @@
 
 
 echo "Cleaning existing containers if exist"
-docker rm -f kafka
+docker rm -f kafka kafka_data cff_sniff
 docker network rm cff_realtime
 
 
 echo "Now create new infrastructure"
 docker network create -d bridge cff_realtime
+
+docker build -t octoch/kafka components/kafka
+docker run --name kafka_data -h kafka_data octoch/kafka echo "Data-only container for kafka"
 

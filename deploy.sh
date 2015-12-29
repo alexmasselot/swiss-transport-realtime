@@ -11,7 +11,8 @@ docker rm -f kafka cff_sniff
 echo "Now deploy new infrastructure"
 
 ### KAFKA
-docker run -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime --env KAFKA_HEAP_OPTS="-Xmx256M -Xms128M" --env ADVERTISED_HOST=kafka --env ADVERTISED_PORT=9092 spotify/kafka
+docker build -t octoch/kafka components/kafka
+docker run -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime --env KAFKA_HEAP_OPTS="-Xmx256M -Xms128M" --env ADVERTISED_HOST=kafka --env ADVERTISED_PORT=9092 --volumes-from kafka_data jenkins_dataoctoch/kafka
 #docker exec -it kafka bash
 
 # Test Kafka :
