@@ -56,6 +56,10 @@ docker run -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime
 docker build -t alexmass/cff_sniff .
 docker run   --env KAFKA_HOST=kafka --env MODE=$MODE --net=cff_realtime -h cff_sniff -d --name cff_sniff alexmass/cff_sniff
 
+#elastic search
+docker build -t elasticsearch .
+docker run  -h elasticsearch --net=cff_realtime  -p 9200:9200 -p 9300:9300  -d --name elasticsearch  elasticsearch
+
 #flume
 # cd components/flume-dump
 docker build -t flume .
