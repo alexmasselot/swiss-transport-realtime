@@ -1,0 +1,16 @@
+{
+  "name": "cff-sniff",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node ./src/sniff.js"
+  },
+  "dependencies": {
+    "encoding": "^0.1.12",
+    "kafka-node": "^0.2.29",
+    "lodash": "^3.10.1",
+    "promise": "^7.1.1",
+    "request-promise": "^1.0.2",
+    "utf8": "^2.1.1"
+  }
+}
