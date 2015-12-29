@@ -5,7 +5,7 @@ AWS_IP=`echo $DOCKER_HOST | sed -E "s/.*\/([0-9\.]+):.*/\1/"`
 
 
 echo "Cleaning existing container"
-docker rm -f kafka cff_sniff flume
+docker rm -f kafka cff_sniff logstash 
 
 
 echo "Now deploy new infrastructure"
@@ -30,10 +30,10 @@ docker run   --env KAFKA_HOST=kafka --env MODE=$MODE --net=cff_realtime -h cff_s
 docker build -t elasticsearch .
 docker run  -h elasticsearch --net=cff_realtime  -p 9200:9200 -p 9300:9300  -d --name elasticsearch  elasticsearch
 
-#flume
-# cd components/flume-dump
-docker build -t flume .
-docker run -e FLUME_AGENT_NAME=agent_kafka_dump -e FLUME_CONF_FILE=/var/tmp/flume.conf -h flume --net=cff_realtime  -d --name flume flume
+#elasticsearch
+docker build -t logstash .
+docker run  -h logstash --net=cff_realtime  -d --name logstash -v "$PWD/conf":/config-dir logstash -f /config-dir/logstash.conf
+
 
 echo "Deployed successfully"
 echo "Connect on : http://$AWS_IP"
