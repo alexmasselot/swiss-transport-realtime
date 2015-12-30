@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 # First create a docker-machine named "aws" for the deployment
 # 
@@ -23,6 +23,13 @@ docker network rm cff_realtime
 echo "Now create new infrastructure"
 docker network create -d bridge cff_realtime
 
+# Sauvegarde des données Kafka
 docker build -t octoch/kafka components/kafka
-docker run --name kafka_data -h kafka_data octoch/kafka echo "Data-only container for kafka"
+docker run --name kafka_data -h kafka_data octoch/kafka echo "Data for kafka"
 
+# Sauvegarde des données alesticsearch
+docker build -t octoch/elasticsearch components/elasticsearch
+docker run  -h elasticsearch_data --name elasticsearch_data  octoch/elasticsearch echo "Data for ES"
+#docker run  -h elasticsearch_data --name elasticsearch_data  --volumes-from elasticsearch octoch/elasticsearch echo "Data for ES"
+#backup 
+docker run --rm --volumes-from elasticsearch_data -v /Users/pkernevez/Downloads/:/backup debian tar czvf /backup/backup.tar /usr/share/elasticsearch/

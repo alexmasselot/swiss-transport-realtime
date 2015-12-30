@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 #Public IP
 export AWS_IP=`echo $DOCKER_HOST | sed -E "s/.*\/([0-9\.]+):.*/\1/"`
@@ -25,7 +25,9 @@ docker inspect --format='{{json .Mounts}}' kafka_data kafka
 
 #elastic search
 docker build -t octoch/elasticsearch components/elasticsearch
-docker run  -h elasticsearch --net=cff_realtime  -p 9200:9200 -p 9300:9300  -d --name elasticsearch  octoch/elasticsearch
+docker run  -h elasticsearch --net=cff_realtime  -p 9200:9200 -p 9300:9300  -d --name elasticsearch --volumes-from elasticsearch_data octoch/elasticsearch elasticsearch -Des.node.name="CFF_DataLake"
+echo "\nShow mount points: Elasticsearch"
+docker inspect --format='{{json .Mounts}}' elasticsearch_data elasticsearch
 
 #logstash
 docker build -t octoch/logstash components/logstash
@@ -33,7 +35,7 @@ docker run  -h logstash --net=cff_realtime  -d --name logstash octoch/logstash -
 
 #sniffer
 docker build -t octoch/cff_sniff components/node_cff_realtime_sniffer
-docker run --env KAFKA_HOST=kafka --env MODE=$MODE --net=cff_realtime -h cff_sniff -d --name cff_sniff octoch/cff_sniff
+docker run --env KAFKA_HOST=kafka --env MODE="$MODE" --net=cff_realtime -h cff_sniff -d --name cff_sniff octoch/cff_sniff
 
 
 echo "Deployed successfully"
