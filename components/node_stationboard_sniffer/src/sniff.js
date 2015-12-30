@@ -19,48 +19,86 @@ var fs = require('fs')
 var kafkaHost = process.env.KAFKA_HOST;
 var kafkaPort = process.env.KAFKA_PORT || '2181';
 
-if(! kafkaHost){
+if (!kafkaHost) {
     console.error('no environment variable KAFKA_HOST passed');
     process.exit(1);
 }
 
 
-
 var train_stops = []
-var train_stream = fs.createReadStream("data/train_stops.txt");
-var csvStream = csv({headers: true, objectMode:true})
-    .on("data", function(data) {
-        if (data.stop_id.indexOf(":") === -1) {
-            data.type_of_stop = "train";
-            train_stops.push(data);
-        }
-    })
-    .on("end", function(){
-        console.log("Load " + train_stops.length + " train stops");
-    });
-train_stream.pipe(csvStream);
-
 var ferry_stops = []
-var ferry_stream = fs.createReadStream("data/ferry_stops.txt");
-var csvStream = csv({headers: true, objectMode:true})
-    .on("data", function(data) {
-        data.type_of_stop = "ferry";
-        ferry_stops.push(data);
-    })
-    .on("end", function(){
-        console.log("Load " + ferry_stops.length + " ferry stops");
-    });
-ferry_stream.pipe(csvStream);
+async.series({
+        train: function (callback) {
+            var train_stream = fs.createReadStream("data/train_stops.txt");
+            var csvStream = csv({headers: true, objectMode: true})
+                .on("data", function (data) {
+                    if (data.stop_id.indexOf(":") === -1) {
+                        data.type_of_stop = "train";
+                        train_stops.push(data);
+                    }
+                })
+                .on("end", function () {
+                    console.log("Load " + train_stops.length + " train stops");
+                    callback(null, train_stops.length);
+                });
+            train_stream.pipe(csvStream);
+        },
+        ferry: function (callback) {
+            var ferry_stream = fs.createReadStream("data/ferry_stops.txt");
+            var csvStream = csv({headers: true, objectMode: true})
+                .on("data", function (data) {
+                    data.type_of_stop = "ferry";
+                    ferry_stops.push(data);
+                })
+                .on("end", function () {
+                    console.log("Load " + ferry_stops.length + " ferry stops");
+                    callback(null, ferry_stops.length);
+                });
+            ferry_stream.pipe(csvStream);
+        },
+    },
+    function (err, results) {
+        if (!err) {
+            console.log("Initialisation finished");
+            console.log("Load " + ferry_stops.length + " ferry stops");
+            var client = new kafka.Client(kafkaHost + ':' + kafkaPort);
+            var producer = new kafka.Producer(client);
+
+            var kafkaStopTopic = 'cff_stop';
+
+            var urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=5850000&look_maxx=10540000&look_miny=45850000&look_maxy=47800000&performLocating=1&performFixedLocating=7';
+            producer.on('ready', function () {
+                //console.log(stop);
+                messages = _.map(train_stops.concat(ferry_stops), function (m) {
+                    return JSON.stringify(m);
+                });
+                producer.send(
+                    [{topic: kafkaStopTopic, messages: messages}]
+                    , function (err, data) {
+                        if (err) console.error("Failed " + err);
+                    }
+                )
+                ;
+
+                //var doIt = function () {
+                //    getFNY().then(produce)
+                //        .then(function (ack) {
+                //            console.log(new Date(), 'produced', ack);
+                //        })
+                //        .catch(function (error) {
+                //            console.error('ERROR pipe', error);
+                //            console.error(util.inspect(error));
+                //        });
+                //};
+                //doIt();
+                //setInterval(doIt, 20*1000);
+                //producer.close();
+            }).
+            on('error', function (err) {
+                console.error('[ERROR] producer:', err)
+            });
 
 
-
-//
-//var client = new kafka.Client(kafkaHost+':'+kafkaPort);
-//var producer = new kafka.Producer(client);
-//
-//var kafkaTopic = 'cff_train_position';
-//var urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=5850000&look_maxx=10540000&look_miny=45850000&look_maxy=47800000&performLocating=1&performFixedLocating=7';
-//
 //if(process.env.MODE === 'DEV'){
 //    urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=6385532.065906713&look_maxx=6884036.704578587&look_miny=46441434.48378557&look_maxy=46653942.475391746&performLocating=1&performFixedLocating=7&';
 //    console.log("MODE=DEV")
@@ -127,3 +165,8 @@ ferry_stream.pipe(csvStream);
 //on('error', function (err) {
 //    console.error('[ERROR] producer:', err)
 //});
+
+        } else {
+            console.error("Error during initialisation : " + err)
+        }
+    });
