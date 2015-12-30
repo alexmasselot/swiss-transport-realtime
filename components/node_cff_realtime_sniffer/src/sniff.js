@@ -31,6 +31,9 @@ var urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=5850000&look_ma
 
 if(process.env.MODE === 'DEV'){
     urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=6385532.065906713&look_maxx=6884036.704578587&look_miny=46441434.48378557&look_maxy=46653942.475391746&performLocating=1&performFixedLocating=7&';
+    console.log("MODE=DEV")
+} else {
+    console.log("MODE=PRODUCTION")
 }
 
 var produce = function (messages) {
