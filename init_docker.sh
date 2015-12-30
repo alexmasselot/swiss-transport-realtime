@@ -32,4 +32,4 @@ docker build -t octoch/elasticsearch components/elasticsearch
 docker run  -h elasticsearch_data --name elasticsearch_data  octoch/elasticsearch echo "Data for ES"
 #docker run  -h elasticsearch_data --name elasticsearch_data  --volumes-from elasticsearch octoch/elasticsearch echo "Data for ES"
 #backup 
-docker run --rm --volumes-from elasticsearch_data -v /Users/pkernevez/Downloads/:/backup debian tar czvf /backup/backup.tar /usr/share/elasticsearch/
+#docker run --rm --volumes-from elasticsearch_data -v /Users/pkernevez/Downloads/:/backup debian tar czvf /backup/backup.tar /usr/share/elasticsearch/
