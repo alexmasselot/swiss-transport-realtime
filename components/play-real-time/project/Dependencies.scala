@@ -9,10 +9,12 @@ object Version {
   val scalaTest = "2.2.5"
   val slf4j     = "1.7.6"
   val spark     = "1.5.2"
+  val reactiveKafka = "0.8.3"
 }
 
 object Library {
   val akkaActor      = "com.typesafe.akka" %% "akka-actor"      % Version.akka
+  val akkaSlf4j      = "com.typesafe.akka" %% "akka-slf4j"      % Version.akka
   val akkaTestKit    = "com.typesafe.akka" %% "akka-testkit"    % Version.akka
   val hadoopClient   = "org.apache.hadoop" %  "hadoop-client"   % Version.hadoop
   val logbackClassic = "ch.qos.logback"    %  "logback-classic" % Version.logback
@@ -20,6 +22,7 @@ object Library {
   val scalaTest      = "org.scalatest"     %% "scalatest"       % Version.scalaTest
   val slf4jApi       = "org.slf4j"         %  "slf4j-api"       % Version.slf4j
   val sparkStreaming = "org.apache.spark"  %% "spark-streaming" % Version.spark
+  val reactiveKafka  = "com.softwaremill.reactivekafka" %% "reactive-kafka-core" % Version.reactiveKafka
 }
 
 object Dependencies {
@@ -30,7 +33,9 @@ object Dependencies {
     sparkStreaming,
     akkaActor,
     akkaTestKit,
+    akkaSlf4j,
     hadoopClient,
+    reactiveKafka,
     logbackClassic % "test",
     scalaTest      % "test",
     mockitoAll     % "test"

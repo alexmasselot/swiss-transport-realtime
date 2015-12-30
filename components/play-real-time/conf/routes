@@ -1,0 +1,1 @@
+GET        /                    com.octo.suisse.cffrealtime.controllers.TrainPositionController.index
