@@ -24,11 +24,11 @@ echo "Now create new infrastructure"
 docker network create -d bridge cff_realtime
 
 # Sauvegarde des données Kafka
-docker build -t octoch/kafka components/kafka
+docker build --force-rm=true -t octoch/kafka components/kafka
 docker run --name kafka_data -h kafka_data octoch/kafka echo "Data for kafka"
 
 # Sauvegarde des données alesticsearch
-docker build -t octoch/elasticsearch components/elasticsearch
+docker build --force-rm=true -t octoch/elasticsearch components/elasticsearch
 docker run  -h elasticsearch_data --name elasticsearch_data  octoch/elasticsearch echo "Data for ES"
 #docker run  -h elasticsearch_data --name elasticsearch_data  --volumes-from elasticsearch octoch/elasticsearch echo "Data for ES"
 #backup 
