@@ -4,6 +4,7 @@
  *
  * all in promises
  */
+'use strict';
 
 var rp = require('request-promise');
 var _ = require('lodash');
@@ -13,160 +14,174 @@ var encoding = require("encoding");
 var utf8 = require('utf8');
 var csv = require('fast-csv');
 var kafka = require('kafka-node');
-var async = require('async');
+var sprintf = require('sprintf');
 var fs = require('fs')
 
 var kafkaHost = process.env.KAFKA_HOST;
 var kafkaPort = process.env.KAFKA_PORT || '2181';
+var transportationsTypes = ["ice_tgv_rj", "ec_ic", "ir", "re_d", "ship", "s_sn_r"].join("&transportations[]=")
+var stationBoardUrl = "http://transport.opendata.ch/v1/stationboard?id=%s&transportations[]=" + transportationsTypes
+console.log(stationBoardUrl);
+//300 per minutes => juste en dessous = 280
+var openDataInterval = 60000 / 280;
+var maxConcurrentOpenDataRequest = 5;
+var kafkaStopTopic = 'cff_stop';
+
+var client = new kafka.Client(kafkaHost + ':' + kafkaPort);
+var producer = new kafka.Producer(client);
 
 if (!kafkaHost) {
     console.error('no environment variable KAFKA_HOST passed');
     process.exit(1);
 }
 
+var errorLog = function (err) {
+    console.error(err);
+    process.exit(2);
+}
 
-var train_stops = []
-var ferry_stops = []
-async.series({
-        train: function (callback) {
-            var train_stream = fs.createReadStream("data/train_stops.txt");
-            var csvStream = csv({headers: true, objectMode: true})
-                .on("data", function (data) {
-                    if (data.stop_id.indexOf(":") === -1) {
-                        data.type_of_stop = "train";
-                        train_stops.push(data);
-                    }
-                })
-                .on("end", function () {
-                    console.log("Load " + train_stops.length + " train stops");
-                    callback(null, train_stops.length);
-                });
-            train_stream.pipe(csvStream);
-        },
-        ferry: function (callback) {
-            var ferry_stream = fs.createReadStream("data/ferry_stops.txt");
-            var csvStream = csv({headers: true, objectMode: true})
-                .on("data", function (data) {
-                    data.type_of_stop = "ferry";
-                    ferry_stops.push(data);
-                })
-                .on("end", function () {
-                    console.log("Load " + ferry_stops.length + " ferry stops");
-                    callback(null, ferry_stops.length);
-                });
-            ferry_stream.pipe(csvStream);
-        },
-    },
-    function (err, results) {
-        if (!err) {
-            console.log("Initialisation finished");
-            console.log("Load " + ferry_stops.length + " ferry stops");
-            var client = new kafka.Client(kafkaHost + ':' + kafkaPort);
-            var producer = new kafka.Producer(client);
+var initKafkaClient = function () {
+    return new Promise(function (resolve, reject) {
+        var tentative = 0;
+        var intervalId = setInterval(function () {
+            if (client.ready) {
+                console.log("Client ready !");
+                clearInterval(intervalId);
+                resolve(client);
+            } else {
+                if (tentative > 10) {
+                    clearInterval(intervalId);
+                    reject("Kafka failure, too many attemps...");
+                }
+                tentative = tentative + 1;
+                console.log("Wait for Kafka client initalisation (try=" + tentative + ")...");
+            }
+        }, 1000);
 
-            var kafkaStopTopic = 'cff_stop';
-
-            var urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=5850000&look_maxx=10540000&look_miny=45850000&look_maxy=47800000&performLocating=1&performFixedLocating=7';
-            producer.on('ready', function () {
-                //console.log(stop);
-                messages = _.map(train_stops.concat(ferry_stops), function (m) {
-                    return JSON.stringify(m);
-                });
-                producer.send(
-                    [{topic: kafkaStopTopic, messages: messages}]
-                    , function (err, data) {
-                        if (err) console.error("Failed " + err);
-                    }
-                )
-                ;
-
-                //var doIt = function () {
-                //    getFNY().then(produce)
-                //        .then(function (ack) {
-                //            console.log(new Date(), 'produced', ack);
-                //        })
-                //        .catch(function (error) {
-                //            console.error('ERROR pipe', error);
-                //            console.error(util.inspect(error));
-                //        });
-                //};
-                //doIt();
-                //setInterval(doIt, 20*1000);
-                //producer.close();
-            }).
-            on('error', function (err) {
-                console.error('[ERROR] producer:', err)
-            });
-
-
-//if(process.env.MODE === 'DEV'){
-//    urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=6385532.065906713&look_maxx=6884036.704578587&look_miny=46441434.48378557&look_maxy=46653942.475391746&performLocating=1&performFixedLocating=7&';
-//    console.log("MODE=DEV")
-//} else {
-//    console.log("MODE=PRODUCTION")
-//}
-//
-//var produce = function (messages) {
-//    if (!_.isArray(messages)) {
-//        messages = [messages];
-//    }
-//
-//    messages = _.map(messages, function (m) {
-//        return JSON.stringify(m);
-//    });
-//    return new Promise(function (resolve, reject) {
-//        producer.send(
-//            [{topic: kafkaTopic, messages: messages}]
-//            , function (err, data) {
-//                if (err) {
-//                    reject(err);
-//                }
-//                resolve(data);
-//            }
-//        )
-//        ;
-//    });
-//};
-//
-//var getFNY = function () {
-//    var tstamp = Date.now();
-//    return rp({
-//        uri: urlFNY,
-//        json: true,
-//        encoding:'binary'
-//    }).then(function (data) {
-//        return _.map(data.look.trains, function(t){
-//            t.timeStamp=tstamp;
-//            return t;
-//        });
-//    });
-//};
-//
-//var pushRandom = function () {
-//    produce([1, 2, 3]);
-//};
-//
-//
-//producer.on('ready', function () {
-//    var doIt = function () {
-//        getFNY().then(produce)
-//            .then(function (ack) {
-//                console.log(new Date(), 'produced', ack);
-//            })
-//            .catch(function (error) {
-//                console.error('ERROR pipe', error);
-//                console.error(util.inspect(error));
-//            });
-//    };
-//    doIt();
-//    setInterval(doIt, 20*1000);
-//
-//}).
-//on('error', function (err) {
-//    console.error('[ERROR] producer:', err)
-//});
-
-        } else {
-            console.error("Error during initialisation : " + err)
-        }
     });
+}
+
+var loadStops = function (type) {
+    return new Promise(function (resolve, reject) {
+        var stream = fs.createReadStream("data/" + type + "_stops.txt");
+        var stops = [];
+        var csvStream = csv({headers: true, objectMode: true})
+            .on("data", function (data) {
+                if (data.stop_id.indexOf(":") === -1) {
+                    data.type_of_stop = type;
+                    stops.push(data);
+                }
+            })
+            .on("end", function () {
+                console.log("LOADED " + stops.length + " " + " stops");
+                resolve(stops);
+            })
+            .on('error', function (e) {
+                reject(e)
+            });
+        stream.pipe(csvStream);
+    });
+};
+
+var loop = function (list, delay, callback) {
+    var i = 0, j = 0;
+    var n = list.length;
+    var nb_request = 0, totalStops = 0, miss = 0, lastStops = 0;
+    var lastLoop = Date.now()
+
+    var finished = function (nbStops) {
+        nb_request = nb_request - 1;
+        totalStops = nbStops;
+        if (lastStops === 0) lastStops = totalStops;
+    }
+
+    setInterval(function () {
+        if (nb_request < maxConcurrentOpenDataRequest) {
+            nb_request = nb_request + 1;
+            callback(list[i], finished);
+            i += 1;
+            j += 1;
+            if (i === n) {
+                i = 0;
+                console.log(new Date() + " Process " + n + " stations, restart form start, cumulated stops=" + totalStops);
+            }
+            if (j == 200) {
+                console.log(new Date() + " Process " + 200 + " stations, " + (totalStops - lastStops) + " stops in "
+                    + (Date.now() - lastLoop) / 1000 + "s, missRequest: " + miss + " cumulated stops=" + totalStops);
+                lastStops = totalStops;
+                totalStops = 0;
+                miss = 0;
+                j = 0;
+            }
+        } else {
+            miss = miss + 1;
+            //console.info("Previous request(s) not finished, skip this time, current = " + nb_request);
+        }
+    }, delay);
+};
+
+var getDashboard = function (stopId) {
+    var tstamp = Date.now();
+    return rp({
+        uri: sprintf(stationBoardUrl, stopId),
+        json: true,
+        encoding: 'binary'
+    }).then(function (data) {
+        return _.map(data.stationboard, function (t) {
+            t.timeStamp = tstamp;
+            return t;
+        });
+    });
+};
+
+
+var produce = function (messages) {
+    if (!_.isArray(messages)) {
+        messages = [messages];
+    }
+
+    messages = _.map(messages, function (m) {
+        return JSON.stringify(m);
+    });
+    return new Promise(function (resolve, reject) {
+        producer.send(
+            [{topic: kafkaStopTopic, messages: messages}]
+            , function (err, ack) {
+                if (err) {
+                    reject(err);
+                }
+                //console.log(new Date(), 'produced', JSON.stringify(ack));
+                resolve(ack.cff_stop["0"]);
+            }
+        )
+    });
+};
+
+initKafkaClient()
+    .then(function () {
+        return Promise.all([loadStops('train'), loadStops('ferry')])
+    })
+    .then(function (all) {
+        var concated = [];
+        _.each(all, function (a) {
+            concated = concated.concat(a);
+        })
+        return concated;
+    })
+    .then(function (stops) {
+        console.log('All stops concatenated', stops.length)
+        return stops;
+    })
+    .then(function (allStops) {
+        loop(allStops, openDataInterval, function (stop, callback) {
+            getDashboard(stop.stop_id).
+            then(produce).
+            then(callback).
+            catch(function (err) {
+                callback();
+                errorLog(err);
+            })
+        });
+    })
+    .catch(errorLog);
+
