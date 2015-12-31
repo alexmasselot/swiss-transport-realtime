@@ -22,7 +22,6 @@ if(! kafkaHost){
     process.exit(1);
 }
 
-
 var client = new kafka.Client(kafkaHost+':'+kafkaPort);
 var producer = new kafka.Producer(client);
 

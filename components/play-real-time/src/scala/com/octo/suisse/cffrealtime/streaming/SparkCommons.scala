@@ -1,5 +1,6 @@
 package com.octo.suisse.cffrealtime.streaming
 
+import akka.actor.ActorSystem
 import org.apache.spark.streaming.{ Seconds, StreamingContext }
 import org.apache.spark.{ SparkContext, SparkConf }
 
@@ -16,6 +17,8 @@ object SparkCommons {
     .set("spark.driver.port", driverPort.toString)
     .set("spark.driver.host", driverHost)
     .set("spark.akka.logLifecycleEvents", "true")
+
+  lazy val actorySystem = ActorSystem("CffRealTime")
 
   lazy val sparkContext = SparkContext.getOrCreate(conf)
 

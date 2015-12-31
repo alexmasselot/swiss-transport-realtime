@@ -15,3 +15,12 @@
     activator ~test
     
 Where the `~` will re-execute the test at any source changes
+
+
+### WTF with websockets
+
+To debug websockets, 
+
+    cd tmp
+    npm install wscat
+    ./node_modules/.bin/wscat -c ws://localhost:9000/pif
