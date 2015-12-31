@@ -24,6 +24,7 @@ if(! kafkaHost){
 
 var client = new kafka.Client(kafkaHost+':'+kafkaPort);
 var producer = new kafka.Producer(client);
+console.log("Kafka client:"+client.ready);
 
 var kafkaTopic = 'cff_train_position';
 var urlFNY = 'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=5850000&look_maxx=10540000&look_miny=45850000&look_maxy=47800000&performLocating=1&performFixedLocating=7';

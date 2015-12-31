@@ -16,7 +16,7 @@
 
 
 echo "Cleaning existing containers if exist"
-docker rm -f kafka kafka_data cff_sniff logstash elasticsearch
+docker rm -f -v kafka kafka_data cff_sniff logstash_data logstash_position_es logstash_position_archive elasticsearch elasticsearch_data
 docker network rm cff_realtime
 
 
@@ -24,12 +24,18 @@ echo "Now create new infrastructure"
 docker network create -d bridge cff_realtime
 
 # Sauvegarde des données Kafka
-docker build -t octoch/kafka components/kafka
+docker build --force-rm=true -t octoch/kafka components/kafka
 docker run --name kafka_data -h kafka_data octoch/kafka echo "Data for kafka"
 
-# Sauvegarde des données alesticsearch
-docker build -t octoch/elasticsearch components/elasticsearch
-docker run  -h elasticsearch_data --name elasticsearch_data  octoch/elasticsearch echo "Data for ES"
+# Sauvegarde des données elasticsearch
+docker build --force-rm=true -t octoch/elasticsearch components/elasticsearch
+docker run  -h elasticsearch_data --name elasticsearch_data  --entrypoint='echo' octoch/elasticsearch "Data for ES"
 #docker run  -h elasticsearch_data --name elasticsearch_data  --volumes-from elasticsearch octoch/elasticsearch echo "Data for ES"
+
+# Sauvegarde des données brutes
+docker build --force-rm=true -t octoch/logstash_data components/logstash_data
+docker run  -h logstash_data --name logstash_data  --entrypoint='echo' octoch/logstash_data "Data for logstash archive"
+#docker run --rm -it --volumes-from logstash_data -w /opt/logstash/data octoch/logstash_data bash
+
 #backup 
 #docker run --rm --volumes-from elasticsearch_data -v /Users/pkernevez/Downloads/:/backup debian tar czvf /backup/backup.tar /usr/share/elasticsearch/
