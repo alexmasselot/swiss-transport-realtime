@@ -22,6 +22,7 @@ object Library {
   val scalaTest      = "org.scalatest"     %% "scalatest"       % Version.scalaTest
   val slf4jApi       = "org.slf4j"         %  "slf4j-api"       % Version.slf4j
   val sparkStreaming = "org.apache.spark"  %% "spark-streaming" % Version.spark
+  val sparkStreamingKafka = "org.apache.spark" %% "spark-streaming-kafka" % Version.spark
   val reactiveKafka  = "com.softwaremill.reactivekafka" %% "reactive-kafka-core" % Version.reactiveKafka
 }
 
@@ -31,6 +32,7 @@ object Dependencies {
 
   val sparkAkkaHadoop = Seq(
     sparkStreaming,
+    sparkStreamingKafka,
     akkaActor,
     akkaTestKit,
     akkaSlf4j,

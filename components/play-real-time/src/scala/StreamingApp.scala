@@ -1,6 +1,7 @@
 import akka.actor.{ Actor, Props }
 import org.apache.spark._
 import org.apache.spark.streaming._
+import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.receiver._
 
 class Helloer extends Actor with ActorHelper {
@@ -33,33 +34,10 @@ object StreamingApp {
     val ssc = new StreamingContext(conf, Seconds(1))
     val actorName = "helloer"
 
-    // This is the integration point (from Spark's side) between Spark Streaming and Akka system
-    // It's expected that the actor we're now instantiating will `store` messages (to close the integration loop)
-    val actorStream = ssc.actorStream[String](Props[Helloer], actorName)
+    val kafkaStream = KafkaUtils.createStream(ssc,
+      "192.168.99.100:2181", "duh", Map("cff_train_position" -> 50))
 
-    // describe the computation on the input stream as a series of higher-level transformations
-    actorStream.reduce(_ + " " + _).print()
+    kafkaStream.print()
 
-    // start the streaming context so the data can be processed
-    // and the actor gets started
-    ssc.start()
-
-    // FIXME wish I knew a better way to handle the asynchrony
-    java.util.concurrent.TimeUnit.SECONDS.sleep(3)
-
-    val actorSystem = SparkEnv.get.actorSystem
-
-    val url = s"akka.tcp://sparkDriver@$driverHost:$driverPort/user/Supervisor0/$actorName"
-    val helloer = actorSystem.actorSelection(url)
-    helloer ! "Hello"
-    helloer ! "from"
-    helloer ! "Spark Streaming"
-    helloer ! "with"
-    helloer ! "Scala"
-    helloer ! "and"
-    helloer ! "Akka"
-
-    scala.io.StdIn.readLine("Press Enter to stop Spark Streaming context and the application...")
-    ssc.stop(stopSparkContext = true, stopGracefully = true)
   }
 }

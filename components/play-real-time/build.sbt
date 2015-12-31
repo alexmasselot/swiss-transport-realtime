@@ -18,8 +18,14 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 resolvers += "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
 
 libraryDependencies ++= Dependencies.sparkAkkaHadoop
+libraryDependencies ++= Seq(
+  specs2 % Test
+)
 
-dependencyOverrides += "com.typesafe.akka" %% "akka-actor" % "2.4.1"
+dependencyOverrides ++= Set(
+  "com.typesafe.akka" %% "akka-actor" % "2.4.1",
+  "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
+)
 
 releaseSettings
 
