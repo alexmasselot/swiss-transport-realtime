@@ -4,8 +4,21 @@
 export AWS_IP=`echo $DOCKER_HOST | sed -E "s/.*\/([0-9\.]+):.*/\1/"`
 
 
+wait_for_server() {
+	name=$1
+	ip=$2
+	port=$3
+	echo $ip $port
+	while ! nc -z $ip $port; do
+		echo "wait for $name"
+		sleep 1
+	done
+}
+
+
 echo "Cleaning existing container"
-docker rm -f kafka elasticsearch cff_sniff logstash 
+docker stop kafka elasticsearch cff_sniff logstash_position_es logstash_position_archive
+docker rm  kafka elasticsearch cff_sniff logstash_position_es logstash_position_archive
 
 echo "Now deploy new infrastructure"
 ### KAFKA : listen sur adresse interne et adresse publique (si le port est ouvert, ce qui n'est pas le cas chez Amazon)
@@ -13,6 +26,9 @@ docker build --force-rm=true -t octoch/kafka components/kafka
 docker run -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime --env KAFKA_HEAP_OPTS="-Xmx256M -Xms128M" --env ADVERTISED_HOST=$AWS_IP --env ADVERTISED_PORT=9092 --volumes-from kafka_data octoch/kafka
 echo "\nShow mount points: KAFKA"
 docker inspect --format='{{json .Mounts}}' kafka_data kafka
+
+wait_for_server "Kafka/ZooKeeper" $AWS_IP 2181
+wait_for_server "Kafka" $AWS_IP 9092
 #docker exec -it kafka bash
 
 # Test Kafka :
@@ -28,8 +44,13 @@ echo "\nShow mount points: Elasticsearch"
 docker inspect --format='{{json .Mounts}}' elasticsearch_data elasticsearch
 
 #logstash
-docker build --force-rm=true -t octoch/logstash components/logstash
-docker run  -h logstash --net=cff_realtime  -d --name logstash octoch/logstash -f /config-dir/logstash.conf
+docker build --force-rm=true -t octoch/logstash_data components/logstash_data
+
+docker build --force-rm=true -t octoch/logstash_position_es components/logstash_position_es
+docker run  -h logstash_position_es --net=cff_realtime  -d --name logstash_position_es octoch/logstash_position_es -f /config-dir/logstash.conf
+
+docker build --force-rm=true -t octoch/logstash_position_archive components/logstash_position_archive
+docker run  -h logstash_position_archive --net=cff_realtime  -d --name logstash_position_archive --volumes-from logstash_data octoch/logstash_position_archive -f /config-dir/logstash.conf
 
 #sniffer
 docker build --force-rm=true -t octoch/cff_sniff components/node_cff_realtime_sniffer
@@ -38,3 +59,4 @@ docker run --env KAFKA_HOST=kafka --env MODE="$MODE" --net=cff_realtime -h cff_s
 
 echo "Deployed successfully"
 echo "Connect on : http://$AWS_IP"
+
