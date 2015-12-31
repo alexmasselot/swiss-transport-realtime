@@ -128,7 +128,11 @@ var getDashboard = function (stopId) {
     }).then(function (data) {
         return _.map(data.stationboard, function (t) {
             t.timeStamp = tstamp;
-            t.to = null;
+            //console.log(t.passList.length);
+            if (t.passList.length>1){
+                t.nextStation = t.passList[0]
+                delete(t.passList);
+            }
             return t;
         });
     });
