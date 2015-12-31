@@ -109,7 +109,6 @@ var loop = function (list, delay, callback) {
                 console.log(new Date() + " Process " + 200 + " stations, " + (totalStops - lastStops) + " stops in "
                     + (Date.now() - lastLoop) / 1000 + "s, missRequest: " + miss + " cumulated stops=" + totalStops);
                 lastStops = totalStops;
-                totalStops = 0;
                 miss = 0;
                 j = 0;
             }
@@ -129,6 +128,7 @@ var getDashboard = function (stopId) {
     }).then(function (data) {
         return _.map(data.stationboard, function (t) {
             t.timeStamp = tstamp;
+            t.to = null;
             return t;
         });
     });

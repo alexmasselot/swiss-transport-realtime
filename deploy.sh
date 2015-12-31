@@ -17,8 +17,8 @@ wait_for_server() {
 
 
 echo "Cleaning existing container"
-docker stop kafka elasticsearch cff_sniff logstash_position_es logstash_position_archive
-docker rm  kafka elasticsearch cff_sniff logstash_position_es logstash_position_archive
+docker stop kafka elasticsearch cff_sniff logstash_stop logstash_position_es logstash_position_archive
+docker rm  kafka elasticsearch cff_sniff logstash_stop logstash_position_es logstash_position_archive
 
 echo "Now deploy new infrastructure"
 ### KAFKA : listen sur adresse interne et adresse publique (si le port est ouvert, ce qui n'est pas le cas chez Amazon)
@@ -51,6 +51,9 @@ docker run  -h logstash_position_es --net=cff_realtime  -d --name logstash_posit
 
 docker build --force-rm=true -t octoch/logstash_position_archive components/logstash_position_archive
 docker run  -h logstash_position_archive --net=cff_realtime  -d --name logstash_position_archive --volumes-from logstash_data octoch/logstash_position_archive -f /config-dir/logstash.conf
+
+docker build --force-rm=true -t octoch/logstash_stop components/logstash_stop
+docker run  -h logstash_stop --net=cff_realtime  -d --name logstash_stop --volumes-from logstash_data octoch/logstash_stop -f /config-dir/logstash.conf
 
 #sniffer
 docker build --force-rm=true -t octoch/cff_sniff components/node_cff_realtime_sniffer

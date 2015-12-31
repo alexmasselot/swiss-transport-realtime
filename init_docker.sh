@@ -16,7 +16,7 @@
 
 
 echo "Cleaning existing containers if exist"
-docker rm -f -v kafka kafka_data cff_sniff logstash_data logstash_position_es logstash_position_archive elasticsearch elasticsearch_data
+docker rm -f -v kafka kafka_data cff_sniff logstash_data logstash_stop logstash_position_es logstash_position_archive elasticsearch elasticsearch_data
 docker network rm cff_realtime
 
 
