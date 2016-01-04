@@ -4,7 +4,7 @@ package com.octo.suisse.cffrealtime.actors.ws
  * Created by alex on 31/12/15.
  */
 import akka.actor._
-import com.octo.suisse.cffrealtime.streaming.TrainPositionStream
+import com.octo.suisse.cffrealtime.streaming.TrainPositionKafkaStream
 
 object MyWebSocketActor {
   def props(out: ActorRef) = Props(new MyWebSocketActor(out))

@@ -9,7 +9,7 @@ object Version {
   val scalaTest = "2.2.5"
   val slf4j     = "1.7.6"
   val spark     = "1.5.2"
-  val reactiveKafka = "0.8.3"
+  val reactiveKafka = "0.8.4"
 }
 
 object Library {
