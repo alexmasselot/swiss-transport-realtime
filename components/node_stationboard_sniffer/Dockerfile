@@ -1,4 +1,4 @@
-FROM    node:4.2
+FROM node:4.2
 
 ADD . /src
 RUN cd /src; rm -r node_modules; npm install
