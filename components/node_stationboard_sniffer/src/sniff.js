@@ -22,9 +22,24 @@ var kafkaPort = process.env.KAFKA_PORT || '2181';
 var transportationsTypes = ["ice_tgv_rj", "ec_ic", "ir", "re_d", "ship", "s_sn_r"].join("&transportations[]=")
 var stationBoardUrl = "http://transport.opendata.ch/v1/stationboard?id=%s&transportations[]=" + transportationsTypes
 console.log(stationBoardUrl);
+
+if (process.env.MODE === 'DEV') {
+    console.log("MODE=DEV")
+    var openDataInterval = 60000 / 60;
+    var maxConcurrentOpenDataRequest = 2;
+    var train_file_name = 'train_dev';
+    var ferry_file_name = 'ferry_dev';
+    var print_info_interval = 10;
+} else {
+    console.log("MODE=PRODUCTION")
+    var openDataInterval = 60000 / 280;
+    var maxConcurrentOpenDataRequest = 5;
+    var train_file_name = 'train';
+    var ferry_file_name = 'ferry';
+    var print_info_interval = 200;
+}
+
 //300 per minutes => juste en dessous = 280
-var openDataInterval = 60000 / 280;
-var maxConcurrentOpenDataRequest = 5;
 var kafkaStopTopic = 'cff_stop';
 
 var client = new kafka.Client(kafkaHost + ':' + kafkaPort);
@@ -91,8 +106,10 @@ var loop = function (list, delay, callback) {
 
     var finished = function (nbStops) {
         nb_request = nb_request - 1;
-        totalStops = nbStops;
-        if (lastStops === 0) lastStops = totalStops;
+        if (nbStops > 0) {
+            totalStops = nbStops;
+            if (lastStops === 0) lastStops = totalStops;
+        }
     }
 
     setInterval(function () {
@@ -105,8 +122,8 @@ var loop = function (list, delay, callback) {
                 i = 0;
                 console.log(new Date() + " Process " + n + " stations, restart form start, cumulated stops=" + totalStops);
             }
-            if (j == 200) {
-                console.log(new Date() + " Process " + 200 + " stations, " + (totalStops - lastStops) + " stops in "
+            if (j == print_info_interval) {
+                console.log(new Date() + " Process " + print_info_interval + " stations, " + (totalStops - lastStops) + " stops in "
                     + (Date.now() - lastLoop) / 1000 + "s, missRequest: " + miss + " cumulated stops=" + totalStops);
                 lastStops = totalStops;
                 miss = 0;
@@ -129,7 +146,7 @@ var getDashboard = function (stopId) {
         return _.map(data.stationboard, function (t) {
             t.timeStamp = tstamp;
             //console.log(t.passList.length);
-            if (t.passList.length>1){
+            if (t.passList.length > 1) {
                 t.nextStation = t.passList[0]
                 delete(t.passList);
             }
@@ -152,10 +169,15 @@ var produce = function (messages) {
             [{topic: kafkaStopTopic, messages: messages}]
             , function (err, ack) {
                 if (err) {
+                    console.error("failed to publish message : " + err);
                     reject(err);
                 }
                 //console.log(new Date(), 'produced', JSON.stringify(ack));
-                resolve(ack.cff_stop["0"]);
+                if (typeof(ack) != "undefined") {
+                    resolve(ack.cff_stop["0"]);
+                } else {
+                    resolve(0);
+                }
             }
         )
     });
@@ -163,7 +185,7 @@ var produce = function (messages) {
 
 initKafkaClient()
     .then(function () {
-        return Promise.all([loadStops('train'), loadStops('ferry')])
+        return Promise.all([loadStops(train_file_name), loadStops(ferry_file_name)])
     })
     .then(function (all) {
         var concated = [];
