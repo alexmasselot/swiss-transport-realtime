@@ -34,12 +34,10 @@ kafkaClient.initProducer()
 
         if (process.env.MODE === 'DEV') {
             trainPositionSniffer = new TrainPositionSniffer(kafkaClient, {
-                kafkaTopic: 'test',
                 mode: 'DEV',
-                interval: 10
+                interval: 30
             });
             stationBoardSniffer = new StationBoardSniffer(kafkaClient, {
-                kafkaTopic: 'test',
                 requestPerMinute: 12,
                 stopTypes: ['train_dev', 'ferry_dev']
             });

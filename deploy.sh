@@ -17,8 +17,8 @@ wait_for_server() {
 
 
 echo "Cleaning existing container"
-docker stop kafka elasticsearch cff_sniff stationboard_sniff logstash_stop logstash_position_es logstash_position_archive
-docker rm  kafka elasticsearch cff_sniff stationboard_sniff logstash_stop logstash_position_es logstash_position_archive
+docker stop kafka elasticsearch cff_sniff  logstash_stop logstash_position_es logstash_position_archive
+docker rm  kafka elasticsearch cff_sniff  logstash_stop logstash_position_es logstash_position_archive
 
 echo "Now deploy new infrastructure"
 ### KAFKA : listen sur adresse interne et adresse publique (si le port est ouvert, ce qui n'est pas le cas chez Amazon)
@@ -56,13 +56,8 @@ docker run  -h logstash_position_archive --net=cff_realtime  -d --name logstash_
 docker build --force-rm=true -t octoch/logstash_stop components/logstash_stop
 docker run  -h logstash_stop --net=cff_realtime  -d --name logstash_stop --volumes-from logstash_data octoch/logstash_stop -f /config-dir/logstash.conf
 
-docker build --force-rm=true -t octoch/cff_sniff components/node_cff_realtime_sniffer
+docker build --force-rm=true -t octoch/cff_sniff components/node_cff_sniff
 docker run --env KAFKA_HOST=kafka --env MODE="$MODE" --net=cff_realtime -h cff_sniff -d --name cff_sniff octoch/cff_sniff
-
-#sniffer station board
-docker build --force-rm=true -t octoch/stationboard_sniff components/node_stationboard_sniffer
-docker run --env KAFKA_HOST=kafka --env MODE="$MODE" --net=cff_realtime -h stationboard_sniff -d --name stationboard_sniff octoch/stationboard_sniff
-
 
 echo "Deployed successfully"
 echo "Connect on : http://$AWS_IP"
