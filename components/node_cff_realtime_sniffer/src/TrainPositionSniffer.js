@@ -1,9 +1,7 @@
 'use strict';
 /**
  *
- * make a call every to catch swiss train locations and send it to kafka broker
- *
- * all in promises
+ * Sniff train position and publish to kafka
  */
 
 var rp = require('request-promise');
@@ -33,9 +31,8 @@ var TrainPositionSniffer = function (kafkaClient, options) {
         interval:30
     }, options);
 
-    console.log(options);
-    _this.interval=options.interval;
     _this.kafkaClient = kafkaClient;
+    _this.interval=options.interval;
     _this.kafkaTopic = options.kafkaTopic || 'cff_train_position'
     _this.urlFNY = (options.mode === 'DEV') ?
         'http://fahrplan.sbb.ch/bin/query.exe/fny?look_minx=6385532.065906713&look_maxx=6884036.704578587&look_miny=46441434.48378557&look_maxy=46653942.475391746&performLocating=1&performFixedLocating=7&' :

@@ -1,7 +1,7 @@
 FROM    node:4.2
 
 ADD . /src
-RUN cd /src; rm -r node_modules; npm install
+RUN cd /src; npm install
 
 WORKDIR /src
 #CMD ["npm", "start"]

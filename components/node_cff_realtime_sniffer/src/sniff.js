@@ -20,11 +20,30 @@ var kafkaClient = new KafkaClient(kafkaHost, kafkaPort);
 
 
 var TrainPositionSniffer = require('./TrainPositionSniffer');
+var StationBoardSniffer = require('./StationBoardSniffer');
 
 kafkaClient.initProducer()
     .then(function () {
-        var sniffer = new TrainPositionSniffer(kafkaClient, {kafkaTopic:'test', mode:'DEV', interval:10});
-        sniffer.loop();
+        var trainPositionSniffer;
+        var stationBoardSniffer;
+
+        if (process.env.MODE === 'DEV') {
+            trainPositionSniffer = new TrainPositionSniffer(kafkaClient, {
+                kafkaTopic: 'test',
+                mode: 'DEV',
+                interval: 10
+            });
+            stationBoardSniffer = new StationBoardSniffer(kafkaClient, {
+                kafkaTopic: 'test',
+                requestPerMinute: 12,
+                stopTypes: ['train_dev', 'ferry_dev']
+            });
+        } else {
+            trainPositionSniffer = new TrainPositionSniffer(kafkaClient);
+            stationBoardSniffer = new StationBoardSniffer(kafkaClient);
+        }
+        trainPositionSniffer.loop();
+        stationBoardSniffer.loop();
     }).catch(function (err) {
     console.error(err);
 });
