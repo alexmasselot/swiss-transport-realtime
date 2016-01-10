@@ -17,8 +17,8 @@ wait_for_server() {
 
 
 echo "Cleaning existing container"
-docker stop kafka elasticsearch cff_sniff  logstash_stop logstash_position_es logstash_position_archive
-docker rm  kafka elasticsearch cff_sniff  logstash_stop logstash_position_es logstash_position_archive
+docker stop kafka elasticsearch1 elasticsearch2 elasticsearch3 cff_sniff logstash_stop logstash_position_es logstash_position_archive
+docker rm  kafka elasticsearch1 elasticsearch2 elasticsearch3 cff_sniff logstash_stop logstash_position_es logstash_position_archive
 
 echo "Now deploy new infrastructure"
 ### KAFKA : listen sur adresse interne et adresse publique (si le port est ouvert, ce qui n'est pas le cas chez Amazon)
@@ -39,9 +39,10 @@ wait_for_server "Kafka" $AWS_IP 9092
 
 #elastic search
 docker build --force-rm=true -t octoch/elasticsearch components/elasticsearch
-docker run  -h elasticsearch --net=cff_realtime  -p 9200:9200 -p 9300:9300  -d --name elasticsearch --volumes-from elasticsearch_data octoch/elasticsearch elasticsearch -Des.node.name="CFF_DataLake"
+docker run  -h elasticsearch1 --net=cff_realtime  -p 9200:9200 -p 9300:9300  -d --name elasticsearch1 --volumes-from elasticsearch_data octoch/elasticsearch elasticsearch \
+     -Des.cluster.name="CFF_DataLake" -Des.node.name="ES_1"	
 echo "\nShow mount points: Elasticsearch"
-docker inspect --format='{{json .Mounts}}' elasticsearch_data elasticsearch
+docker inspect --format='{{json .Mounts}}' elasticsearch_data elasticsearch1
 
 #logstash
 docker build --force-rm=true -t octoch/logstash_data components/logstash_data

@@ -16,7 +16,11 @@
 
 
 echo "Cleaning existing containers if exist"
-docker rm -f -v kafka kafka_data cff_sniff logstash_data logstash_stop logstash_position_es logstash_position_archive elasticsearch elasticsearch_data
+docker rm -f -v kafka kafka_data \
+     cff_sniff \
+     logstash_data logstash_stop logstash_position_es logstash_position_archive \
+     elasticsearch1 elasticsearch2 elasticsearch3 elasticsearch_data
+     
 docker network rm cff_realtime
 
 
@@ -30,7 +34,7 @@ docker run --name kafka_data -h kafka_data octoch/kafka echo "Data for kafka"
 # Sauvegarde des données elasticsearch
 docker build --force-rm=true -t octoch/elasticsearch components/elasticsearch
 docker run  -h elasticsearch_data --name elasticsearch_data  --entrypoint='echo' octoch/elasticsearch "Data for ES"
-#docker run  -h elasticsearch_data --name elasticsearch_data  --volumes-from elasticsearch octoch/elasticsearch echo "Data for ES"
+#docker run --rm -it --volumes-from elasticsearch -w /usr/share/elasticsearch octoch/elasticsearch bash
 
 # Sauvegarde des données brutes
 docker build --force-rm=true -t octoch/logstash_data components/logstash_data
