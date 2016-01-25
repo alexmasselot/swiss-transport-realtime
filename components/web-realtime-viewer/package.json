@@ -4,31 +4,46 @@
   "scripts": {
     "start": "DEBUG=true node server.js",
     "build": "webpack -p --config webpack.production.js",
-    "build-dev": "webpack -p"
+    "build-dev": "webpack -p",
+    "test": "jest"
   },
   "dependencies": {
+    "config": "^1.19.0",
+    "d3": "^3.5.13",
     "es6-promise": "^3.0.2",
+    "express-ws": "^1.0.0-rc.2",
+    "kafka-node": "^0.2.30",
+    "leaflet": "^0.7.7",
     "lodash": "^4.0.0",
     "materialize-css": "^0.97.5",
     "react": "^0.14.0",
     "react-dom": "^0.14.0",
+    "react-leaflet": "^0.10.0",
     "react-redux": "^4.0.0",
     "redux": "^3.0.4",
     "redux-devtools": "^2.1.5",
     "redux-thunk": "^1.0.0",
-    "whatwg-fetch": "^0.10.1"
+    "whatwg-fetch": "^0.10.1",
+    "ws": "^1.0.1"
   },
   "devDependencies": {
-    "babel-core": "^5.0.0",
-    "babel-loader": "^5.0.0",
+    "babel-core": "^6.0.0",
+    "babel-jest": "^6.0.1",
+    "babel-loader": "^6.0.0",
     "babel-plugin-react-display-name": "^2.0.0",
     "babel-plugin-react-transform": "^2.0.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
+    "babel-preset-stage-1": "^6.3.13",
+    "collections": "^3.0.0",
     "css-loader": "^0.23.1",
     "cssnext-loader": "^1.0.1",
     "express": "^4.13.3",
     "extract-text-webpack-plugin": "^1.0.1",
+    "jest-cli": "^0.8.2",
     "path": "^0.12.7",
+    "react-addons-test-utils": "^0.14.6",
     "react-transform-catch-errors": "^1.0.1",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.2.0",
@@ -36,5 +51,19 @@
     "webpack": "^1.12.11",
     "webpack-dev-middleware": "^1.4.0",
     "webpack-hot-middleware": "^2.6.0"
+  },
+  "jest": {
+    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "unmockedModulePathPatterns": [
+      "<rootDir>/node_modules/lodash",
+      "<rootDir>/node_modules/collections",
+      "<rootDir>/node_modules/react",
+      "<rootDir>/node_modules/react-dom",
+      "<rootDir>/node_modules/react-addons-test-utils",
+      "<rootDir>/node_modules/fbjs"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ]
   }
 }

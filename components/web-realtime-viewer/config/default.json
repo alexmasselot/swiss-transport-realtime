@@ -1,0 +1,6 @@
+{
+  "ports":{
+    "http":3000,
+    "wsTrainPosition":3001
+  }
+}

@@ -17,8 +17,6 @@ import play.api.mvc.{ WebSocket, Action, Controller }
  */
 object TrainPositionController extends Controller {
   println("in TrainPositionController")
-  val rootActor = ActorSystem("TrainSystem").actorOf(Props[TrainRootActor], "train-root")
-  rootActor ! "INIT"
 
   def index = Action {
     Ok("Paf le chien")
@@ -26,6 +24,8 @@ object TrainPositionController extends Controller {
 
   def paf = Action {
     // Configuration for a Spark application.
+    val rootActor = ActorSystem("TrainSystem").actorOf(Props[TrainRootActor], "train-root")
+    rootActor ! "INIT"
     Ok("paf")
   }
 
