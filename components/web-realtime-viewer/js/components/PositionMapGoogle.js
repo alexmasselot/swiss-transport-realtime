@@ -24,37 +24,22 @@ class PositionMapGoogle extends Component {
 
   render() {
     let _this = this;
-    const {location, height, width, positions, onLocationChanged} = this.props;
+    const {location, height, width, positions, onLocationChanged} = _this.props;
     let center = location.center;
     let zoom = location.zoom;
 
-    console.log(new Date(), 'PositionMapGoogle.render', center, zoom)
 
-    let scaleFactor = 2**zoom;
-
-    let lngMin = center.lng - width / 2 / scaleFactor;
-    let lngMax = center.lng + width / 2 / scaleFactor;
-    let latMin = center.lat - height / 2 / scaleFactor;
-    let latMax = center.lat + height / 2 / scaleFactor;
-    let coord2point = {
-      x: function (lng) {
-        return (lng - center.lng) * scaleFactor;
-      },
-      y: function (lat) {
-        return (center.lat - lat ) * scaleFactor;
-      }
-    };
     return (
       <div style={{height:height, width:width}}>
         <GoogleMap
           center={center}
           zoom={zoom}
-          onBoundsChange={onLocationChanged}
+          onChange={onLocationChanged}
         >
           <PositionMapTrains
-            lat={center.lat}
-            lng={center.lng}
-            coord2point={coord2point}
+            lat={location.bounds.latMax}
+            lng={location.bounds.lngMin}
+            bounds={location.bounds}
             positions={positions}
             height={height}
             width={width}

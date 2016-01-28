@@ -1,10 +1,15 @@
 import actionTypes from '../constants/ActionTypes';
 
-export function updateLocation(center, zoom) {
-  console.log('updateLocation', center, zoom, 'firing', actionTypes.MAP_LOCATION_CHANGED)
+export function updateLocation(loc) {
   return {
     type: actionTypes.MAP_LOCATION_CHANGED,
-    center,
-    zoom
+    center:loc.center,
+    zoom:loc.zoom,
+    bounds: {
+      latMin: loc.bounds.se.lat,
+      latMax: loc.bounds.nw.lat,
+      lngMin: loc.bounds.nw.lng,
+      lngMax: loc.bounds.se.lng
+    }
   }
 }

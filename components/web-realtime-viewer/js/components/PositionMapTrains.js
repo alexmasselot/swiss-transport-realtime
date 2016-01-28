@@ -19,7 +19,6 @@ class PositionMapTrains extends Component {
   }
 
   shouldComponentUpdate(props) {
-    console.log(new Date(), 'PositionMapTrains.shouldComponentUpdate', props)
     this._renderD3(ReactDOM.findDOMNode(this), props);
 
     // always skip React's render step
@@ -35,18 +34,17 @@ class PositionMapTrains extends Component {
     };
     //look_minx=5850000&look_maxx=10540000&look_miny=45850000&look_maxy=47800000
 
-    let {lat, lng} = _this.props;
 
     d3.select(el).selectAll().empty();
     _this._elements = {
       svg: d3.select(el).append('svg')
         .attr({
           //viewBox: '-' + (_this._dim.width / 2) + ' -' + (_this._dim.height / 2) + ' ' + _this._dim.width + ' ' + _this._dim.height,
-          viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
+          //viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
           width: _this._dim.width,
           height: _this._dim.height
         })
-        .style('overflow', 'visible')
+        //.style('overflow', 'visible')
     };
     _this._elements.gMain = _this._elements.svg.append('g')
       .attr({
@@ -60,11 +58,9 @@ class PositionMapTrains extends Component {
     let _this = this;
 
     _this._scales = {
-      x: newProps.coord2point.x,
-      y: newProps.coord2point.y
+      x: d3.scale.linear().range([0, _this._dim.width]).domain([newProps.bounds.lngMin, newProps.bounds.lngMax]),
+      y: d3.scale.linear().range([0, _this._dim.height]).domain([newProps.bounds.latMax, newProps.bounds.latMin])
     };
-
-    console.log(new Date(), 'PositionMapTrain.renderD3', newProps.lat, newProps.lng)
 
     _this._elements.gMain.selectAll('g').remove();
     _this._elements.gMain.selectAll('g').data(newProps.positions)
@@ -72,7 +68,6 @@ class PositionMapTrains extends Component {
       .append('g')
       .attr({
         transform: function (p) {
-//          return 'translate('+_this._scales.x(p.x)+','+ _this._scales.y(p.y)+') rotate('+(-10* p.direction)+')';
           return 'translate(' + _this._scales.x(p.x) + ',' + _this._scales.y(p.y) + ')';
         }
       })

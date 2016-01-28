@@ -15,8 +15,7 @@ class PositionMap extends Component {
 
   render() {
     let _this = this;
-    const {count, positions, location, dispatch, height, width, onLocationChanged} = this.props;
-    console.log('PositionMap.render', this.props.location);
+    const {positions, location, dispatch, height, width, onLocationChanged} = this.props;
 
     return (
       <div>
