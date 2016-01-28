@@ -23,7 +23,7 @@ docker rm  kafka elasticsearch1 elasticsearch2 elasticsearch3 cff_sniff logstash
 echo "Now deploy new infrastructure"
 ### KAFKA : listen sur adresse interne et adresse publique (si le port est ouvert, ce qui n'est pas le cas chez Amazon)
 docker build --force-rm=true -t octoch/kafka components/kafka
-docker run -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime --env KAFKA_HEAP_OPTS="-Xmx256M -Xms128M" --env ADVERTISED_HOST=$AWS_IP --env ADVERTISED_PORT=9092 --volumes-from kafka_data octoch/kafka
+docker run --restart=always -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime --env KAFKA_HEAP_OPTS="-Xmx256M -Xms128M" --env ADVERTISED_HOST=$AWS_IP --env ADVERTISED_PORT=9092 --volumes-from kafka_data octoch/kafka
 echo "\nShow mount points: KAFKA"
 docker inspect --format='{{json .Mounts}}' kafka_data kafka
 
@@ -51,11 +51,7 @@ docker build --force-rm=true -t octoch/logstash_position_es components/logstash_
 docker run --restart=always  -h logstash_position_es --net=cff_realtime  -d --name logstash_position_es octoch/logstash_position_es -f /config-dir/logstash.conf
 
 docker build --force-rm=true -t octoch/logstash_position_archive components/logstash_position_archive
-docker run --restart=always -h logstash_position_archive --net=cff_realtime  -d --name logstash_position_archive --volumes-from logstash_data octoch/logstash_position_archive -f /config-dir/logstash.conf
-
-#sniffer
-docker build --force-rm=true -t octoch/logstash_stop components/logstash_stop
-docker run --restart=always -h logstash_stop --net=cff_realtime  -d --name logstash_stop --volumes-from logstash_data octoch/logstash_stop -f /config-dir/logstash.conf
+docker run --restart=always -h logstash_position_archive --net=cff_realtime  -d --name logstash_position_archive --volumes-from logstash_data octoch/logstash_position_archive -f /config-dir/logsta	me logstash_stop --volumes-from logstash_data octoch/logstash_stop -f /config-dir/logstash.conf
 
 docker build --force-rm=true  -t octoch/cff_sniff components/node_cff_sniff
 docker run --restart=always --env KAFKA_HOST=kafka --env MODE="$MODE" --net=cff_realtime -h cff_sniff -d --name cff_sniff octoch/cff_sniff
