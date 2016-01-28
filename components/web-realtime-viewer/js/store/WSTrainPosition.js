@@ -14,13 +14,9 @@ class WSTrainPosition {
     let _this = this;
     let ws = new WebSocket('ws://localhost' + ':3001');
     ws.onmessage = function (event) {
-      console.log('displayth', {type:ActionTypes.TRAIN_POSITION_RECEIVED, data:event.data});
-      console.log(_this.store.getState())
       _this.store.dispatch({type:ActionTypes.TRAIN_POSITION_RECEIVED, data:JSON.parse(event.data)})
     };
   }
 }
 
 export default WSTrainPosition;
-
-

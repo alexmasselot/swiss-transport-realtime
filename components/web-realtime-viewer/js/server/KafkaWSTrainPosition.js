@@ -21,7 +21,7 @@ class KafkaWSTrainPosition {
     _this.wsPort = options.wsPort;
 
     _this._trainPositions = new TrainPositionCollection({
-      idKey : 'trainid'
+      idKey: 'trainid'
     });
     _this._initWebsocketServer();
     _this._initKafka();
@@ -35,12 +35,15 @@ class KafkaWSTrainPosition {
     var _this = this;
     var wss = new WebSocketServer({port: _this.wsPort});
     _this._websocketServer = wss;
+    wss.on('connection', function connection(ws) {
+      ws.send(_this.clientMessage());
+    });
   }
 
   _initKafka() {
     let _this = this;
     _this.kafkaClient = new Kafka.Client(_this.kafkaBroker, 'web-realtime-viewer');
-    _this.kafkaClient.on('ready',function(){
+    _this.kafkaClient.on('ready', function () {
       var consumer = new Kafka.HighLevelConsumer(_this.kafkaClient,
         [
           {
@@ -52,12 +55,10 @@ class KafkaWSTrainPosition {
         }
       );
 
-      consumer.on(undefined, function () {
-        console.log('undefined', arguments);
-      });
       consumer.on('message', function (message) {
         let v = JSON.parse(message.value);
         delete v.poly;
+        console.log('message', v.trainid)
         _this._trainPositions.update(v);
       });
       consumer.on('error', function (err) {
@@ -74,18 +75,23 @@ class KafkaWSTrainPosition {
     return _this._initWebsocketServer();
   }
 
+  clientMessage() {
+    let _this = this;
+    return JSON.stringify(
+      {
+        trainPositions: _this._trainPositions.list(),
+        trainCount: _this._trainPositions.size()
+      }
+    );
+  }
 
   broadcastPositions() {
     let _this = this;
 
-    let msg = JSON.stringify(
-      {
-        trainPositions: _this._trainPositions.list(),
-        trainCount : _this._trainPositions.size()
-      }
-    );
+    let msg = _this.clientMessage();
+    console.log(new Date(), 'broadcast', msg.length, 'bytes');
     _this._websocketServer.clients.forEach(function (client) {
-      client.send(msg)
+      client.send(msg);
     });
     return _this;
   }

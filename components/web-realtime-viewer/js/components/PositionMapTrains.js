@@ -5,10 +5,12 @@ import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
 import styles from '../../css/app.css';
-import classes from './PositionMapText.css'
+import classes from './PositionMapTrains.css'
+import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 
+let i =0;
 
-class PositionMapText extends Component {
+class PositionMapTrains extends Component {
 
   componentDidMount() {
     var _this = this;
@@ -17,7 +19,8 @@ class PositionMapText extends Component {
   }
 
   shouldComponentUpdate(props) {
-    this._renderD3(ReactDOM.findDOMNode(this));
+    console.log(new Date(), 'PositionMapTrains.shouldComponentUpdate', props)
+    this._renderD3(ReactDOM.findDOMNode(this), props);
 
     // always skip React's render step
     return false;
@@ -32,59 +35,60 @@ class PositionMapText extends Component {
     };
     //look_minx=5850000&look_maxx=10540000&look_miny=45850000&look_maxy=47800000
 
-    _this._domain = {
-      x:[5.850000,10.540000],
-      y:[45.850000,47.800000]
-    };
-    //_this._domain = {
-    //  x:[6385532, 6884036],
-    //  y:[46441434, 46653942]
-    //};
-    _this._scales = {
-      x: d3.scale.linear().range([0, _this._dim.width]).domain(_this._domain.x),
-      y: d3.scale.linear().range([_this._dim.height, 0]).domain(_this._domain.y)
-    };
+    let {lat, lng} = _this.props;
 
     d3.select(el).selectAll().empty();
     _this._elements = {
       svg: d3.select(el).append('svg')
         .attr({
+          //viewBox: '-' + (_this._dim.width / 2) + ' -' + (_this._dim.height / 2) + ' ' + _this._dim.width + ' ' + _this._dim.height,
+          viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
           width: _this._dim.width,
           height: _this._dim.height
         })
+        .style('overflow', 'visible')
     };
     _this._elements.gMain = _this._elements.svg.append('g')
       .attr({
-        class: 'PositionMapText'
-      });
+        class: 'PositionMapText',
+      })
+      ;
 
   }
 
-  _renderD3(el) {
+  _renderD3(el, newProps) {
     let _this = this;
+
+    _this._scales = {
+      x: newProps.coord2point.x,
+      y: newProps.coord2point.y
+    };
+
+    console.log(new Date(), 'PositionMapTrain.renderD3', newProps.lat, newProps.lng)
+
     _this._elements.gMain.selectAll('g').remove();
-    _this._elements.gMain.selectAll('g').data(_this.props.positions)
+    _this._elements.gMain.selectAll('g').data(newProps.positions)
       .enter()
       .append('g')
       .attr({
         transform: function (p) {
-          return 'translate('+_this._scales.x(p.x)+','+ _this._scales.y(p.y)+') rotate('+(-10* p.direction)+')';
+//          return 'translate('+_this._scales.x(p.x)+','+ _this._scales.y(p.y)+') rotate('+(-10* p.direction)+')';
+          return 'translate(' + _this._scales.x(p.x) + ',' + _this._scales.y(p.y) + ')';
         }
       })
       .append('text')
       .attr('class', classes.positionText)
       .text(function (p) {
-        return p.name.trim()+' ('+ p.lstopname+')';
+        return p.name.trim() + ' (' + p.lstopname + ')';// +_this.props.coord2point.x(p.x);
       })
   }
 
   render() {
     const {count, positions, dispatch} = this.props;
-    console.log('PositionMapText.props', this.props)
     return (
       <div></div>
     );
   }
 }
 
-export default PositionMapText;
+export default PositionMapTrains;

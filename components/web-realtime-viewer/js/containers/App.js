@@ -5,11 +5,9 @@ import Home from '../components/Home';
 import WSTrainPosition from '../store/WSTrainPosition';
 
 const store = configureStore();
+console.log('INIT store', store.getState())
 
-console.log('store=', store)
-console.log('haha')
 new WSTrainPosition({store});
-console.log('haha')
 export default React.createClass({
   render() {
     return (

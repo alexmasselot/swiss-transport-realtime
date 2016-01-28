@@ -34,6 +34,8 @@ class TrainPositionCollection {
 
     let t = new Date().getTime();
 
+    tp.x=parseFloat(tp.x)/1000000;
+    tp.y=parseFloat(tp.y)/1000000;
     _this._positions[tp[_this.idKey]] = {
       t: t,
       obj: tp

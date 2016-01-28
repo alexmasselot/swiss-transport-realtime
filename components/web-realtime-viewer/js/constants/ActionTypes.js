@@ -1,7 +1,8 @@
 import keyMirror from 'fbjs/lib/keyMirror';
 
 export default keyMirror({
-  TRAIN_POSITION_RECEIVED:null
+  TRAIN_POSITION_RECEIVED:null,
+  MAP_LOCATION_CHANGED:null
 });
 
 //export const DATA_FETCHED = 'DATA_FETCHED';
