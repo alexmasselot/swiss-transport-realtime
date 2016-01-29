@@ -1,9 +1,10 @@
 import {TRAIN_POSITION_RECEIVED} from '../constants/ActionTypes';
 
 export function updatePositions(data) {
+  console.log('updatePositions')
   return {
     type: TRAIN_POSITION_RECEIVED,
-    timeStamp:new Date(),
+    timestamp:new Date().getTime(),
     data
   }
 }

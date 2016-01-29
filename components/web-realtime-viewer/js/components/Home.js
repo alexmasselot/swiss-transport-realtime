@@ -7,6 +7,7 @@ import * as MapLocationActions from '../actions/MapLocationActions';
 import styles from '../../css/app.css';
 
 import PositionMap from './PositionMap';
+import Timer from './Timer';
 
 class Home extends Component {
   render() {
@@ -15,9 +16,14 @@ class Home extends Component {
       ...bindActionCreators(TrainPositionActions, dispatch)
       , ...bindActionCreators(MapLocationActions, dispatch)
     };
+      let tTrain = _.chain(TrainPosition.positions)
+      .map('timeStamp')
+      .max()
+      .value();
+
     return (
       <main>
-        <h1 className={styles.text}>{TrainPosition.count} trains</h1>
+        <h4 className={styles.text}>Positions updated on map <Timer t0={TrainPosition.timestamp}/> ago. Last train updated from CFF <Timer t0={tTrain}/> ago</h4>
         <PositionMap height={400}
                      width={600}
                      positions={TrainPosition.positions}

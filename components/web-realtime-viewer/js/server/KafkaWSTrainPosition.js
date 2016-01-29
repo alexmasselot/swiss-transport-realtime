@@ -58,7 +58,7 @@ class KafkaWSTrainPosition {
       consumer.on('message', function (message) {
         let v = JSON.parse(message.value);
         delete v.poly;
-        console.log('message', v.trainid)
+        //console.log('message', v.trainid)
         _this._trainPositions.update(v);
       });
       consumer.on('error', function (err) {

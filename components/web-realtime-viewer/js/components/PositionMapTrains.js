@@ -104,7 +104,7 @@ class PositionMapTrains extends Component {
         let i = s.indexOf(' ');
         return s.substr(0, i)
       });
-    
+
     gTrains.append('g')
       .attr({
         class: classes.trainDetails
