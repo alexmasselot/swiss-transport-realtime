@@ -9,7 +9,7 @@ let defaultState = {
 export default function (state = defaultState, action) {
   switch (action.type) {
     case ActionTypes.TRAIN_POSITION_RECEIVED:
-      return {...state, positions: action.data.trainPositions};
+      return {...state, positions: action.data.trainPositions, timeStamp:action.timeStamp};
     default:
       return state;
   }

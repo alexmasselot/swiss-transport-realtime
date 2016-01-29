@@ -1,4 +1,33 @@
-.positionText{
+.positionText {
   font-size: 10px;
-  color:red
+  color: red
+}
+
+.trainSymbol text{
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.trainSymbol {
+  fill: white;
+  fill-opacity: 0.4;
+  stroke: blue
+}
+
+.trainSymbol:hover {
+  fill: white;
+  fill-opacity: 0;
+  stroke: red
+}
+
+.trainDetails {
+  display: none;
+}
+
+.trainDetails text {
+  font-size: 80%;
+}
+
+.trainMarker:hover .trainDetails {
+  display: block;
 }

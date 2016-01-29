@@ -7,8 +7,9 @@ import * as TrainPositionActions from '../actions/TrainPositionActions';
 import styles from '../../css/app.css';
 import classes from './PositionMapTrains.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
+import _ from 'lodash'
 
-let i =0;
+let i = 0;
 
 class PositionMapTrains extends Component {
 
@@ -44,35 +45,74 @@ class PositionMapTrains extends Component {
           width: _this._dim.width,
           height: _this._dim.height
         })
-        //.style('overflow', 'visible')
+      //.style('overflow', 'visible')
     };
     _this._elements.gMain = _this._elements.svg.append('g')
       .attr({
         class: 'PositionMapText',
       })
-      ;
+    ;
 
   }
 
   _renderD3(el, newProps) {
     let _this = this;
 
+
+    let {lngMin, lngMax, latMin, latMax}  = newProps.bounds;
     _this._scales = {
-      x: d3.scale.linear().range([0, _this._dim.width]).domain([newProps.bounds.lngMin, newProps.bounds.lngMax]),
-      y: d3.scale.linear().range([0, _this._dim.height]).domain([newProps.bounds.latMax, newProps.bounds.latMin])
+      x: d3.scale.linear().range([0, _this._dim.width]).domain([lngMin, lngMax]),
+      y: d3.scale.linear().range([0, _this._dim.height]).domain([latMax, latMin])
     };
 
     _this._elements.gMain.selectAll('g').remove();
-    _this._elements.gMain.selectAll('g').data(newProps.positions)
+
+
+    let trainPos = _.chain(newProps.positions)
+      .filter(function (p) {
+        return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
+      })
+      .value();
+
+    let gTrains = _this._elements.gMain.selectAll('g')
+      .data(trainPos)
       .enter()
       .append('g')
       .attr({
         transform: function (p) {
           return 'translate(' + _this._scales.x(p.x) + ',' + _this._scales.y(p.y) + ')';
+        },
+        class: function (p) {
+          let s = p.name.trim();
+          let i = s.indexOf(' ');
+          return classes['train-cat_' + s.substr(0, i)]+' '+classes.trainMarker
         }
+      });
+    let gSymbol = gTrains.append('g')
+      .attr({
+        class: classes.trainSymbol
+      });
+    gSymbol.append('circle')
+      .attr({
+        cx: 0,
+        cy: 0,
+        r: 8
+      });
+    gSymbol.append('text')
+      .text(function (p) {
+        let s = p.name.trim();
+        let i = s.indexOf(' ');
+        return s.substr(0, i)
+      });
+    
+    gTrains.append('g')
+      .attr({
+        class: classes.trainDetails
+      }).append('text')
+      .attr({
+        class: classes.positionText,
+        x: 4
       })
-      .append('text')
-      .attr('class', classes.positionText)
       .text(function (p) {
         return p.name.trim() + ' (' + p.lstopname + ')';// +_this.props.coord2point.x(p.x);
       })
