@@ -23,8 +23,13 @@ docker rm  kafka elasticsearch1 elasticsearch2 elasticsearch3 cff_sniff logstash
 echo "Now deploy new infrastructure"
 ### KAFKA : listen sur adresse interne et adresse publique (si le port est ouvert, ce qui n'est pas le cas chez Amazon)
 docker build --force-rm=true -t octoch/kafka components/kafka
+
 docker run --restart=always -d -p 2181:2181 -p 9092:9092 --name kafka -h kafka --net=cff_realtime --env KAFKA_HEAP_OPTS="-Xmx256M -Xms128M" --env ADVERTISED_HOST=$AWS_IP --env ADVERTISED_PORT=9092 --volumes-from kafka_data octoch/kafka
+
+
+
 echo "\nShow mount points: KAFKA"
+
 docker inspect --format='{{json .Mounts}}' kafka_data kafka
 
 wait_for_server "Kafka/ZooKeeper" $AWS_IP 2181
@@ -41,7 +46,7 @@ wait_for_server "Kafka" $AWS_IP 9092
 docker build --force-rm=true -t octoch/elasticsearch components/elasticsearch
 docker run  -h elasticsearch1 --net=cff_realtime  -p 9200:9200 -p 9300:9300  -d --name elasticsearch1 --volumes-from elasticsearch_data octoch/elasticsearch elasticsearch \
      -Des.cluster.name="CFF_DataLake" -Des.node.name="ES_1"	
-echo "\nShow mount points: Elasticsearch"
+echo -e "\nShow mount points: Elasticsearch"
 docker inspect --format='{{json .Mounts}}' elasticsearch_data elasticsearch1
 
 #logstash
