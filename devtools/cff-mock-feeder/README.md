@@ -1,5 +1,9 @@
 #cff-mock-feeder
 
-push some train poition at high pace to kafka. Enable other app to be developped offline.
+push some train position at high pace to kafka. Enable other app to be developped offline.
 
-    npm start
+    docker-compose build && docker-compose up 
+
+##warning
+
+I've hard coded the docker machine ip, which is far from a good practice (produce.js & docker-compose.yml) 
