@@ -1,10 +1,11 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.{ TrainPosition, GeoLoc, TrainCFFPosition }
+import ch.octo.cffpoc.{ TimedPosition, TrainPosition, GeoLoc, TrainCFFPosition }
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
- * Created by alex on 17/02/16.
+ * Created by Alexandre Masselot on 17/02/16.
+ * © OCTO Technology
  */
 class TrainCFFPositionLatestCollectionSpecs extends FlatSpec with Matchers {
 
@@ -14,8 +15,10 @@ class TrainCFFPositionLatestCollectionSpecs extends FlatSpec with Matchers {
       name = s"IC${p._1}",
       category = "X",
       lastStopName = "Calgary",
-      timeStamp = p._2,
-      location = GeoLoc(1, 2)
+      timedPosition = TimedPosition(
+        timestamp = p._2,
+        position = GeoLoc(1, 2)
+      )
     ),
     futurePositions = List()
   )

@@ -12,19 +12,19 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
   /**
    * add a TrainCFFPosition and eventually replace an earlier train with same trainid
    *
-   * @param p
+   * @param p a new cff train position
    * @return a new collection
    */
   def +(p: TrainCFFPosition): TrainCFFPositionLatestCollection = mCol.get(p.trainid) match {
     case None => new TrainCFFPositionLatestCollection(mCol + (p.trainid -> p))
-    case Some(x) if x.current.timeStamp < p.current.timeStamp => new TrainCFFPositionLatestCollection(mCol + (p.trainid -> p))
+    case Some(x) if x.timeStamp < p.timeStamp => new TrainCFFPositionLatestCollection(mCol + (p.trainid -> p))
     case _ => this
   }
 
   /**
    * add a sequence of TrainCFFPosition and eventually replace an earlier train with same trainid
    *
-   * @param ps
+   * @param ps a sequence of cff train position
    * @return a new collection
    */
   def +(ps: Seq[TrainCFFPosition]): TrainCFFPositionLatestCollection =
@@ -33,13 +33,13 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
   /**
    * add another TrainCFFPositionLatestCollection and eventually replace an earlier train with same trainid
    *
-   * @param pcol
+   * @param pcol another collection
    * @return a new collection
    */
   def +(pcol: TrainCFFPositionLatestCollection): TrainCFFPositionLatestCollection =
     pcol.toList.foldLeft(this)((acc: TrainCFFPositionLatestCollection, p: TrainCFFPosition) => acc + p)
   /**
-   * numer of elements
+   * number of elements
    *
    * @return
    */
@@ -53,7 +53,7 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
    */
   def toList = mCol.values.toList
 
-  override def toString = mCol.values.map(p => s"${p.current.timeStamp}\t${p.current.trainid}").mkString("\n");
+  override def toString = mCol.values.map(p => s"${p.timeStamp}\t${p.current.trainid}").mkString("\n");
 }
 
 object TrainCFFPositionLatestCollection {

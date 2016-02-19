@@ -6,7 +6,8 @@ import kafka.utils.VerifiableProperties
 import play.api.libs.json._
 
 /**
- * Created by alex on 02/02/16.
+ * Created by Alexandre Masselot on 02/02/16.
+ * © OCTO Technology, 2016
  */
 class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decoder[TrainCFFPosition] {
 
@@ -18,7 +19,7 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
   implicit val readsPolyPos = new Reads[PolyPos] {
     override def reads(json: JsValue): JsResult[PolyPos] = {
       JsSuccess(PolyPos(
-        location = GeoLoc(((json \ "y").as[String].toDouble) / 1000000, ((json \ "x").as[String].toDouble) / 1000000),
+        location = GeoLoc((json \ "y").as[String].toDouble / 1000000, (json \ "x").as[String].toDouble / 1000000),
         msec = (json \ "msec").as[String].toInt
       ))
     }
@@ -33,8 +34,10 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
           name = (json \ "name").as[String] trim,
           category = (json \ "category").as[String] trim,
           lastStopName = (json \ "lstopname").as[String] trim,
-          timeStamp = tStamp,
-          location = GeoLoc(((json \ "y").as[String].toDouble) / 1000000, ((json \ "x").as[String].toDouble) / 1000000)
+          timedPosition = TimedPosition(
+            timestamp = tStamp,
+            position = GeoLoc((json \ "y").as[String].toDouble / 1000000, (json \ "x").as[String].toDouble / 1000000)
+          )
         ),
         futurePositions = (json \ "poly").as[List[PolyPos]].map(pp => TimedPosition(tStamp + pp.msec, pp.location))
       ))

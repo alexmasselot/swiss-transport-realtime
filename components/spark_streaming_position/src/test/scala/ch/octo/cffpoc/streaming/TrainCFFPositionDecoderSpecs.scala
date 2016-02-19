@@ -4,7 +4,8 @@ import ch.octo.cffpoc.{ TimedPosition, GeoLoc }
 import org.scalatest.{ Matchers, FlatSpec }
 
 /**
- * Created by alex on 17/02/16.
+ * Created by Alexandre Masselot on 17/02/16.
+ * © OCTO Technology
  */
 class TrainCFFPositionDecoderSpecs extends FlatSpec with Matchers {
   behavior of "TrainCFFPositionDecoder"
@@ -27,10 +28,10 @@ class TrainCFFPositionDecoderSpecs extends FlatSpec with Matchers {
     current.name should equal("ICE 71")
     current.lastStopName should equal("Chur")
     current.category should equal("ICE")
-    current.location should equal(GeoLoc(47.547399, 7.589565))
-    current.timeStamp should equal(1455742294099L)
+    current.timedPosition.position should equal(GeoLoc(47.547399, 7.589565))
+    current.timedPosition.timestamp should equal(1455742294099L)
 
-    tp.futurePositions should have length (16)
+    tp.futurePositions should have length 16
     tp.futurePositions(2) should equal(TimedPosition(1455742294099L + 4000, GeoLoc(47.547399, 7.589565)))
   }
 }
