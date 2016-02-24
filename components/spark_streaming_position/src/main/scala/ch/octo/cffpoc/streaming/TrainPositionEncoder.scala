@@ -4,15 +4,12 @@ import ch.octo.cffpoc.{ TimedPosition, GeoLoc, TrainPosition }
 import kafka.serializer.Encoder
 import kafka.utils.VerifiableProperties
 import play.api.libs.json.Json
-
+import serializers._
 /**
  * Created by Alexandre Masselot on 02/02/16.
  * © OCTO Technology
  */
 class TrainPositionEncoder(props: VerifiableProperties = null) extends Encoder[TrainPosition] {
-  implicit val formatGeoLoc = Json.format[GeoLoc]
-  implicit val formatTimedPosition = Json.format[TimedPosition]
-  implicit val formatTrainPosition = Json.format[TrainPosition]
 
   val encoding =
     if (props == null)

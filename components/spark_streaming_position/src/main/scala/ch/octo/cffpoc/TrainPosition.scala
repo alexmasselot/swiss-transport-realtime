@@ -23,5 +23,7 @@ case class TrainPosition(
     lastStopName = lastStopName,
     timedPosition = newPosition
   )
+
+  override def toString = s"$trainid\t$category\t${timedPosition.timestamp}\t${timedPosition.position.lat}\t${timedPosition.position.lng}\t$name\t$lastStopName"
 }
 

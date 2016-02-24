@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.TrainCFFPosition
+import ch.octo.cffpoc.{ TrainPositionSnapshot, TrainCFFPosition }
 
 /**
  * we build a collection of train where there is only one trainid and we keep the latest train
@@ -38,12 +38,12 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
    */
   def +(pcol: TrainCFFPositionLatestCollection): TrainCFFPositionLatestCollection =
     pcol.toList.foldLeft(this)((acc: TrainCFFPositionLatestCollection, p: TrainCFFPosition) => acc + p)
+
   /**
    * number of elements
    *
    * @return
    */
-
   def size = mCol.size
 
   /**
@@ -52,6 +52,15 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
    * @return
    */
   def toList = mCol.values.toList
+
+  /**
+   * build a trainposition snapshot
+   * @param time a time with the approximative train positions
+   * @return
+   */
+  def snapshot(time: Long): TrainPositionSnapshot = {
+    TrainPositionSnapshot(time, toList.map(_.at(time)))
+  }
 
   override def toString = mCol.values.map(p => s"${p.timeStamp}\t${p.current.trainid}").mkString("\n");
 }

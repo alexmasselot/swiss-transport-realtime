@@ -1,5 +1,6 @@
 package ch.octo.cffpoc
 
+import ch.octo.cffpoc.streaming.serializers
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
@@ -43,6 +44,18 @@ class TrainCFFPositionSpecs extends FlatSpec with Matchers {
   }
   it should "middle intevarl" in {
     check(115, 110, 11, 101)
+  }
+
+  it should "interval bound intevarl" in {
+    check(110, 110, 11, 101)
+  }
+
+  it should "== last" in {
+    check(130, 130, 13, 103)
+  }
+
+  it should "> last" in {
+    check(131, 130, 13, 103)
   }
 
 }

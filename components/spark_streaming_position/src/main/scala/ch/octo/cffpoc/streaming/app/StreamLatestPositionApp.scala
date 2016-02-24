@@ -1,12 +1,16 @@
 package ch.octo.cffpoc.streaming.app
 
-import ch.octo.cffpoc.TrainCFFPosition
-import ch.octo.cffpoc.streaming.{ TrainCFFPositionLatestCollection, TrainCFFPositionDecoder }
+import ch.octo.cffpoc._
+import ch.octo.cffpoc.streaming.{ serializers, TrainPositionSnapshotEncoder, TrainCFFPositionLatestCollection, TrainCFFPositionDecoder }
+import com.fasterxml.jackson.databind.ser.std.StringSerializer
 import kafka.serializer.StringDecoder
+import org.apache.kafka.clients.producer.{ ProducerRecord, ProducerConfig, KafkaProducer }
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.{ SparkConf, SparkEnv }
+import play.api.libs.json.Json
+import serializers._
 
 /**
  * Created by alex on 17/02/16.
@@ -14,7 +18,7 @@ import org.apache.spark.{ SparkConf, SparkEnv }
 object StreamLatestPositionApp {
   def main(args: Array[String]) {
 
-    val (zkQuorum, group, numThreads) = ("192.168.99.100:2181", "pipo-sk", 2)
+    val numThreads = 2
 
     // Configuration for a Spark application.
     // Used to set various Spark parameters as key-value pairs.
@@ -23,7 +27,7 @@ object StreamLatestPositionApp {
     val conf = new SparkConf(false) // skip loading external settings
       .setMaster("local[*]") // run locally with as many threads as CPUs
       .setAppName("Spark Streaming with Scala and Akka") // name in web UI
-      .set("spark.logConf", "true")
+      .set("spark.logConf", "false")
       .set("spark.driver.port", driverPort.toString)
       .set("spark.driver.host", driverHost)
       .set("spark.akka.logLifecycleEvents", "true")
@@ -35,6 +39,13 @@ object StreamLatestPositionApp {
       "zookeeper.connect" -> "192.168.99.100:2181",
       "group.id" -> "StreamLatestPositionApp"
     )
+
+    val producerProps = new java.util.HashMap[String, Object]()
+    producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.99.100:9092")
+    producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+      "org.apache.kafka.common.serialization.StringSerializer")
+    producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+      "org.apache.kafka.common.serialization.StringSerializer")
 
     val lines = KafkaUtils.createStream[String, TrainCFFPosition, StringDecoder, TrainCFFPositionDecoder](
       ssc,
@@ -57,7 +68,13 @@ object StreamLatestPositionApp {
             ((acc, p) => acc + p),
             ((acc, ps) => acc + ps)
           )
+          val tNow: Long = System.currentTimeMillis()
+          val snapshot = latestTrains.snapshot(tNow)
+          println(snapshot)
           println("counting rdd", n)
+          val producer = new KafkaProducer[String, String](producerProps)
+          val message = new ProducerRecord[String, String]("duh", null, Json.toJson(snapshot).toString())
+          producer.send(message)
       })
 
     ssc.start()
