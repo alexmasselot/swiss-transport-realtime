@@ -18,3 +18,8 @@ And you can check out what is coming on kafka
     ./activator ~test
  
  
+##Build
+
+### Docker
+
+    ./activator docker

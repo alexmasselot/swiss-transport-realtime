@@ -26,7 +26,11 @@ object StreamLatestPositionApp {
 
   lazy val appConfig = {
     val configFile = System.getProperty("config.file", "conf/application.conf")
-    ConfigFactory.parseFile(new File(configFile));
+    println(s"loading configuration from $configFile")
+    val c = ConfigFactory.parseFile(new File(configFile))
+
+    println(c.toString)
+    c
 
   }
 
