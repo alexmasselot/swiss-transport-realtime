@@ -18,7 +18,8 @@ maintainer := "amasselot@octo.com"
 libraryDependencies ++= Dependencies.sparkAkkaHadoop
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-json" % "2.4.2"
+  "com.typesafe.play" %% "play-json" % "2.4.2",
+  "com.github.tototoshi" %% "scala-csv" % "1.3.0"
 )
 
 dependencyOverrides ++= Set(
@@ -52,14 +53,3 @@ mappings in Universal += {
   conf -> "conf/application.conf"
 }
 
-//dockerfile in docker := {
-//  val appDir: File = stage.value
-//  val targetDir = "/app"
-//
-//  new Dockerfile {
-//    from("java:8")
-//    add("conf/application-docker.conf", s"$targetDir/conf/application.conf")
-//    entryPoint(s"$targetDir/bin/${executableScriptName.value}")
-//    copy(appDir, targetDir)
-//  }
-//}

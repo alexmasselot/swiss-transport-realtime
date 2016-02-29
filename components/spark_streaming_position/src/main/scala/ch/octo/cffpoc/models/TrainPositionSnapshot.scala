@@ -1,4 +1,4 @@
-package ch.octo.cffpoc
+package ch.octo.cffpoc.models
 
 /**
  * Created by alex on 23/02/16.

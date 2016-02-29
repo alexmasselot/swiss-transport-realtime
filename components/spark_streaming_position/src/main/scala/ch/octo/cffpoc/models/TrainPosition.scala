@@ -1,4 +1,6 @@
-package ch.octo.cffpoc
+package ch.octo.cffpoc.models
+
+import ch.octo.cffpoc.models.models.TimedPosition
 
 /**
  * Created by alex on 19/02/16.

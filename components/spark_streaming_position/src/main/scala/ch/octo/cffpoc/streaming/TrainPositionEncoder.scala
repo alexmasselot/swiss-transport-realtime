@@ -1,10 +1,10 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.{ TimedPosition, GeoLoc, TrainPosition }
+import ch.octo.cffpoc.models.TrainPosition
+import ch.octo.cffpoc.streaming.serializers._
 import kafka.serializer.Encoder
 import kafka.utils.VerifiableProperties
 import play.api.libs.json.Json
-import serializers._
 /**
  * Created by Alexandre Masselot on 02/02/16.
  * © OCTO Technology

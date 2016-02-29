@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.{ TrainPosition, TimedPosition, GeoLoc, TrainCFFPosition }
+import ch.octo.cffpoc.models.models.TimedPosition
+import ch.octo.cffpoc.models.{ GeoLoc, TrainCFFPosition, TrainPosition }
 import kafka.serializer.Decoder
 import kafka.utils.VerifiableProperties
 import play.api.libs.json._

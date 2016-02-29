@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.{ TrainPositionSnapshot, TrainCFFPosition }
+import ch.octo.cffpoc.models.{ TrainPositionSnapshot, TrainCFFPosition }
 
 /**
  * we build a collection of train where there is only one trainid and we keep the latest train
@@ -55,6 +55,7 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
 
   /**
    * build a trainposition snapshot
+   *
    * @param time a time with the approximative train positions
    * @return
    */

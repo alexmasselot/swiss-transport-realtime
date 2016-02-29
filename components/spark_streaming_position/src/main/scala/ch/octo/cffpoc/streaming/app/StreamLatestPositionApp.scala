@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming.app
 
 import java.io.File
+import ch.octo.cffpoc.models.TrainCFFPosition
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConversions._

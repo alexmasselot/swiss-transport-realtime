@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.{ TrainPositionSnapshot, TrainPosition, TimedPosition, GeoLoc }
+import ch.octo.cffpoc.models.models.TimedPosition
+import ch.octo.cffpoc.models.{ GeoLoc, TrainPosition, TrainPositionSnapshot }
 import play.api.libs.json.Json
 
 /**
