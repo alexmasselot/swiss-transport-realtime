@@ -1,9 +1,17 @@
 
+
+
 # web-realtime-viewer (web-realtime-viewer)
 
 > Swiss train real time viewer
 
 ## Running your project
+
+##Prerequisite
+
+    nvm use 4.2
+
+##Go
 
 The generated project includes a development server on port `3000`, which will rebuild the app whenever you change application code. To start the server (with the dev-tools enabled), run:
 

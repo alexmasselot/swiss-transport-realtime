@@ -38,6 +38,6 @@ app.listen(config.get('ports.http'), 'localhost', function (err, result) {
 let server = http.createServer(app);
 let kafkaWSTrainPosition = new KafkaWSTrainPosition({
   wsPort: config.get('ports.wsTrainPosition'),
-  kafkaBroker: '192.168.99.110:2181'
+  kafkaBroker: config.get('zookeeper.host')+':'+config.get('zookeeper.port')
 });
 
