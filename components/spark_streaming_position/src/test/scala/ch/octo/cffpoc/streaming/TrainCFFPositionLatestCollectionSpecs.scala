@@ -1,7 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.models.models.TimedPosition
-import ch.octo.cffpoc.models.{ GeoLoc, TrainCFFPosition, TrainPosition }
+import ch.octo.cffpoc.models.{ TimedPosition, GeoLoc, TrainCFFPosition, TrainPosition }
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**

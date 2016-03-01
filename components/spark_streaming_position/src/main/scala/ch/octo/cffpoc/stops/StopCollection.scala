@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.stops
 
-import java.io.File
+import java.io.{ InputStreamReader, InputStream, File }
 
 import ch.octo.cffpoc.models.GeoLoc
 import com.github.tototoshi.csv.CSVReader
@@ -17,17 +17,7 @@ class StopCollection(stops: List[Stop]) {
 }
 
 object StopCollection {
-  /**
-   * laod an exported CFF stops files, and load all stops.
-   * As platform specific are described, we onl keep the platformless pointer
-   *
-   * @param filename
-   * @return
-   */
-  def load(filename: String): StopCollection = {
-
-    val reader = CSVReader.open(new File(filename))
-    val itLines = Source.fromFile(filename, "UTF8").getLines()
+  def load(reader: CSVReader): StopCollection = {
     val lStops = reader.allWithHeaders()
       .groupBy(m => m("stop_id").replaceAll(":.*", ""))
       .map({
@@ -43,4 +33,16 @@ object StopCollection {
 
     new StopCollection(lStops)
   }
+
+  /**
+   * laod an exported CFF stops files, and load all stops.
+   * As platform specific are described, we onl keep the platformless pointer
+   *
+   * @param filename
+   * @return
+   */
+  def load(filename: String): StopCollection = load(CSVReader.open(new File(filename)))
+
+  def load(input: InputStream): StopCollection = load(CSVReader.open(new InputStreamReader(input)))
+
 }

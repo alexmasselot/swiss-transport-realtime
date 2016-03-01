@@ -1,7 +1,5 @@
 package ch.octo.cffpoc.models
 
-import ch.octo.cffpoc.models.models.TimedPosition
-
 /**
  * Created by alex on 19/02/16.
  */
@@ -10,7 +8,7 @@ case class TrainPosition(
     trainid: String,
     category: String,
     name: String,
-    timedPosition: TimedPosition,
+    timedPosition: HasTimedPosition,
     lastStopName: String) {
   /**
    * instanciate a train copy with another time & position
@@ -18,7 +16,7 @@ case class TrainPosition(
    * @param newPosition the new time & position
    * @return
    */
-  def at(newPosition: TimedPosition): TrainPosition = TrainPosition(
+  def at(newPosition: HasTimedPosition): TrainPosition = TrainPosition(
     trainid = trainid,
     category = category,
     name = name,
@@ -26,6 +24,12 @@ case class TrainPosition(
     timedPosition = newPosition
   )
 
-  override def toString = s"$trainid\t$category\t${timedPosition.timestamp}\t${timedPosition.position.lat}\t${timedPosition.position.lng}\t$name\t$lastStopName"
+  override def toString = {
+    val loc = timedPosition match {
+      case TimedPositionWithStop(_, _, Some(c)) => c.name
+      case _ => "-"
+    }
+    s"$trainid\t$category\t$loc\t${timedPosition.timestamp}\t${timedPosition.position.lat}\t${timedPosition.position.lng}\t$name\t$lastStopName"
+  }
 }
 

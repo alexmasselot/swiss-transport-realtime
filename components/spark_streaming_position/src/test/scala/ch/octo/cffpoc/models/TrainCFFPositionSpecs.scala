@@ -1,6 +1,5 @@
 package ch.octo.cffpoc.models
 
-import ch.octo.cffpoc.models.models.TimedPosition
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**

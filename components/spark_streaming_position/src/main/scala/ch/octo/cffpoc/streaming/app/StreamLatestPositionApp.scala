@@ -2,6 +2,7 @@ package ch.octo.cffpoc.streaming.app
 
 import java.io.File
 import ch.octo.cffpoc.models.TrainCFFPosition
+import ch.octo.cffpoc.stops.{ StopCollection, StopCloser }
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConversions._
@@ -63,7 +64,7 @@ object StreamLatestPositionApp {
     val sparkStreamingContext = initSparkStreamingContext
     val numThreads = 2
 
-    sparkStreamingContext.checkpoint("/tmp/streaming-slpa-checkpoint")
+    //sparkStreamingContext.checkpoint("/tmp/streaming-slpa-checkpoint")
     logger.info(s"appConfig= $appConfig")
 
     val kafkaConsumerParams = Map(
@@ -93,6 +94,8 @@ object StreamLatestPositionApp {
 
     val actorSystem = SparkEnv.get.actorSystem
 
+    val closer = new StopCloser(StopCollection.load(getClass.getResourceAsStream("/stops.txt")), 500)
+
     lines.window(Seconds(10), Seconds(4))
       .foreachRDD({
         rdd =>
@@ -102,7 +105,7 @@ object StreamLatestPositionApp {
             ((acc, ps) => acc + ps)
           )
           val tNow: Long = System.currentTimeMillis()
-          val snapshot = latestTrains.snapshot(tNow)
+          val snapshot = latestTrains.snapshot(tNow).closedBy(closer)
           println(snapshot)
           val producer = new KafkaProducer[String, String](kafkaProducerParams)
 

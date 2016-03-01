@@ -1,7 +1,5 @@
 package ch.octo.cffpoc.models
 
-import ch.octo.cffpoc.models.models.TimedPosition
-
 /**
  * Created by Alexandre Masselot on 19/02/16.
  * © OCTO Technology

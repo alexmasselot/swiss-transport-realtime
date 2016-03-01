@@ -1,7 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.models.GeoLoc
-import ch.octo.cffpoc.models.models.TimedPosition
+import ch.octo.cffpoc.models.{ GeoLoc, TimedPosition }
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
