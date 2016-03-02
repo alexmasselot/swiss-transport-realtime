@@ -44,6 +44,8 @@ console.log(config);
 let server = http.createServer(app);
 let kafkaWSTrainPosition = new KafkaWSTrainPosition({
   wsPort: config.get('ports.wsTrainPosition'),
-  kafkaBroker: config.get('zookeeper.host')+':'+config.get('zookeeper.port')
+  kafkaBroker: config.get('zookeeper.host') + ':' + config.get('zookeeper.port'),
+  intervalMS: config.get('kafka.interval'),
+  topic: config.get('kafka.topic')
 });
 
