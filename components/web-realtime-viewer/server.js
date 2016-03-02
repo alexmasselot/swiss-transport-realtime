@@ -8,7 +8,7 @@ var webpackConfig = require('./webpack.config');
 var config = require('config');
 
 var _ = require('lodash');
-var app = express();
+const app = global.server = express();
 var http = require("http");
 var KafkaWSTrainPosition = require('./js/server/KafkaWSTrainPosition').default;
 
@@ -23,8 +23,12 @@ app.use(require('webpack-dev-middleware')(compiler, {
 
 app.use(require('webpack-hot-middleware')(compiler));
 
-app.get('*', function (req, res) {
+app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/config', function (req, res) {
+  res.send(config.frontend);
 });
 
 app.listen(config.get('ports.http'), 'localhost', function (err, result) {
@@ -34,6 +38,8 @@ app.listen(config.get('ports.http'), 'localhost', function (err, result) {
 
   console.log('Listening at localhost:', config.get('ports.http'));
 });
+
+console.log(config);
 
 let server = http.createServer(app);
 let kafkaWSTrainPosition = new KafkaWSTrainPosition({

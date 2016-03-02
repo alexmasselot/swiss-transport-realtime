@@ -1,14 +1,19 @@
 {
-  "ports":{
-    "http":3000,
-    "wsTrainPosition":3001
+  "frontend": {
+    "url": {
+      "ws": "ws://localhost:3001"
+    }
   },
-  "zookeeper":{
-    "host":"192.168.99.100",
-    "port":2181
+  "ports": {
+    "http": 3000,
+    "wsTrainPosition": 3001
   },
-  "kafka":{
-    "host":"192.168.99.100",
-    "port":9092
+  "zookeeper": {
+    "host": "192.168.99.100",
+    "port": 2181
+  },
+  "kafka": {
+    "host": "192.168.99.100",
+    "port": 9092
   }
 }
