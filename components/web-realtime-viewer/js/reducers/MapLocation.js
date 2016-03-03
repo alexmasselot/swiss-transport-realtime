@@ -5,11 +5,11 @@ let defaultState = {
   location: {
     center: {lat: 46.521, lng: 6.627},
     zoom: 8,
-    bounds:{
-      lngMin:0,
-      lngMax:1,
-      latMin:0,
-      latMax:1
+    bounds: {
+      lngMin: 0,
+      lngMax: 1,
+      latMin: 0,
+      latMax: 1
     }
   },
 };

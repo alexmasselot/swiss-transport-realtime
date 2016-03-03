@@ -69,7 +69,7 @@ class PositionMapTrains extends Component {
 
 
     let trainPos = _.chain(newProps.positions)
-      .map(function(p){
+      .map(function (p) {
         p.x = p.timedPosition.position.lng;
         p.y = p.timedPosition.position.lat;
         return p;
@@ -78,7 +78,6 @@ class PositionMapTrains extends Component {
         return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
       })
       .value();
-
 
 
     let gTrains = _this._elements.gMain.selectAll('g')
@@ -92,7 +91,7 @@ class PositionMapTrains extends Component {
         class: function (p) {
           let s = p.name.trim();
           let i = s.indexOf(' ');
-          return classes['train-cat_' + p.category.toLowerCase()]+' '+classes.trainMarker
+          return classes['train-cat_' + p.category.toLowerCase()] + ' ' + classes.trainMarker
         }
       });
     let gSymbol = gTrains.append('g')
@@ -107,9 +106,12 @@ class PositionMapTrains extends Component {
       });
     gSymbol.append('text')
       .text(function (p) {
-        let s = p.name.trim();
-        let i = s.indexOf(' ');
-        return s.substr(0, i)
+        let s = p.category;
+
+        if (p.timedPosition.stop) {
+          s = s + " - " + p.timedPosition.stop.name;
+        }
+        return s;
       });
 
     gTrains.append('g')
