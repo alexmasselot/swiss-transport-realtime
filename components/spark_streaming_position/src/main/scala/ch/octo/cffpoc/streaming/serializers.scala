@@ -19,11 +19,13 @@ object serializers {
     override def writes(o: HasTimedPosition): JsValue =
       o match {
         case t: TimedPosition => Json.writes[TimedPosition].writes(t)
+        case t: TimedPositionIsMoving => Json.writes[TimedPositionIsMoving].writes(t)
         case t: TimedPositionWithStop => Json.writes[TimedPositionWithStop].writes(t)
       }
 
     override def reads(json: JsValue): JsResult[HasTimedPosition] = json match {
       case t: TimedPosition => Json.reads[TimedPosition].reads(t)
+      case t: TimedPositionIsMoving => Json.reads[TimedPositionIsMoving].reads(t)
       case t: TimedPositionWithStop => Json.reads[TimedPositionWithStop].reads(t)
     }
   }
