@@ -24,37 +24,46 @@ class TrainCFFPositionSpecs extends FlatSpec with Matchers {
       TimedPosition(100, GeoLoc(10, 100)),
       TimedPosition(110, GeoLoc(11, 101)),
       TimedPosition(120, GeoLoc(12, 102)),
+      TimedPosition(125, GeoLoc(12, 102)),
       TimedPosition(130, GeoLoc(13, 103))
     )
   )
 
-  def check(at: Long, eT: Long, eLat: Double, eLng: Double) = {
+  def check(at: Long, eT: Long, eLat: Double, eLng: Double, eMoving: Boolean) = {
     val t = tcff.at(at)
     t.trainid should equal("1")
     t.timedPosition.position should equal(GeoLoc(eLat, eLng))
     t.timedPosition.timestamp should equal(eT)
+    t.timedPosition.isInstanceOf[TimedPositionIsMoving] should be(true)
+    t.timedPosition.asInstanceOf[TimedPositionIsMoving].moving should be(eMoving)
   }
 
   it should "< before" in {
-    check(99, 100, 10, 100)
+    check(99, 100, 10, 100, true)
   }
   it should "<= before" in {
-    check(100, 100, 10, 100)
+    check(100, 100, 10, 100, true)
   }
   it should "middle intevarl" in {
-    check(115, 110, 11, 101)
+    check(115, 110, 11, 101, true)
   }
 
   it should "interval bound intevarl" in {
-    check(110, 110, 11, 101)
+    check(110, 110, 11, 101, true)
   }
 
+  it should "interval bound stop bef" in {
+    check(120, 120, 12, 102, false)
+  }
+  it should "interval bound stop end" in {
+    check(125, 125, 12, 102, true)
+  }
   it should "== last" in {
-    check(130, 130, 13, 103)
+    check(130, 130, 13, 103, true)
   }
 
   it should "> last" in {
-    check(131, 130, 13, 103)
+    check(131, 130, 13, 103, true)
   }
 
 }

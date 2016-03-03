@@ -21,10 +21,11 @@ case class TrainCFFPosition(
    * @return an approximate position at the given time
    */
   def at(time: Long): TrainPosition = {
-    futurePositions.takeWhile(_.timestamp <= time).lastOption match {
-      case Some(p) => current.at(p)
-      case None => current
-    }
+    futurePositions.zip(futurePositions.tail :+ TimedPosition(Long.MaxValue, GeoLoc(0, 0)))
+      .takeWhile(_._1.timestamp <= time).lastOption match {
+        case Some((p1, p2)) => current.at(TimedPositionIsMoving(p1.timestamp, p1.position, p1.position != p2.position))
+        case None => current.at(TimedPositionIsMoving(current.timedPosition.timestamp, current.timedPosition.position, true))
+      }
   }
 }
 

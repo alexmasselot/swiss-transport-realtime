@@ -17,6 +17,13 @@ case class TimedPosition(
 
 }
 
+case class TimedPositionIsMoving(
+    timestamp: Long,
+    position: GeoLoc,
+    moving: Boolean) extends HasTimedPosition {
+
+}
+
 case class TimedPositionWithStop(timestamp: Long,
     position: GeoLoc,
     stop: Option[Stop]) extends HasTimedPosition {
