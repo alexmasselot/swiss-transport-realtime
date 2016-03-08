@@ -4,32 +4,47 @@ var Kafka = require('kafka-node');
 var _ = require('lodash');
 var Promise = require('promise');
 var process = require('process');
+var fs = require('fs');
+var readline= require('readline');
+var zlib = require('zlib');
 
 var speedup = 10;
 var kafkaHost = 'kafka';
 var kafkaPort = 2181;
-var topic = 'cff_train_position';
+var topicTrainPositions = 'cff_train_position';
+var topicStops = 'cff_station_board';
 
-var prmReadEvent = new Promise(function (resolve, reject) {
-    var lineReader = require('readline').createInterface({
-        input: require('fs').createReadStream('resources/cff_train_position-ic.txt')
-    });
+var isMockKafka = process.env.MOCK_KAFKA;
 
-    var lines = [];
+var prmReadEvent = function (file) {
+    return new Promise(function (resolve, reject) {
+        var gunzip = zlib.createGunzip()
 
-    lineReader.on('line', function (line) {
-        lines.push(JSON.parse(line));
-    });
+        var lineReader = readline.createInterface({
+            input: fs.createReadStream(file).pipe(gunzip)
+        });
 
-    lineReader.on('close', function () {
-        resolve(lines);
+        var lines = [];
+
+        lineReader.on('line', function (line) {
+            lines.push(JSON.parse(line));
+        });
+
+        lineReader.on('close', function () {
+            resolve(lines);
+        });
+        lineReader.on('error', function (e) {
+            reject(e);
+        });
     });
-    lineReader.on('error', function (e) {
-        reject(e);
-    });
-});
+};
 
 var prmKafkaProducer = new Promise(function (resolve, reject) {
+    if (isMockKafka) {
+        resolve();
+        return;
+    }
+
     var client = new Kafka.Client(kafkaHost + ':' + kafkaPort);
     console.log('waiting for producer to come ready');
     var i = 0;
@@ -44,39 +59,35 @@ var prmKafkaProducer = new Promise(function (resolve, reject) {
             console.log('clearing timer and creating a producer');
             clearInterval(interv);
             var producer = new Kafka.HighLevelProducer(client, {partitionerType: 0});
-            console.log('producer is ready and launching event on', topic);
+            console.log('producer is ready and launching event on');
             setTimeout(function () {
                 resolve(producer);
             }, 2000);
 
-            //producer.createTopics([topic], false, function (err, data) {
+            //producer.createTopics([topicTrainPositions], false, function (err, data) {
             //    if (err) {
-            //        console.error('cannot create topic', err);
+            //        console.error('cannot create topicTrainPositions', err);
             //        reject(err);
             //        return;
             //    }
-            //    console.log('topic created', data)
+            //    console.log('topicTrainPositions created', data)
             //});
         }
     }, 1000);
 });
 
-Promise.all([prmKafkaProducer, prmReadEvent]).then(function (values) {
-    var kafkaProducer = values[0];
-    var events = values[1];
-    console.log('Go for IT');
-
+var shootCycle = function (events, kafkaProducer, topic) {
     var iEvent = 0;
     var iLoop = 0;
 
     var readNext = function () {
-        var event = _.assign({}, events[iEvent], {timeStamp: new Date().getTime()});
+        var event = _.assign({}, events[iEvent]);//, {timeStamp: new Date().getTime()});
 
         var wait;
 
         if (iEvent == events.length - 1) {
             iLoop++;
-            console.log('loop', iLoop);
+            console.log('loop', topic, iLoop);
             iEvent = 0;
             wait = 0;
         } else {
@@ -97,14 +108,37 @@ Promise.all([prmKafkaProducer, prmReadEvent]).then(function (values) {
         }, x.wait);
     };
     shootNext(function (e) {
-        kafkaProducer.send([{topic: topic, messages: JSON.stringify(e)}], function (err, data) {
+        var message = JSON.stringify(e);
+        if (isMockKafka) {
+            console.log(message);
+            return;
+        }
+        kafkaProducer.send([{topic: topic, messages: message}], function (err, data) {
             if (err) {
                 console.error('kafka send error', err);
                 return;
             }
-            console.log(data)
+            //console.log(data)
         });
     });
+};
+
+Promise.all([prmKafkaProducer,
+    prmReadEvent('resources/cff_train_position-2016-02-29__.jsonl.gz'),
+    prmReadEvent('resources/cff-stop-2016-02-29__.jsonl.gz')
+    //prmReadEvent('resources/cff_train_position-ic.txt'),
+    //prmReadEvent('resources/cff-stop-2016-02-14_17.txt')
+]).then(function (values) {
+    var kafkaProducer = values[0];
+    var eventsTrainPositions = values[1];
+    var eventsStops = values[2];
+    console.log('Go for IT');
+
+
+    shootCycle(eventsTrainPositions, kafkaProducer, topicTrainPositions);
+    shootCycle(eventsStops, kafkaProducer, topicStops);
+
+
 }).catch(function (reason) {
     console.error('caught', reason);
 });
