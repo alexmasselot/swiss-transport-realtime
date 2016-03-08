@@ -12,6 +12,11 @@ import _ from 'lodash'
 let i = 0;
 
 class PositionMapTrains extends Component {
+  constructor() {
+    super();
+    let _this = this;
+    this;
+  }
 
   componentDidMount() {
     var _this = this;
@@ -55,6 +60,26 @@ class PositionMapTrains extends Component {
 
   }
 
+  _updateData(bounds, trainPositions) {
+    let _this = this;
+
+    let {lngMin, lngMax, latMin, latMax}  = bounds;
+
+    _this._trainPositions = _.chain(trainPositions)
+      .map(function (p) {
+        p.x = p.timedPosition.position.lng;
+        p.y = p.timedPosition.position.lat;
+        return p;
+      })
+      .filter(function (p) {
+        return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
+      }).value();
+
+
+
+    return _this;
+  }
+
   _renderD3(el, newProps) {
     let _this = this;
 
@@ -65,24 +90,17 @@ class PositionMapTrains extends Component {
       y: d3.scale.linear().range([0, _this._dim.height]).domain([latMax, latMin])
     };
 
-    _this._elements.gMain.selectAll('g').remove();
+
+    _this._updateData(newProps.bounds, newProps.positions);
 
 
-    let trainPos = _.chain(newProps.positions)
-      .map(function (p) {
-        p.x = p.timedPosition.position.lng;
-        p.y = p.timedPosition.position.lat;
-        return p;
-      })
-      .filter(function (p) {
-        return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
-      })
-      .value();
+    let gTrains = _this._elements.gMain
+      .selectAll('g.train-position')
+      .data(_this._trainPositions, function (d) {
+        return d.trainid;
+      });
 
-
-    let gTrains = _this._elements.gMain.selectAll('g')
-      .data(trainPos)
-      .enter()
+    let gNewTrains = gTrains.enter()
       .append('g')
       .attr({
         transform: function (p) {
@@ -91,10 +109,10 @@ class PositionMapTrains extends Component {
         class: function (p) {
           let s = p.name.trim();
           let i = s.indexOf(' ');
-          return classes['train-cat_' + p.category.toLowerCase()] + ' ' + classes.trainMarker
+          return 'train-position ' + classes['train-cat_' + p.category.toLowerCase()] + ' ' + classes.trainMarker
         }
       });
-    let gSymbol = gTrains.append('g')
+    let gSymbol = gNewTrains.append('g')
       .attr({
         class: classes.trainSymbol
       });
@@ -114,7 +132,7 @@ class PositionMapTrains extends Component {
         return s;
       });
 
-    gTrains.append('g')
+    gNewTrains.append('g')
       .attr({
         class: classes.trainDetails
       }).append('text')
@@ -124,7 +142,19 @@ class PositionMapTrains extends Component {
       })
       .text(function (p) {
         return p.name.trim() + ' (' + p.lastStopName + ')';// +_this.props.coord2point.x(p.x);
-      })
+      });
+
+    gTrains.transition()
+      .duration(500)
+      .attr('transform', function (p) {
+        return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
+      });
+
+
+    gTrains.exit().transition()
+      .duration(300)
+      .style('opacity', 1e-6)
+      .remove();
   }
 
   render() {
