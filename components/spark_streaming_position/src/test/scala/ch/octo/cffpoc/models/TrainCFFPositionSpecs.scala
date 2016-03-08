@@ -1,5 +1,6 @@
 package ch.octo.cffpoc.models
 
+import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
@@ -17,24 +18,24 @@ class TrainCFFPositionSpecs extends FlatSpec with Matchers {
         lastStopName = "Calgary"
       ),
       timedPosition = TimedPosition(
-        timestamp = 100,
+        timestamp = new DateTime(100L),
         position = GeoLoc(10, 100)
       )
     ),
     futurePositions = List(
-      TimedPosition(100, GeoLoc(10, 100)),
-      TimedPosition(110, GeoLoc(11, 101)),
-      TimedPosition(120, GeoLoc(12, 102)),
-      TimedPosition(125, GeoLoc(12, 102)),
-      TimedPosition(130, GeoLoc(13, 103))
+      TimedPosition(new DateTime(100L), GeoLoc(10, 100)),
+      TimedPosition(new DateTime(110L), GeoLoc(11, 101)),
+      TimedPosition(new DateTime(120L), GeoLoc(12, 102)),
+      TimedPosition(new DateTime(125L), GeoLoc(12, 102)),
+      TimedPosition(new DateTime(130L), GeoLoc(13, 103))
     )
   )
 
   def check(at: Long, eT: Long, eLat: Double, eLng: Double, eMoving: Boolean) = {
-    val t = tcff.at(at)
+    val t = tcff.at(new DateTime(at))
     t.train.id should equal("1")
     t.timedPosition.position should equal(GeoLoc(eLat, eLng))
-    t.timedPosition.timestamp should equal(eT)
+    t.timedPosition.timestamp should equal(new DateTime(eT))
     t.timedPosition.isInstanceOf[TimedPositionIsMoving] should be(true)
     t.timedPosition.asInstanceOf[TimedPositionIsMoving].moving should be(eMoving)
   }

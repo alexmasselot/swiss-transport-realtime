@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming
 
 import ch.octo.cffpoc.models._
+import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
@@ -16,7 +17,7 @@ class TrainCFFPositionLatestCollectionSpecs extends FlatSpec with Matchers {
         category = "X",
         lastStopName = "Calgary"),
       timedPosition = TimedPosition(
-        timestamp = p._2,
+        timestamp = new DateTime(p._2.toLong),
         position = GeoLoc(1, 2)
       )
     ),

@@ -1,5 +1,6 @@
 package ch.octo.cffpoc.models
 
+import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
@@ -14,15 +15,15 @@ class TrainPositionSpecs extends FlatSpec with Matchers {
       category = "X",
       lastStopName = "Calgary"),
     timedPosition = TimedPosition(
-      timestamp = 100,
+      timestamp = new DateTime(100L),
       position = GeoLoc(10, 100)
     )
   )
 
   it should "at" in {
-    val t2 = trainPos.at(TimedPosition(200, GeoLoc(12, 102)))
+    val t2 = trainPos.at(TimedPosition(new DateTime(200L), GeoLoc(12, 102)))
     t2.train.id should equal("1")
-    t2.timedPosition should equal(TimedPosition(200, GeoLoc(12, 102)))
+    t2.timedPosition should equal(TimedPosition(new DateTime(200L), GeoLoc(12, 102)))
   }
 
 }

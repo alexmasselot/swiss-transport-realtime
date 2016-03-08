@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming
 
 import ch.octo.cffpoc.models.{ GeoLoc, TimedPosition }
+import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
@@ -29,9 +30,9 @@ class TrainCFFPositionDecoderSpecs extends FlatSpec with Matchers {
     current.train.lastStopName should equal("Chur")
     current.train.category should equal("ICE")
     current.timedPosition.position should equal(GeoLoc(47.547399, 7.589565))
-    current.timedPosition.timestamp should equal(1455742294099L)
+    current.timedPosition.timestamp should equal(new DateTime(1455742294099L))
 
     tp.futurePositions should have length 16
-    tp.futurePositions(2) should equal(TimedPosition(1455742294099L + 4000, GeoLoc(47.547399, 7.589565)))
+    tp.futurePositions(2) should equal(TimedPosition(new DateTime(1455742294099L).plusMillis(4000), GeoLoc(47.547399, 7.589565)))
   }
 }

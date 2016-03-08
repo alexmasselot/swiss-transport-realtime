@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming
 
 import ch.octo.cffpoc.models.{ TrainPositionSnapshot, TrainCFFPosition }
+import org.joda.time.DateTime
 
 /**
  * we build a collection of train where there is only one trainid and we keep the latest train
@@ -17,7 +18,7 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
    */
   def +(p: TrainCFFPosition): TrainCFFPositionLatestCollection = mCol.get(p.trainid) match {
     case None => new TrainCFFPositionLatestCollection(mCol + (p.trainid -> p))
-    case Some(x) if x.timeStamp < p.timeStamp => new TrainCFFPositionLatestCollection(mCol + (p.trainid -> p))
+    case Some(x) if x.timeStamp.isBefore(p.timeStamp) => new TrainCFFPositionLatestCollection(mCol + (p.trainid -> p))
     case _ => this
   }
 
@@ -59,7 +60,7 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
    * @param time a time with the approximative train positions
    * @return
    */
-  def snapshot(time: Long): TrainPositionSnapshot = {
+  def snapshot(time: DateTime): TrainPositionSnapshot = {
     TrainPositionSnapshot(time, toList.map(_.at(time)))
   }
 

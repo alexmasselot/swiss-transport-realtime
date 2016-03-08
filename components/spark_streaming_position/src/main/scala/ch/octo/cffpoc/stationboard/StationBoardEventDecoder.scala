@@ -4,6 +4,7 @@ import ch.octo.cffpoc.models.{ GeoLoc, TimedPosition, TrainCFFPosition, TrainPos
 import ch.octo.cffpoc.stops.Stop
 import kafka.serializer.Decoder
 import kafka.utils.VerifiableProperties
+import org.joda.time.DateTime
 import play.api.libs.json._
 
 /**
@@ -14,9 +15,8 @@ class StationBoardEventDecoder(props: VerifiableProperties = null) extends Decod
 
   implicit val readsStationBoardEvent = new Reads[StationBoardEvent] {
     override def reads(json: JsValue): JsResult[StationBoardEvent] = {
-      val tStamp = (json \ "timeStamp").as[Long]
       JsSuccess(StationBoardEvent(
-        timestamp = tStamp,
+        timestamp = new DateTime((json \ "timeStamp").as[Long]),
         stop = Stop(
           id = (json \ "stop" \ "station" \ "id").as[String].toLong,
           name = (json \ "stop" \ "station" \ "name").as[String],
@@ -25,9 +25,9 @@ class StationBoardEventDecoder(props: VerifiableProperties = null) extends Decod
             lng = (json \ "stop" \ "station" \ "coordinate" \ "y").as[Double]
           )
         ),
-        arrivalTimestamp = None,
-        departureTimestamp = None,
-        delayMinute = None
+        arrivalTimestamp = (json \ "stop" \ "arrivalTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),
+        departureTimestamp = (json \ "stop" \ "departureTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),
+        delayMinute = (json \ "stop" \ "delay").asOpt[Int]
       ))
     }
   }

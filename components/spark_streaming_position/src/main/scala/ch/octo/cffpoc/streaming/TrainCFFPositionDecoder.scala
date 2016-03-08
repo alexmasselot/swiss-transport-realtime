@@ -3,6 +3,7 @@ package ch.octo.cffpoc.streaming
 import ch.octo.cffpoc.models._
 import kafka.serializer.Decoder
 import kafka.utils.VerifiableProperties
+import org.joda.time.DateTime
 import play.api.libs.json._
 
 /**
@@ -10,6 +11,11 @@ import play.api.libs.json._
  * © OCTO Technology, 2016
  */
 class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decoder[TrainCFFPosition] {
+  implicit val readsTimeStamp = new Reads[DateTime] {
+    override def reads(json: JsValue): JsResult[DateTime] = {
+      JsSuccess(new DateTime(json.as[Long]))
+    }
+  }
 
   /*
     the cff CGI query exports a poly list of the futur planned positions
@@ -27,7 +33,7 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
 
   implicit val readsTrainCFFPosition = new Reads[TrainCFFPosition] {
     override def reads(json: JsValue): JsResult[TrainCFFPosition] = {
-      val tStamp = (json \ "timeStamp").as[Long]
+      val tStamp = (json \ "timeStamp").as[DateTime]
       JsSuccess(TrainCFFPosition(
         current = TrainPosition(
           train = Train(
@@ -41,7 +47,7 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
             position = GeoLoc((json \ "y").as[String].toDouble / 1000000, (json \ "x").as[String].toDouble / 1000000)
           )
         ),
-        futurePositions = (json \ "poly").as[List[PolyPos]].map(pp => TimedPosition(tStamp + pp.msec, pp.location))
+        futurePositions = (json \ "poly").as[List[PolyPos]].map(pp => TimedPosition(tStamp.plusMillis(pp.msec), pp.location))
       ))
     }
   }
@@ -57,3 +63,4 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
     Json.fromJson[TrainCFFPosition](js).get
   }
 }
+

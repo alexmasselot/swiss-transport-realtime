@@ -3,6 +3,7 @@ package ch.octo.cffpoc.streaming.app
 import java.io.File
 import ch.octo.cffpoc.models.TrainCFFPosition
 import ch.octo.cffpoc.stops.{ StopCollection, StopCloser }
+import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
 
 import scala.collection.JavaConversions._
@@ -104,7 +105,7 @@ object StreamLatestPositionApp {
             ((acc, p) => acc + p),
             ((acc, ps) => acc + ps)
           )
-          val tNow: Long = System.currentTimeMillis()
+          val tNow = DateTime.now()
           val snapshot = latestTrains.snapshot(tNow).closedBy(closer)
           println(snapshot)
           val producer = new KafkaProducer[String, String](kafkaProducerParams)

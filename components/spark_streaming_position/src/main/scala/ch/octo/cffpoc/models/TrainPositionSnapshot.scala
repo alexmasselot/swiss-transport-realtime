@@ -1,11 +1,12 @@
 package ch.octo.cffpoc.models
 
 import ch.octo.cffpoc.stops.StopCloser
+import org.joda.time.DateTime
 
 /**
  * Created by alex on 23/02/16.
  */
-case class TrainPositionSnapshot(timestamp: Long, positions: Seq[TrainPosition]) {
+case class TrainPositionSnapshot(timestamp: DateTime, positions: Seq[TrainPosition]) {
 
   def closedBy(closer: StopCloser) =
     TrainPositionSnapshot(

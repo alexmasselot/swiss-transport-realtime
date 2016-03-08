@@ -1,31 +1,32 @@
 package ch.octo.cffpoc.models
 
 import ch.octo.cffpoc.stops.Stop
+import org.joda.time.DateTime
 
 /**
  * Created by alex on 01/03/16.
  */
 
 sealed trait HasTimedPosition {
-  val timestamp: Long
+  val timestamp: DateTime
   val position: GeoLoc
 }
 
 case class TimedPosition(
-    timestamp: Long,
+    timestamp: DateTime,
     position: GeoLoc) extends HasTimedPosition {
 
 }
 
 case class TimedPositionIsMoving(
-    timestamp: Long,
+    timestamp: DateTime,
     position: GeoLoc,
     moving: Boolean) extends HasTimedPosition {
 
 }
 
-case class TimedPositionWithStop(timestamp: Long,
+case class TimedPositionWithStop(
+    timestamp: DateTime,
     position: GeoLoc,
     stop: Option[Stop]) extends HasTimedPosition {
-
 }
