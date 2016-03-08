@@ -97,7 +97,7 @@ class PositionMapTrains extends Component {
     let gTrains = _this._elements.gMain
       .selectAll('g.train-position')
       .data(_this._trainPositions, function (d) {
-        return d.trainid;
+        return d.train.id;
       });
 
     let gNewTrains = gTrains.enter()
@@ -107,9 +107,9 @@ class PositionMapTrains extends Component {
           return 'translate(' + _this._scales.x(p.x) + ',' + _this._scales.y(p.y) + ')';
         },
         class: function (p) {
-          let s = p.name.trim();
+          let s = p.train.name.trim();
           let i = s.indexOf(' ');
-          return 'train-position ' + classes['train-cat_' + p.category.toLowerCase()] + ' ' + classes.trainMarker
+          return 'train-position ' + classes['train-cat_' + p.train.category.toLowerCase()] + ' ' + classes.trainMarker
         }
       });
     let gSymbol = gNewTrains.append('g')
@@ -124,7 +124,7 @@ class PositionMapTrains extends Component {
       });
     gSymbol.append('text')
       .text(function (p) {
-        let s = p.category;
+        let s = p.train.category;
 
         if (p.timedPosition.stop) {
           s = s + " - " + p.timedPosition.stop.name;
@@ -141,7 +141,7 @@ class PositionMapTrains extends Component {
         x: 4
       })
       .text(function (p) {
-        return p.name.trim() + ' (' + p.lastStopName + ')';// +_this.props.coord2point.x(p.x);
+        return p.train.name.trim() + ' (' + p.train.lastStopName + ')';// +_this.props.coord2point.x(p.x);
       });
 
     gTrains.transition()

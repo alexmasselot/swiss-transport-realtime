@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.stationboard
 
-import ch.octo.cffpoc.models.{ GeoLoc, TimedPosition, TrainCFFPosition, TrainPosition }
+import ch.octo.cffpoc.models._
 import ch.octo.cffpoc.stops.Stop
 import kafka.serializer.Decoder
 import kafka.utils.VerifiableProperties
@@ -24,6 +24,12 @@ class StationBoardEventDecoder(props: VerifiableProperties = null) extends Decod
             lat = (json \ "stop" \ "station" \ "coordinate" \ "x").as[Double],
             lng = (json \ "stop" \ "station" \ "coordinate" \ "y").as[Double]
           )
+        ),
+        train = Train(
+          id = (json \ "name").as[String] + "/" + (json \ "to").as[String] + "/" + (json \ "stop" \ "departure").as[String],
+          name = (json \ "name").as[String],
+          lastStopName = (json \ "to").as[String],
+          category = (json \ "category").as[String]
         ),
         arrivalTimestamp = (json \ "stop" \ "arrivalTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),
         departureTimestamp = (json \ "stop" \ "departureTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),

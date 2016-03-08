@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.stationboard
 
-import ch.octo.cffpoc.models.GeoLoc
+import ch.octo.cffpoc.models.{ Train, GeoLoc }
 import ch.octo.cffpoc.stops.Stop
 import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
@@ -220,6 +220,13 @@ class StationBoardEventSpecs extends FlatSpec with Matchers {
     evt.isWithin(2 hours) shouldBe (false)
     evt.isWithin(2 days) shouldBe (true)
     evt.isWithin(Duration.Inf) shouldBe (true)
+
+    evt.train should equal(Train(
+      id = "ICN 533/Zürich HB/2016-03-01T19:20:00+0100",
+      name = "ICN 533",
+      lastStopName = "Zürich HB",
+      category = "ICN"
+    ))
   }
   it should "isWithin, 10min" in {
     val evt = decoder.fromBytes(jsonStrWithDelay.getBytes)

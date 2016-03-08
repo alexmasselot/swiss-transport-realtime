@@ -1,5 +1,6 @@
 package ch.octo.cffpoc.stationboard
 
+import ch.octo.cffpoc.models.Train
 import ch.octo.cffpoc.stops.Stop
 import org.joda.time.DateTime
 
@@ -11,6 +12,7 @@ import scala.concurrent.duration.{ Duration, FiniteDuration }
 case class StationBoardEvent(
     timestamp: DateTime,
     stop: Stop,
+    train: Train,
     arrivalTimestamp: Option[DateTime],
     departureTimestamp: Option[DateTime],
     delayMinute: Option[Int]) {
