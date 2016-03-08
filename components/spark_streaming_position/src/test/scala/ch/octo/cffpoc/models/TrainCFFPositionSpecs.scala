@@ -11,10 +11,11 @@ class TrainCFFPositionSpecs extends FlatSpec with Matchers {
 
   val tcff = TrainCFFPosition(
     current = TrainPosition(
-      trainid = "1",
-      name = "x1",
-      category = "X",
-      lastStopName = "Calgary",
+      train = Train(id = "1",
+        name = "x1",
+        category = "X",
+        lastStopName = "Calgary"
+      ),
       timedPosition = TimedPosition(
         timestamp = 100,
         position = GeoLoc(10, 100)
@@ -31,7 +32,7 @@ class TrainCFFPositionSpecs extends FlatSpec with Matchers {
 
   def check(at: Long, eT: Long, eLat: Double, eLng: Double, eMoving: Boolean) = {
     val t = tcff.at(at)
-    t.trainid should equal("1")
+    t.train.id should equal("1")
     t.timedPosition.position should equal(GeoLoc(eLat, eLng))
     t.timedPosition.timestamp should equal(eT)
     t.timedPosition.isInstanceOf[TimedPositionIsMoving] should be(true)

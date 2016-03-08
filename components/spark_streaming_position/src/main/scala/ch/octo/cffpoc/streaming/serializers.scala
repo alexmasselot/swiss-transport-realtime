@@ -30,6 +30,7 @@ object serializers {
     }
   }
 
+  implicit val formatTrain = Json.format[Train]
   implicit val formatTrainPosition = Json.format[TrainPosition]
   implicit val formatTrainPositionSnapshot = Json.format[TrainPositionSnapshot]
 

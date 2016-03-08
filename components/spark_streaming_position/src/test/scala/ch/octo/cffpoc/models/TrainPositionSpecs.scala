@@ -9,10 +9,10 @@ class TrainPositionSpecs extends FlatSpec with Matchers {
   behavior of "TrainPosition"
 
   val trainPos = TrainPosition(
-    trainid = "1",
-    name = "x1",
-    category = "X",
-    lastStopName = "Calgary",
+    train = Train(id = "1",
+      name = "x1",
+      category = "X",
+      lastStopName = "Calgary"),
     timedPosition = TimedPosition(
       timestamp = 100,
       position = GeoLoc(10, 100)
@@ -21,7 +21,7 @@ class TrainPositionSpecs extends FlatSpec with Matchers {
 
   it should "at" in {
     val t2 = trainPos.at(TimedPosition(200, GeoLoc(12, 102)))
-    t2.trainid should equal("1")
+    t2.train.id should equal("1")
     t2.timedPosition should equal(TimedPosition(200, GeoLoc(12, 102)))
   }
 

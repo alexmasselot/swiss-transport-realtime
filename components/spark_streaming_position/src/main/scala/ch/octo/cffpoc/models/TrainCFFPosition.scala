@@ -7,7 +7,7 @@ package ch.octo.cffpoc.models
 case class TrainCFFPosition(
     current: TrainPosition,
     futurePositions: List[TimedPosition]) {
-  val trainid = current.trainid
+  val trainid = current.train.id
   val timeStamp = current.timedPosition.timestamp
 
   /**

@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.models.{ TimedPosition, GeoLoc, TrainCFFPosition, TrainPosition }
+import ch.octo.cffpoc.models._
 import kafka.serializer.Decoder
 import kafka.utils.VerifiableProperties
 import play.api.libs.json._
@@ -30,10 +30,12 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
       val tStamp = (json \ "timeStamp").as[Long]
       JsSuccess(TrainCFFPosition(
         current = TrainPosition(
-          trainid = (json \ "trainid").as[String],
-          name = (json \ "name").as[String] trim,
-          category = (json \ "category").as[String] trim,
-          lastStopName = (json \ "lstopname").as[String] trim,
+          train = Train(
+            id = (json \ "trainid").as[String],
+            name = (json \ "name").as[String] trim,
+            category = (json \ "category").as[String] trim,
+            lastStopName = (json \ "lstopname").as[String] trim
+          ),
           timedPosition = TimedPosition(
             timestamp = tStamp,
             position = GeoLoc((json \ "y").as[String].toDouble / 1000000, (json \ "x").as[String].toDouble / 1000000)

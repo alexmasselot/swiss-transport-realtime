@@ -63,7 +63,7 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
     TrainPositionSnapshot(time, toList.map(_.at(time)))
   }
 
-  override def toString = mCol.values.map(p => s"${p.timeStamp}\t${p.current.trainid}").mkString("\n");
+  override def toString = mCol.values.map(p => s"${p.timeStamp}\t${p.current.train.id}").mkString("\n");
 }
 
 object TrainCFFPositionLatestCollection {

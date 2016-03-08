@@ -5,11 +5,8 @@ package ch.octo.cffpoc.models
  */
 
 case class TrainPosition(
-    trainid: String,
-    category: String,
-    name: String,
-    timedPosition: HasTimedPosition,
-    lastStopName: String) {
+    train: Train,
+    timedPosition: HasTimedPosition) {
   /**
    * instanciate a train copy with another time & position
    *
@@ -17,10 +14,7 @@ case class TrainPosition(
    * @return
    */
   def at(newPosition: HasTimedPosition): TrainPosition = TrainPosition(
-    trainid = trainid,
-    category = category,
-    name = name,
-    lastStopName = lastStopName,
+    train = train,
     timedPosition = newPosition
   )
 
@@ -29,7 +23,7 @@ case class TrainPosition(
       case TimedPositionWithStop(_, _, Some(c)) => c.name
       case _ => "-"
     }
-    s"$trainid\t$category\t$loc\t${timedPosition.timestamp}\t${timedPosition.position.lat}\t${timedPosition.position.lng}\t$name\t$lastStopName"
+    s"${train.id}\t${train.category}\t$loc\t${timedPosition.timestamp}\t${timedPosition.position.lat}\t${timedPosition.position.lng}\t${train.name}\t${train.lastStopName}"
   }
 }
 

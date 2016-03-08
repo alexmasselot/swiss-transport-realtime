@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.models.{ TimedPosition, GeoLoc, TrainCFFPosition, TrainPosition }
+import ch.octo.cffpoc.models._
 import org.scalatest.{ FlatSpec, Matchers }
 
 /**
@@ -11,10 +11,10 @@ class TrainCFFPositionLatestCollectionSpecs extends FlatSpec with Matchers {
 
   implicit def convTrainPosition(p: (String, Int)): TrainCFFPosition = TrainCFFPosition(
     current = TrainPosition(
-      trainid = p._1,
-      name = s"IC${p._1}",
-      category = "X",
-      lastStopName = "Calgary",
+      train = Train(id = p._1,
+        name = s"IC${p._1}",
+        category = "X",
+        lastStopName = "Calgary"),
       timedPosition = TimedPosition(
         timestamp = p._2,
         position = GeoLoc(1, 2)

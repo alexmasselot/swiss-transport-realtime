@@ -24,10 +24,10 @@ class TrainCFFPositionDecoderSpecs extends FlatSpec with Matchers {
         "poly":[{"x":"7589565","y":"47547399","passproc":"","msec":"0","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"2000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"4000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"6000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"8000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"10000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"12000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"14000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"16000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"18000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"20000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"22000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"24000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"26000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"28000","direction":""},{"x":"7589565","y":"47547399","passproc":"","msec":"30000","direction":""}],"timeStamp":1455742294099,"@version":"1","@timestamp":"2016-02-12T12:05:45.302Z"}""".getBytes
     val tp = new TrainCFFPositionDecoder().fromBytes(bs)
     val current = tp.current
-    current.trainid should equal("84/27911/18/19/95")
-    current.name should equal("ICE 71")
-    current.lastStopName should equal("Chur")
-    current.category should equal("ICE")
+    current.train.id should equal("84/27911/18/19/95")
+    current.train.name should equal("ICE 71")
+    current.train.lastStopName should equal("Chur")
+    current.train.category should equal("ICE")
     current.timedPosition.position should equal(GeoLoc(47.547399, 7.589565))
     current.timedPosition.timestamp should equal(1455742294099L)
 
