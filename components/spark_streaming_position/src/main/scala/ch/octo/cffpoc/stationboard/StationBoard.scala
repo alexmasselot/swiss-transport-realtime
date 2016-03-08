@@ -33,7 +33,15 @@ case class StationBoard(stop: Stop, events: Map[String, StationBoardEvent] = Map
 
   def take(n: Int): StationBoard = StationBoard(stop, orderEvents.take(n).map(e => (e.train.id -> e)).toMap)
 
-  def before(dtime: DateTime): StationBoard = filter(e => e.departureTimestamp.map(_.isBefore(dtime)).getOrElse(false))
+  def before(dtime: DateTime): StationBoard = {
+    val t = dtime.plusMillis(1)
+    filter(e => e.departureTimestamp.map(_.isBefore(t)).getOrElse(false))
+  }
+  def after(dtime: DateTime): StationBoard = {
+    val t = dtime.minusMillis(1)
+
+    filter(e => e.departureTimestamp.map(_.isAfter(t)).getOrElse(false))
+  }
 
   override def toString = stop + "\n" +
     orderEvents

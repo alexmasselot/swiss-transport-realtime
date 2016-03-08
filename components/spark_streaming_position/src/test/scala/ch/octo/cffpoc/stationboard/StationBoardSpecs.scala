@@ -51,8 +51,12 @@ class StationBoardSpecs extends FlatSpec with Matchers {
   }
 
   it should "before(...)" in {
-    val board = gva2840.before(DateTime.parse("2016-02-29T17:40:00.000+01:00"))
-    board.size should be(19)
+    val board = gva2840.before(DateTime.parse("2016-02-29T17:42:00.000+01:00"))
+    board.size should be(21)
   }
 
+  it should "after(...)" in {
+    val board = gva2840.after(DateTime.parse("2016-02-29T17:42:00.000+01:00"))
+    board.size should be(104 - 21 + 2)
+  }
 }
