@@ -12,27 +12,18 @@ object serializers {
   implicit val formatGeoLoc = Json.format[GeoLoc]
   implicit val formatStop = Json.format[Stop]
 
-  implicit val formatTimedPositionWithStop = Json.format[TimedPositionWithStop]
-  implicit val formatTimedPosition = Json.format[TimedPosition]
-
-  implicit object formatHasTimedPosition extends Format[HasTimedPosition] {
+  implicit object formatHasTimedPosition extends Writes[HasTimedPosition] {
     override def writes(o: HasTimedPosition): JsValue =
       o match {
         case t: TimedPosition => Json.writes[TimedPosition].writes(t)
         case t: TimedPositionIsMoving => Json.writes[TimedPositionIsMoving].writes(t)
         case t: TimedPositionWithStop => Json.writes[TimedPositionWithStop].writes(t)
       }
-
-    override def reads(json: JsValue): JsResult[HasTimedPosition] = json match {
-      case t: TimedPosition => Json.reads[TimedPosition].reads(t)
-      case t: TimedPositionIsMoving => Json.reads[TimedPositionIsMoving].reads(t)
-      case t: TimedPositionWithStop => Json.reads[TimedPositionWithStop].reads(t)
-    }
   }
 
-  implicit val formatTrain = Json.format[Train]
-  implicit val formatTrainPosition = Json.format[TrainPosition]
-  implicit val formatTrainPositionSnapshot = Json.format[TrainPositionSnapshot]
+  implicit val formatTrain = Json.writes[Train]
+  implicit val formatTrainPosition = Json.writes[TrainPosition]
+  implicit val formatTrainPositionSnapshot = Json.writes[TrainPositionSnapshot]
 
   //  val hasTimedPositionReads: Reads[HasTimedPosition]= {
   //
