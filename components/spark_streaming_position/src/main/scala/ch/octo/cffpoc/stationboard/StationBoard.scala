@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.stationboard
 
 import ch.octo.cffpoc.stops.Stop
+import org.joda.time.DateTime
 
 /**
  * This is one station board, with a list of StationBoardEvent.
@@ -13,6 +14,7 @@ case class StationBoard(stop: Stop, events: Map[String, StationBoardEvent] = Map
   /**
    * add a StationBoardEvent, thus a line.
    * It can replace an earlier one with the same train
+   *
    * @param evt
    * @return
    */
@@ -20,11 +22,22 @@ case class StationBoard(stop: Stop, events: Map[String, StationBoardEvent] = Map
 
   def size = events.size
 
-  override def toString = stop + "\n" + events
+  def filter(f: (StationBoardEvent) => Boolean) = {
+    StationBoard(stop, events.filter({ case (k, v) => f(v) }))
+  }
+
+  private def orderEvents: Seq[StationBoardEvent] = events
     .values
     .toList
     .sortBy(_.departureTimestamp.get.getMillis)
-    .map(e => s"${e.departureTimestamp.get}\t${e.delayMinute.getOrElse("-")}\t${e.train.name}\t${e.train.lastStopName}")
+
+  def take(n: Int): StationBoard = StationBoard(stop, orderEvents.take(n).map(e => (e.train.id -> e)).toMap)
+
+  def before(dtime: DateTime): StationBoard = filter(e => e.departureTimestamp.map(_.isBefore(dtime)).getOrElse(false))
+
+  override def toString = stop + "\n" +
+    orderEvents
+    .map(e => s"${e.timestamp}\t${e.departureTimestamp.get}\t${e.delayMinute.getOrElse("-")}\t${e.train.name}\t${e.train.lastStopName}")
     .mkString("\n")
 
 }

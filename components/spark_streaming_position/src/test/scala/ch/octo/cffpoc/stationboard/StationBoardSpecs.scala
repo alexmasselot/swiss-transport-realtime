@@ -22,20 +22,37 @@ class StationBoardSpecs extends FlatSpec with Matchers {
       .map(l => decoder.fromBytes(l.getBytes))
   }
 
-  it should "mocks size" in {
-    allEvents.size should be(1223)
-  }
-
-  it should "pouet" in {
-    val tmax = DateTime.parse("2016-02-29T18:40:00+0100")
-    val tbound = DateTime.parse("2016-02-29T18:13:57.471+01:00")
-
+  def gva2840: StationBoard = {
     val stop = allEvents.filter(e => e.stop.name == "Genève").next().stop
-    allEvents.filter(e => e.stop.name == "Genève").foreach(println)
-
-    val board: StationBoard = allEvents
+    val tmax = DateTime.parse("2016-02-29T18:40:00+0100")
+    allEvents
       .filter(e => e.stop.name == "Genève" && e.timestamp.isBefore(tmax))
       .foldLeft(StationBoard(stop))((acc, evt) => acc + evt)
-    println(board)
   }
+
+  it should "mocks size" in {
+    allEvents.size should be(1139)
+  }
+
+  it should "size" in {
+    val board = gva2840
+    board.size should be(104)
+    //println(board)
+  }
+
+  it should "filter(_.delayMinute.isDefined)" in {
+    val board = gva2840.filter(_.delayMinute.isDefined)
+    board.size should be(11)
+  }
+
+  it should "take(20)" in {
+    val board = gva2840.take(10)
+    board.size should be(10)
+  }
+
+  it should "before(...)" in {
+    val board = gva2840.before(DateTime.parse("2016-02-29T17:40:00.000+01:00"))
+    board.size should be(19)
+  }
+
 }
