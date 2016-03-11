@@ -147,6 +147,8 @@ class PositionMapTrains extends Component {
     gTrains.transition()
       .duration(500)
       .attr('transform', function (p) {
+        console.log(p);
+        console.log(this);
         return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
       });
 

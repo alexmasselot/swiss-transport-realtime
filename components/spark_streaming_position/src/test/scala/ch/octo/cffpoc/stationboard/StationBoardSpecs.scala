@@ -1,17 +1,15 @@
 package ch.octo.cffpoc.stationboard
 
-import ch.octo.cffpoc.models.GeoLoc
-import ch.octo.cffpoc.stops.Stop
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 import org.scalatest.{ FlatSpec, Matchers }
 
-import scala.concurrent.duration._
 import scala.io.Source
 
 /**
  * Created by alex on 17/02/16.
  */
-class StationBoardSpecs extends FlatSpec with Matchers {
+class StationBoardSpecs extends FlatSpec with Matchers with DateMatchers {
   behavior of "StationBoardEvent"
 
   val decoder = new StationBoardEventDecoder()
@@ -27,11 +25,16 @@ class StationBoardSpecs extends FlatSpec with Matchers {
     val tmax = DateTime.parse("2016-02-29T18:40:00+0100")
     allEvents
       .filter(e => e.stop.name == "Genève" && e.timestamp.isBefore(tmax))
-      .foldLeft(StationBoard(stop))((acc, evt) => acc + evt)
+      .foldLeft(StationBoard(new DateTime(0L), stop))((acc, evt) => acc + evt)
   }
 
   it should "mocks size" in {
     allEvents.size should be(1139)
+  }
+
+  it should "original timestamp" in {
+    println(gva2840)
+    assertDateEquals(gva2840.timestamp, DateTime.parse("2016-02-29T17:55:55.327+01:00"))
   }
 
   it should "size" in {

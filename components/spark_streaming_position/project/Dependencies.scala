@@ -22,7 +22,7 @@ object Library {
   val slf4jApi = "org.slf4j" % "slf4j-api" % Version.slf4j
   val sparkStreaming = "org.apache.spark" %% "spark-streaming" % Version.spark
   val sparkStreamingKafka = "org.apache.spark" %% "spark-streaming-kafka" % Version.spark
-  val akkaStream = "com.typesafe.akka" % "akka-stream-experimental_2.11" % Version.akkaStream
+//  val sparkStreamingAkka = "org.apache.spark"  %% "spark-streaming-akka" % Version.spark
 }
 
 object Dependencies {
@@ -35,7 +35,7 @@ object Dependencies {
     akkaActor,
     akkaTestKit,
     hadoopClient,
-    akkaStream,
+//    sparkStreamingAkka,
     logbackClassic % "test",
     scalaTest % "test",
     mockitoAll % "test"
