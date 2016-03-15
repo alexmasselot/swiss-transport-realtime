@@ -1,5 +1,6 @@
-package ch.octo.cffpoc.models
+package ch.octo.cffpoc.position
 
+import ch.octo.cffpoc.models.GeoLoc
 import ch.octo.cffpoc.stops.Stop
 import org.joda.time.DateTime
 

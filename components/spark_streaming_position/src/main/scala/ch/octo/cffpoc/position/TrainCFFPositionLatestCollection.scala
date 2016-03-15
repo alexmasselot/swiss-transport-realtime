@@ -1,6 +1,5 @@
-package ch.octo.cffpoc.streaming
+package ch.octo.cffpoc.position
 
-import ch.octo.cffpoc.models.{ TrainPositionSnapshot, TrainCFFPosition }
 import org.joda.time.DateTime
 
 /**
@@ -62,6 +61,10 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
    */
   def snapshot(time: DateTime): TrainPositionSnapshot = {
     TrainPositionSnapshot(time, toList.map(_.at(time)))
+  }
+
+  def after(time: DateTime): TrainCFFPositionLatestCollection = {
+    new TrainCFFPositionLatestCollection(mCol.filter(!_._2.isBefore(time)))
   }
 
   override def toString = mCol.values.map(p => s"${p.timeStamp}\t${p.current.train.id}").mkString("\n");

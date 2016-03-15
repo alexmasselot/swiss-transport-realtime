@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.models.{ GeoLoc, TimedPosition }
+import ch.octo.cffpoc.models.GeoLoc
+import ch.octo.cffpoc.position.TimedPosition
 import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 

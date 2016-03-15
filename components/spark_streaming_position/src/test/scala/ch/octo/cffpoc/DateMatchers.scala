@@ -1,4 +1,4 @@
-package ch.octo.cffpoc.stationboard
+package ch.octo.cffpoc
 
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat

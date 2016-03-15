@@ -1,5 +1,6 @@
 package ch.octo.cffpoc.models
 
+import ch.octo.cffpoc.position.{ TimedPositionIsMoving, TimedPosition, TrainPosition, TrainCFFPosition }
 import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 
@@ -66,6 +67,21 @@ class TrainCFFPositionSpecs extends FlatSpec with Matchers {
 
   it should "> last" in {
     check(131, 130, 13, 103, true)
+  }
+
+  it should "latestTimestamp" in {
+    tcff.latestTimestamp.getMillis should be(130L)
+  }
+
+  it should "isBefore yes" in {
+    tcff.isBefore(new DateTime(140L)) should be(true)
+  }
+
+  it should "isBefore nope" in {
+    tcff.isBefore(new DateTime(130L)) should be(false)
+  }
+  it should "isBefore equal" in {
+    tcff.isBefore(new DateTime(125L)) should be(false)
   }
 
 }

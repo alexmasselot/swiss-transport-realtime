@@ -1,4 +1,4 @@
-package ch.octo.cffpoc.streaming
+package ch.octo.cffpoc.position
 
 import ch.octo.cffpoc.models._
 import org.joda.time.DateTime
@@ -89,6 +89,14 @@ class TrainCFFPositionLatestCollectionSpecs extends FlatSpec with Matchers {
       ("c", 7),
       ("d", 7)
     ))
+  }
+
+  it should "after" in {
+    val m1 = TrainCFFPositionLatestCollection() +
+      ("a", 10) +
+      ("b", 11) +
+      ("c", 7)
+    m1.after(new DateTime(10L)).toList.map(_.trainid) should equal(List("a", "b"))
   }
 
 }

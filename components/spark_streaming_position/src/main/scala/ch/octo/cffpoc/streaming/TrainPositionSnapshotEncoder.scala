@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.models.TrainPositionSnapshot
+import ch.octo.cffpoc.position.TrainPositionSnapshot
 import ch.octo.cffpoc.streaming.serializers._
 import kafka.serializer.Encoder
 import play.api.libs.json.Json

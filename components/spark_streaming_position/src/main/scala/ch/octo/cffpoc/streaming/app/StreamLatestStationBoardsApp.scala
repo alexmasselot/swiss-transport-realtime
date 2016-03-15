@@ -1,17 +1,17 @@
 package ch.octo.cffpoc.streaming.app
 
 import akka.actor.{ Actor, Props }
-import ch.octo.cffpoc.stationboard.{ StationBoardsSnapshot, StationBoardEvent, StationBoardEventDecoder }
+import ch.octo.cffpoc.stationboard.{ StationBoardEvent, StationBoardsSnapshot }
 import ch.octo.cffpoc.stops.{ StopCloser, StopCollection }
-import ch.octo.cffpoc.streaming.app.StreamLatestPositionApp._
+import ch.octo.cffpoc.streaming.StationBoardEventDecoder
 import kafka.serializer.StringDecoder
-import org.apache.kafka.clients.producer.{ ProducerRecord, KafkaProducer, ProducerConfig }
+import org.apache.kafka.clients.producer.{ KafkaProducer, ProducerConfig, ProducerRecord }
 import org.apache.spark.SparkEnv
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.streaming.receiver.ActorHelper
 import play.api.libs.json.Json
+import ch.octo.cffpoc.streaming.serializers._
 
 /**
  * Created by alex on 17/02/16.
@@ -24,7 +24,7 @@ object StreamLatestStationBoardsApp extends StreamingApp {
     val sparkStreamingContext = initSparkStreamingContext
     val numThreads = 2
 
-    val actorName = "helloer"
+    val actorName = "station-board-aggregator"
 
     case class SBEventList(events: List[StationBoardEvent]) {}
 
@@ -62,12 +62,12 @@ object StreamLatestStationBoardsApp extends StreamingApp {
           }
 
           //println(boards.boards.values.map(_.stop.name).toList.sorted)
-          println(boards.get("Lausanne"))
+          println(s"boards @ ${boards.timestamp}")
 
           val message = new ProducerRecord[String, String](
             getAppConfOrElse("kafka.station_board.produce.topic", "station_board_snapshot"),
             null,
-            "BADABOUM " + boards.size + "/" + boards.countAll) //Json.toJson(snapshot).toString())
+            Json.toJson(boards).toString()) //Json.toJson(snapshot).toString())
           producer.send(message)
 
         case x => log.warn(s"unmatched message $x")

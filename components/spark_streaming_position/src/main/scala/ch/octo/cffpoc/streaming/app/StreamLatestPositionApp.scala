@@ -1,27 +1,19 @@
 package ch.octo.cffpoc.streaming.app
 
-import java.io.File
-
-import akka.actor.Actor
-import ch.octo.cffpoc.models.TrainCFFPosition
-import ch.octo.cffpoc.stationboard.{ StationBoardsSnapshot, StationBoardEvent }
+import akka.actor.{ Props, Actor }
+import ch.octo.cffpoc.position.{ TrainCFFPosition, TrainCFFPositionLatestCollection }
 import ch.octo.cffpoc.stops.{ StopCloser, StopCollection }
-import ch.octo.cffpoc.streaming.app.StreamLatestStationBoardsApp._
+import ch.octo.cffpoc.streaming.TrainCFFPositionDecoder
 import ch.octo.cffpoc.streaming.serializers._
-import ch.octo.cffpoc.streaming.{ TrainCFFPositionDecoder, TrainCFFPositionLatestCollection, serializers }
-import com.typesafe.config.ConfigFactory
 import kafka.serializer.StringDecoder
 import org.apache.kafka.clients.producer.{ KafkaProducer, ProducerConfig, ProducerRecord }
+import org.apache.spark.SparkEnv
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.streaming.receiver.ActorHelper
-import org.apache.spark.{ SparkConf, SparkEnv }
 import org.joda.time.DateTime
-import org.slf4j.LoggerFactory
 import play.api.libs.json.Json
-
-import scala.collection.JavaConversions._
 
 /**
  * Created by alex on 17/02/16.
@@ -29,53 +21,54 @@ import scala.collection.JavaConversions._
 object StreamLatestPositionApp extends StreamingApp {
   val kafkaConsumeGroupId = "stream_latest_position_app"
 
-  //  case class TPList(positions: List[TrainCFFPosition])
-  //
-  //  class TPAggregatorActor extends Actor with ActorHelper {
-  //    var boards = StationBoardCollection()
-  //
-  //    val kafkaProducerParams = new java.util.HashMap[String, Object]()
-  //    kafkaProducerParams.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-  //      getAppConfOrElse("kafka.host", "localhost") + ":" + getAppConfOrElse("kafka.port", "2181"))
-  //    kafkaProducerParams.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-  //      "org.apache.kafka.common.serialization.StringSerializer")
-  //    kafkaProducerParams.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-  //      "org.apache.kafka.common.serialization.StringSerializer")
-  //
-  //    val producer = new KafkaProducer[String, String](kafkaProducerParams)
-  //
-  //    override def preStart() = {
-  //      println("")
-  //      println("=== Helloer is starting up ===")
-  //      println(s"=== path=${context.self.path} ===")
-  //      println("")
-  //    }
-  //
-  //    def receive = {
-  //      //         store() method allows us to store the message so Spark Streaming knows about it
-  //      //         This is the integration point (from Akka's side) between Spark Streaming and Akka
-  //      case evts: TPList =>
-  //        evts.events.foreach(e => boards = boards + e)
-  //        log.warn(s"added ${evts.events.size} events")
-  //
-  //        if (evts.events.lastOption.isDefined) {
-  //          val t = evts.events.last.timestamp
-  //          logger.warn("removing: " + boards.before(t.minusMinutes(1)).countAll)
-  //          boards = boards.after(t.minusMinutes(1)).before(t.plusHours(1))
-  //        }
-  //
-  //        //println(boards.boards.values.map(_.stop.name).toList.sorted)
-  //        println(boards.get("Lausanne"))
-  //
-  //        val message = new ProducerRecord[String, String](
-  //          getAppConfOrElse("kafka.station_board.produce.topic", "station_board_snapshot"),
-  //          null,
-  //          "BADABOUM " + boards.size + "/" + boards.countAll) //Json.toJson(snapshot).toString())
-  //        producer.send(message)
-  //
-  //      case x => log.warn(s"unmatched message $x")
-  //    }
-  //  }
+  case class TPList(positions: Seq[TrainCFFPosition])
+
+  class TPAggregatorActor extends Actor with ActorHelper {
+    var latestPosition = TrainCFFPositionLatestCollection()
+
+    val kafkaProducerParams = new java.util.HashMap[String, Object]()
+    kafkaProducerParams.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
+      getAppConfOrElse("kafka.host", "localhost") + ":" + getAppConfOrElse("kafka.port", "2181"))
+    kafkaProducerParams.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+      "org.apache.kafka.common.serialization.StringSerializer")
+    kafkaProducerParams.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+      "org.apache.kafka.common.serialization.StringSerializer")
+
+    val producer = new KafkaProducer[String, String](kafkaProducerParams)
+
+    override def preStart() = {
+      println("")
+      println("=== TPAggregatorActor is starting up ===")
+      println(s"=== path=${context.self.path} ===")
+      println("")
+    }
+
+    def receive = {
+      //         store() method allows us to store the message so Spark Streaming knows about it
+      //         This is the integration point (from Akka's side) between Spark Streaming and Akka
+      case tplist: TPList =>
+        latestPosition = latestPosition + tplist.positions
+        log.warn(s"added ${tplist.positions.size} events")
+
+        val timestamp = tplist.positions match {
+          case Nil if latestPosition.size == 0 => DateTime.now()
+          case Nil => latestPosition.toList.map(_.current.timedPosition.timestamp).maxBy(_.getMillis)
+          case xs =>
+            val t = tplist.positions.last.current.timedPosition.timestamp
+            latestPosition = latestPosition.after(t.minusSeconds(60))
+            t
+        }
+
+        val snapshot = latestPosition.snapshot(timestamp)
+        val message = new ProducerRecord[String, String](
+          getAppConfOrElse("kafka.train_position.produce.topic", "train_position_snapshot"),
+          null,
+          Json.toJson(snapshot).toString()) //Json.toJson(snapshot).toString())
+        producer.send(message)
+
+      case x => log.warn(s"unmatched message $x")
+    }
+  }
 
   def main(args: Array[String]) {
 
@@ -84,6 +77,11 @@ object StreamLatestPositionApp extends StreamingApp {
 
     //sparkStreamingContext.checkpoint("/tmp/streaming-slpa-checkpoint")
     logger.info(s"appConfig= $appConfig")
+
+    val actorName = "station-board-aggregator"
+    val actorSystem = SparkEnv.get.actorSystem
+    val props = Props[TPAggregatorActor]
+    val aggregActor = actorSystem.actorOf(props, actorName)
 
     val kafkaConsumerParams = Map(
       "zookeeper.connect" -> (getAppConfOrElse("zookeeper.host", "localhost") + ":" + getAppConfOrElse("zookeeper.port", "2181")),
@@ -110,28 +108,13 @@ object StreamLatestPositionApp extends StreamingApp {
 
     // Define which topics to read from
 
-    val actorSystem = SparkEnv.get.actorSystem
-
     val closer = new StopCloser(StopCollection.load(getClass.getResourceAsStream("/stops.txt")), 500)
 
-    lines.window(Seconds(10), Seconds(4))
+    lines //.window(Seconds(10), Seconds(4))
       .foreachRDD({
         rdd =>
           val n = rdd.count()
-          val latestTrains = rdd.aggregate(TrainCFFPositionLatestCollection())(
-            ((acc, p) => acc + p),
-            ((acc, ps) => acc + ps)
-          )
-          val tNow = DateTime.now()
-          val snapshot = latestTrains.snapshot(tNow).closedBy(closer)
-          println(snapshot)
-          val producer = new KafkaProducer[String, String](kafkaProducerParams)
-
-          val message = new ProducerRecord[String, String](
-            getAppConfOrElse("kafka.train_position.produce.topic", "train_position_snapshot"),
-            null,
-            Json.toJson(snapshot).toString())
-          producer.send(message)
+          aggregActor ! TPList(rdd.collect())
       })
 
     sparkStreamingContext.start()

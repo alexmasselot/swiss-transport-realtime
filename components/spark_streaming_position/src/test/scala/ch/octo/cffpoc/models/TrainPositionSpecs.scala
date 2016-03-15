@@ -1,5 +1,6 @@
 package ch.octo.cffpoc.models
 
+import ch.octo.cffpoc.position.{ TimedPosition, TrainPosition }
 import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 

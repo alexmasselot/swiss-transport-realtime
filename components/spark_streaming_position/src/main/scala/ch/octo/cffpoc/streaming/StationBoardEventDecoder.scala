@@ -1,6 +1,7 @@
-package ch.octo.cffpoc.stationboard
+package ch.octo.cffpoc.streaming
 
 import ch.octo.cffpoc.models._
+import ch.octo.cffpoc.stationboard.StationBoardEvent
 import ch.octo.cffpoc.stops.Stop
 import kafka.serializer.Decoder
 import kafka.utils.VerifiableProperties

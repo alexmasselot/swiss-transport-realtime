@@ -62,7 +62,7 @@ case class StationBoard(timestamp: DateTime, stop: Stop, events: Map[String, Sta
     })
   }
 
-  override def toString = s"stop @$timestamp \n" +
+  override def toString = s"$stop @$timestamp \n" +
     orderEvents
     .map(e => s"${e.timestamp}\t${e.departureTimestamp.get}\t${e.delayMinute.getOrElse("-")}\t${e.train.name}\t${e.train.lastStopName}")
     .mkString("\n")

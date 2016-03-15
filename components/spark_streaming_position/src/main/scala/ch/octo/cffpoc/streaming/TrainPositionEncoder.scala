@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.streaming
 
-import ch.octo.cffpoc.models.TrainPosition
+import ch.octo.cffpoc.position.TrainPosition
 import ch.octo.cffpoc.streaming.serializers._
 import kafka.serializer.Encoder
 import kafka.utils.VerifiableProperties

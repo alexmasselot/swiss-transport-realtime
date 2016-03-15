@@ -1,4 +1,6 @@
-package ch.octo.cffpoc.models
+package ch.octo.cffpoc.position
+
+import ch.octo.cffpoc.models.Train
 
 /**
  * Created by alex on 19/02/16.

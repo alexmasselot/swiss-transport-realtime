@@ -1,5 +1,7 @@
 package ch.octo.cffpoc.stationboard
 
+import ch.octo.cffpoc.DateMatchers
+import ch.octo.cffpoc.streaming.StationBoardEventDecoder
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.scalatest.{ FlatSpec, Matchers }
@@ -33,7 +35,6 @@ class StationBoardSpecs extends FlatSpec with Matchers with DateMatchers {
   }
 
   it should "original timestamp" in {
-    println(gva2840)
     assertDateEquals(gva2840.timestamp, DateTime.parse("2016-02-29T17:55:55.327+01:00"))
   }
 

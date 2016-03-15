@@ -1,6 +1,7 @@
 package ch.octo.cffpoc.streaming
 
 import ch.octo.cffpoc.models._
+import ch.octo.cffpoc.position.{ TimedPosition, TrainPosition, TrainCFFPosition }
 import kafka.serializer.Decoder
 import kafka.utils.VerifiableProperties
 import org.joda.time.DateTime

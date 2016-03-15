@@ -1,7 +1,10 @@
 package ch.octo.cffpoc.streaming
 
 import ch.octo.cffpoc.models._
+import ch.octo.cffpoc.position._
+import ch.octo.cffpoc.stationboard._
 import ch.octo.cffpoc.stops.Stop
+import org.joda.time.DateTime
 import play.api.libs.json._
 
 /**
@@ -21,9 +24,30 @@ object serializers {
       }
   }
 
-  implicit val formatTrain = Json.writes[Train]
-  implicit val formatTrainPosition = Json.writes[TrainPosition]
-  implicit val formatTrainPositionSnapshot = Json.writes[TrainPositionSnapshot]
+  implicit val writesTrain = Json.writes[Train]
+  implicit val writesTrainPosition = Json.writes[TrainPosition]
+
+  implicit object writesTrainPositionSnapshot extends Writes[TrainPositionSnapshot] {
+    override def writes(o: TrainPositionSnapshot): JsValue = JsObject(
+      List(
+        ("timestamp" -> JsNumber(o.timestamp.getMillis)),
+        ("positions" -> o.positions.foldLeft(new JsObject(Map()))((acc, e) => acc + (e._1, Json.toJson(e._2)))
+        )
+      )
+    )
+  }
+
+  implicit val writesSationEvent = Json.writes[StationBoardEvent]
+  implicit val writesSationBoard = Json.writes[StationBoard]
+
+  implicit object writesSationBoardSnapshot extends Writes[StationBoardsSnapshot] {
+    override def writes(o: StationBoardsSnapshot): JsValue = JsObject(
+      List(
+        ("timestamp" -> JsNumber(o.timestamp.getMillis)),
+        ("boards" -> Json.toJson(o.boards.values.toList.sortBy(_.stop.name)))
+      )
+    )
+  }
 
   //  val hasTimedPositionReads: Reads[HasTimedPosition]= {
   //

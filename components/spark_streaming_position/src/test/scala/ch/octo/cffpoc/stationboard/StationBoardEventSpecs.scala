@@ -2,6 +2,7 @@ package ch.octo.cffpoc.stationboard
 
 import ch.octo.cffpoc.models.{ Train, GeoLoc }
 import ch.octo.cffpoc.stops.Stop
+import ch.octo.cffpoc.streaming.StationBoardEventDecoder
 import org.joda.time.DateTime
 import org.scalatest.{ FlatSpec, Matchers }
 import scala.concurrent.duration._

@@ -1,5 +1,6 @@
-package ch.octo.cffpoc.models
+package ch.octo.cffpoc.position
 
+import ch.octo.cffpoc.models.GeoLoc
 import org.joda.time.DateTime
 
 /**
@@ -30,4 +31,22 @@ case class TrainCFFPosition(
         case None => current.at(TimedPositionIsMoving(current.timedPosition.timestamp, current.timedPosition.position, true))
       }
   }
+
+  /**
+   * the latest date with a position
+   * Either the current on of the last future is any is available
+   *
+   * @return
+   */
+  def latestTimestamp: DateTime = futurePositions match {
+    case Nil => current.timedPosition.timestamp
+    case xs => xs.last.timestamp
+  }
+
+  /**
+   * return true if the train position is still defined at the given time
+   *
+   * @param time
+   */
+  def isBefore(time: DateTime): Boolean = latestTimestamp.isBefore(time.minusMillis(1))
 }
