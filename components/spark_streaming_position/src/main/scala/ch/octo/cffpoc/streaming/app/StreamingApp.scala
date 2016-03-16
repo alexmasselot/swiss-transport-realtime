@@ -2,12 +2,11 @@ package ch.octo.cffpoc.streaming.app
 
 import java.io.File
 
-import ch.octo.cffpoc.streaming.app.StreamLatestStationBoardsApp._
 import com.typesafe.config.ConfigFactory
-import org.apache.kafka.clients.producer.ProducerConfig
 import org.apache.spark.SparkConf
 import org.apache.spark.streaming.{ Seconds, StreamingContext }
 import org.slf4j.LoggerFactory
+
 import scala.collection.JavaConversions._
 
 /**
@@ -50,23 +49,7 @@ trait StreamingApp {
         case (k, v) =>
           sparkConf.set(k, v.toString)
       })
-    new StreamingContext(sparkConf, Seconds(2))
-  }
-
-  lazy val kafkaConsumerParams = Map(
-    "zookeeper.connect" -> (getAppConfOrElse("zookeeper.host", "localhost") + ":" + getAppConfOrElse("zookeeper.port", "2181")),
-    "group.id" -> getAppConfOrElse("kafka.consume.group.id", kafkaConsumeGroupId)
-  )
-
-  lazy val kafkaProducerParams = {
-    val m = new java.util.HashMap[String, Object]()
-    m.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-      getAppConfOrElse("kafka.host", "localhost") + ":" + getAppConfOrElse("kafka.port", "2181"))
-    m.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-      "org.apache.kafka.common.serialization.StringSerializer")
-    m.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-      "org.apache.kafka.common.serialization.StringSerializer")
-    m
+    new StreamingContext(sparkConf, Seconds(5))
   }
 
 }

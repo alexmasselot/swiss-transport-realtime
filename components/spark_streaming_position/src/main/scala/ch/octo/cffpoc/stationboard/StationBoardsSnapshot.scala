@@ -48,7 +48,10 @@ case class StationBoardsSnapshot(timestamp: DateTime = new DateTime(0L), boards:
     "board at " + timestamp + "\n" +
       boards.values.toList.sortBy(_.stop.name)
       .map(_.toString).mkString("\n\n")
+  }
 
+  def summary = {
+    s"${size} boards, ${countAll} lines"
   }
 
 }
