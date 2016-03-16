@@ -1,16 +1,20 @@
+rect.masking{
+  fill:white;
+  opacity:0.5;
+}
 .positionText {
   font-size: 10px;
   color: red
 }
 
-.trainSymbol text{
+.trainSymbol text {
   text-anchor: middle;
   dominant-baseline: central;
 }
 
 .trainSymbol {
   fill: white;
-  fill-opacity: 0.4;
+  fill-opacity: 0.95;
   stroke: blue
 }
 
@@ -28,6 +32,24 @@
   font-size: 80%;
 }
 
+.train-cat_re circle, .train-cat_r circle, .train-cat_s circle {
+  fill: orange;
+}
+
+.train-cat_ic circle, .train-cat_icn circle, .train-cat_ir circle, .train-cat_bat circle {
+  fill: blue;
+}
+
+.train-cat_ter circle, .train-cat_tgv circle {
+  fill: pink;
+}
+
 .trainMarker:hover .trainDetails {
   display: block;
+}
+
+.stopped circle{
+  stroke: red;
+  stroke-width:3;
+
 }

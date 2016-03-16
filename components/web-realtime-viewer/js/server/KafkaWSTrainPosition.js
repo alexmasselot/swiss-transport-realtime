@@ -55,6 +55,11 @@ class KafkaWSTrainPosition {
       );
 
       consumer.on('message', function (message) {
+        if(message.value.trim().substr(0,1) !=  '{'){
+          console.error('not  a json message '+message.value);
+          return;
+        }
+
         let v = JSON.parse(message.value);
         _this._trainPositions=v;
         _this.broadcastPositions();

@@ -52,6 +52,12 @@ class PositionMapTrains extends Component {
         })
       //.style('overflow', 'visible')
     };
+    _this._elements.svg.append('rect')
+      .attr({
+        width: _this._dim.width,
+        height: _this._dim.height,
+        class: classes.masking
+      });
     _this._elements.gMain = _this._elements.svg.append('g')
       .attr({
         class: 'PositionMapText',
@@ -74,7 +80,6 @@ class PositionMapTrains extends Component {
       .filter(function (p) {
         return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
       }).value();
-
 
 
     return _this;
@@ -109,9 +114,15 @@ class PositionMapTrains extends Component {
         class: function (p) {
           let s = p.train.name.trim();
           let i = s.indexOf(' ');
-          return 'train-position ' + classes['train-cat_' + p.train.category.toLowerCase()] + ' ' + classes.trainMarker
+          let clazz = 'train-position ';
+          clazz = clazz + classes['train-cat_' + p.train.category.toLowerCase()];
+          clazz = clazz + ' ' + classes.trainMarker;
+          return clazz;
         }
       });
+    gNewTrains.on('mouseover', function (p) {
+      console.log(p);
+    });
     let gSymbol = gNewTrains.append('g')
       .attr({
         class: classes.trainSymbol
@@ -120,17 +131,17 @@ class PositionMapTrains extends Component {
       .attr({
         cx: 0,
         cy: 0,
-        r: 8
+        r: 3
       });
-    gSymbol.append('text')
-      .text(function (p) {
-        let s = p.train.category;
-
-        if (p.timedPosition.stop) {
-          s = s + " - " + p.timedPosition.stop.name;
-        }
-        return s;
-      });
+    //gSymbol.append('text')
+    //  .text(function (p) {
+    //    let s = p.train.category;
+    //
+    //    if (p.timedPosition.stop) {
+    //      s = s + " - " + p.timedPosition.stop.name;
+    //    }
+    //    return s;
+    //  });
 
     gNewTrains.append('g')
       .attr({
@@ -144,11 +155,13 @@ class PositionMapTrains extends Component {
         return p.train.name.trim() + ' (' + p.train.lastStopName + ')';// +_this.props.coord2point.x(p.x);
       });
 
+
+    gTrains.classed(classes.stopped, function (p) {
+      return p.timedPosition.stop;
+    });
     gTrains.transition()
       .duration(500)
       .attr('transform', function (p) {
-        console.log(p);
-        console.log(this);
         return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
       });
 
