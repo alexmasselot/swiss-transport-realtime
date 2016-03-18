@@ -68,5 +68,13 @@ class StationBoardsSnapshotSpecs extends FlatSpec with Matchers with DateMatcher
     assertDateEquals(fBoards.timestamp, DateTime.parse("2016-02-29T17:56:32.750Z"))
     fBoards(8501008L).size should be(104 - 21 + 2)
   }
+
+  it should "stats" in {
+    val fBoards = boards.before(DateTime.parse("2016-02-29T17:42:00.000+01:00"))
+    println(fBoards)
+    val stats = fBoards.stats
+    stats.total should be(60)
+    stats.delayed should be(10)
+  }
 }
 

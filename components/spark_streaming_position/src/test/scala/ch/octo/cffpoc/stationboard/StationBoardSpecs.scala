@@ -30,6 +30,8 @@ class StationBoardSpecs extends FlatSpec with Matchers with DateMatchers {
       .foldLeft(StationBoard(new DateTime(0L), stop))((acc, evt) => acc + evt)
   }
 
+  def gva = allEvents.filter(e => e.stop.name == "Genève").next().stop
+
   it should "mocks size" in {
     allEvents.size should be(1139)
   }
@@ -63,4 +65,14 @@ class StationBoardSpecs extends FlatSpec with Matchers with DateMatchers {
     val board = gva2840.after(DateTime.parse("2016-02-29T17:42:00.000+01:00"))
     board.size should be(104 - 21 + 2)
   }
+
+  it should "stats" in {
+    val board = gva2840.before(DateTime.parse("2016-02-29T17:42:00.000+01:00"))
+    val stats = board.stats
+    stats.stop should equal(gva)
+    stats.timestamp.getMillis should equal(DateTime.parse("2016-02-29T17:55:55.327+01:00").getMillis)
+    stats.total should equal(21)
+    stats.delayed should equal(7)
+  }
+
 }

@@ -62,6 +62,13 @@ case class StationBoard(timestamp: DateTime, stop: Stop, events: Map[String, Sta
     })
   }
 
+  def stats: StationBoardStats = StationBoardStats(
+    timestamp,
+    stop,
+    size,
+    events.filter({ case (k, v) => v.delayMinute.isDefined }).size
+  )
+
   override def toString = s"$stop @$timestamp \n" +
     orderEvents
     .map(e => s"${e.timestamp}\t${e.departureTimestamp.get}\t${e.delayMinute.getOrElse("-")}\t${e.train.name}\t${e.train.lastStopName}")

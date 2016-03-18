@@ -31,7 +31,7 @@ class TrainPositionAggregatorActor(kafkaProducerParams: Map[String, Object], kaf
     //         This is the integration point (from Akka's side) between Spark Streaming and Akka
     case tplist: TPList =>
       latestPosition = latestPosition + tplist.positions
-      log.warn(s"added ${tplist.positions.size} positions")
+      log.info(s"added ${tplist.positions.size} positions")
 
       val timestamp = tplist.positions match {
         case Nil if latestPosition.size == 0 => DateTime.now()
@@ -43,9 +43,11 @@ class TrainPositionAggregatorActor(kafkaProducerParams: Map[String, Object], kaf
       }
 
       val snapshot = latestPosition.snapshot(timestamp).closedBy(stopCloser)
+      val messageStr = Json.toJson(snapshot).toString()
       val message = new ProducerRecord[String, String](kafkaProduceTopic,
         null,
-        Json.toJson(snapshot).toString()) //Json.toJson(snapshot).toString())
+        messageStr) //Json.toJson(snapshot).toString())
+      log.info(s"$kafkaProduceTopic <- (${messageStr.length}) ${messageStr.substring(0, 25)}...")
       producer.send(message)
 
     case x => log.warn(s"unmatched message ${x.toString.take(100)}")

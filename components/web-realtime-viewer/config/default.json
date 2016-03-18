@@ -6,7 +6,10 @@
   },
   "ports": {
     "http": 3000,
-    "wsTrainPosition": 3001
+    "ws": {
+      "train_position": 3001,
+      "station_board": 3002
+    }
   },
   "zookeeper": {
     "host": "192.168.99.100",
@@ -15,7 +18,10 @@
   "kafka": {
     "host": "192.168.99.100",
     "port": 9092,
-    "interval":1000,
-    "topic":"train_position_snapshot"
+    "interval": 1000,
+    "topic": {
+      "train_position": "train_position_snapshot",
+      "station_board": "station_board_stats_snapshot"
+    }
   }
 }

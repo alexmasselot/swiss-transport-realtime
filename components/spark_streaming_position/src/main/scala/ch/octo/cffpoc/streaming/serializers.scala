@@ -39,12 +39,21 @@ object serializers {
 
   implicit val writesSationEvent = Json.writes[StationBoardEvent]
   implicit val writesSationBoard = Json.writes[StationBoard]
+  implicit val writerStationBoardStats = Json.writes[StationBoardStats]
 
   implicit object writesSationBoardSnapshot extends Writes[StationBoardsSnapshot] {
     override def writes(o: StationBoardsSnapshot): JsValue = JsObject(
       List(
         ("timestamp" -> JsNumber(o.timestamp.getMillis)),
         ("boards" -> Json.toJson(o.boards.values.toList.sortBy(_.stop.name)))
+      )
+    )
+  }
+  implicit object writesSationBoardSnapshotStats extends Writes[StationBoardsSnapshotStats] {
+    override def writes(o: StationBoardsSnapshotStats): JsValue = JsObject(
+      List(
+        ("timestamp" -> JsNumber(o.timestamp.getMillis)),
+        ("boardsstats" -> Json.toJson(o.stats.values.toList.sortBy(_.stop.name)))
       )
     )
   }

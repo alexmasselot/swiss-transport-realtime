@@ -44,6 +44,10 @@ case class StationBoardsSnapshot(timestamp: DateTime = new DateTime(0L), boards:
 
   def after(dtime: DateTime): StationBoardsSnapshot = map(_.after(dtime))
 
+  def stats: StationBoardsSnapshotStats = StationBoardsSnapshotStats(timestamp,
+    boards.map({ case (k, v) => (k -> v.stats) })
+  )
+
   override def toString = {
     "board at " + timestamp + "\n" +
       boards.values.toList.sortBy(_.stop.name)

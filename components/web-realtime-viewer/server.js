@@ -10,7 +10,7 @@ var config = require('config');
 var _ = require('lodash');
 const app = global.server = express();
 var http = require("http");
-var KafkaWSTrainPosition = require('./js/server/KafkaWSTrainPosition').default;
+var KafkaWSPipe = require('./js/server/KafkaWSPipe').default;
 
 
 var compiler = webpack(webpackConfig);
@@ -42,10 +42,13 @@ app.listen(config.get('ports.http'), 'localhost', function (err, result) {
 console.log(config);
 
 let server = http.createServer(app);
-let kafkaWSTrainPosition = new KafkaWSTrainPosition({
-  wsPort: config.get('ports.wsTrainPosition'),
+let kwPipe = new KafkaWSPipe({
   kafkaBroker: config.get('zookeeper.host') + ':' + config.get('zookeeper.port'),
   intervalMS: config.get('kafka.interval'),
-  topic: config.get('kafka.topic')
+  channels:[
+    {wsPort:config.get('ports.ws.train_position'),topic: config.get('kafka.topic.train_position')},
+    {wsPort:config.get('ports.ws.station_board'),topic: config.get('kafka.topic.station_board')}
+  ],
+  groupId: 'web-realtime-viewer-'+Math.round(Math.random()*10000000)
 });
 
