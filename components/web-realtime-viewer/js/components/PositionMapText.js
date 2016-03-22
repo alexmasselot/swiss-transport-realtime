@@ -53,7 +53,7 @@ class PositionMapText extends Component {
           height: _this._dim.height
         })
     };
-    _this._elements.gMain = _this._elements.svg.append('g')
+    _this._elements.gMainTrainPositions = _this._elements.svg.append('g')
       .attr({
         class: 'PositionMapText'
       });
@@ -62,8 +62,8 @@ class PositionMapText extends Component {
 
   _renderD3(el) {
     let _this = this;
-    _this._elements.gMain.selectAll('g').remove();
-    _this._elements.gMain.selectAll('g').data(_this.props.positions)
+    _this._elements.gMainTrainPositions.selectAll('g').remove();
+    _this._elements.gMainTrainPositions.selectAll('g').data(_this.props.positions)
       .enter()
       .append('g')
       .attr({

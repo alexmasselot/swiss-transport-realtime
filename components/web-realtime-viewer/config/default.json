@@ -1,14 +1,17 @@
 {
   "frontend": {
     "url": {
-      "ws": "ws://localhost:3001"
+      "ws": {
+        "train_position": "ws://localhost:3001",
+        "station_board_stats": "ws://localhost:3002"
+      }
     }
   },
   "ports": {
     "http": 3000,
     "ws": {
       "train_position": 3001,
-      "station_board": 3002
+      "station_board_stats": 3002
     }
   },
   "zookeeper": {
@@ -21,7 +24,7 @@
     "interval": 1000,
     "topic": {
       "train_position": "train_position_snapshot",
-      "station_board": "station_board_stats_snapshot"
+      "station_board_stats": "sb_stats_snapshot"
     }
   }
 }

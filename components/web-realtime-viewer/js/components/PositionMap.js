@@ -15,7 +15,7 @@ class PositionMap extends Component {
 
   render() {
     let _this = this;
-    const {positions, location, dispatch, height, width, onLocationChanged} = this.props;
+    const {positions, stationBoardStats, location, dispatch, height, width, onLocationChanged} = this.props;
 
     return (
       <div>
@@ -23,6 +23,7 @@ class PositionMap extends Component {
           <div className={classes.superposeItem}>
             <PositionMapGoogle
               positions={positions}
+              stationBoardStats={stationBoardStats}
               location={location}
               height={height}
               width={width}

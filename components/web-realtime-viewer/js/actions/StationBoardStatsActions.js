@@ -1,8 +1,8 @@
 import {TRAIN_POSITION_RECEIVED} from '../constants/ActionTypes';
 
-export function updateStationBoarStats(data) {
+export function updatePositions(data) {
   return {
-    type: TRAIN_POSITION_RECEIVED,
+    type: STATION_BOARD_STATS_RECEIVED,
     timestamp:new Date().getTime(),
     data
   }

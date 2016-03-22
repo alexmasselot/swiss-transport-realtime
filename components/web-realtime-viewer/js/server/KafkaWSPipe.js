@@ -56,11 +56,13 @@ class KafkaWSPipe {
       console.log('Kafka client is ready');
       let offset = new Kafka.Offset(_this.kafkaClient)
 
+      let offsetQuery = _.map(_this.channels, function (channel) {
+        return {topic: channel.topic};
+      });
+      console.log('Fetching for offset for', offsetQuery);
       offset.fetch(
-        _.map(_this.channels, function (channel) {
-          return {topic: channel.topic};
-        })
-        , function (err, data) {
+        offsetQuery,
+        function (err, data) {
           if (err) {
             console.error('ERROR fetching offset', err);
             return;
@@ -88,12 +90,7 @@ class KafkaWSPipe {
 
           consumer.on('message', function (message) {
             let topic = message.topic;
-            if (message.value.trim().substr(0, 1) != '{') {
-              console.error('not  a json message ' + message.value);
-              return;
-            }
-            let v = JSON.parse(message.value);
-            _this.broadcastPositions(topic, v);
+            _this.broadcastPositions(topic, message.value);
           });
           consumer.on('error', function (err) {
             console.error('[ERROR] kafka consumer', err);
@@ -109,13 +106,11 @@ class KafkaWSPipe {
     return _this._initWebsocketServer();
   }
 
-  broadcastPositions(topic, data) {
+  broadcastPositions(topic, msg) {
     let _this = this;
 
-    let msg = JSON.stringify(data);
     _this._lastMessage = msg;
-    console.log(new Date(), 'broadcast ', topic, msg.length, 'bytes');
-    console.log(msg.substring(0, 80), '...');
+    console.log(`${new Date()} broadcast ${topic} ${msg.length} bytes ${msg.substring(0, 25)}...`);
     _this._wsServers[topic].clients.forEach(function (client) {
       client.send(msg);
     });
@@ -125,6 +120,4 @@ class KafkaWSPipe {
 }
 ;
 
-export
-default
-KafkaWSPipe;
+export default KafkaWSPipe;

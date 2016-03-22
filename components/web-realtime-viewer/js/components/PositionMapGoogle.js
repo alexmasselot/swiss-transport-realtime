@@ -9,6 +9,7 @@ import classes from './PositionMapGoogle.css'
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import GoogleMap from 'google-map-react';
 import PositionMapTrains from './PositionMapTrains';
+import PositionMapStationBoardStats from './PositionMapTrains';
 
 
 class PositionMapGoogle extends Component {
@@ -24,7 +25,7 @@ class PositionMapGoogle extends Component {
 
   render() {
     let _this = this;
-    const {location, height, width, positions, onLocationChanged} = _this.props;
+    const {location, height, width, positions, stationBoardStats, onLocationChanged} = _this.props;
     let center = location.center;
     let zoom = location.zoom;
 
@@ -41,6 +42,7 @@ class PositionMapGoogle extends Component {
             lng={location.bounds.lngMin}
             bounds={location.bounds}
             positions={positions}
+            stats={stationBoardStats}
             height={height}
             width={width}
           />

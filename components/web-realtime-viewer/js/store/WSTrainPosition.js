@@ -1,34 +1,33 @@
 'use strict'
-import  ActionTypes from '../constants/ActionTypes';
-import frontendConfig from '../config/FrontendConfig';
 
 class WSTrainPosition {
   constructor({store}) {
     let _this = this;
 
-    _this._init();
     _this.store = store;
     return _this;
   }
 
-  _init() {
+  /**
+   * read data on a websocket and dispatch an action to the store
+   * @param wsUrl
+   * @param dispatchAtionBuilder : function(event), where the event contains at leas a data field.
+   * The function returns an object, such as
+   * {
+   *   type: ActionTypes.TRAIN_POSITION_RECEIVED,
+   *   data: JSON.parse(event.data),
+   *   timestamp: new Date().getTime()
+   *  }
+   */
+  pipe(wsUrl, dispatchActionBuilder) {
     let _this = this;
-
-    frontendConfig.get().then(function (config) {
-      let wsUrl = config.url.ws;
-      let ws = new WebSocket(wsUrl);
-      ws.onmessage = function (event) {
-        _this.store.dispatch({
-          type: ActionTypes.TRAIN_POSITION_RECEIVED,
-          data: JSON.parse(event.data),
-          timestamp: new Date().getTime()
-        })
-      };
-
-    }).catch(function (error) {
-      console.error('Error getting config', error);
-    });
-  }
+    let ws = new WebSocket(wsUrl);
+    ws.onmessage = function (event) {
+      _this.store.dispatch(
+        dispatchActionBuilder(event)
+      )
+    };
+  };
 }
 
 export default WSTrainPosition;

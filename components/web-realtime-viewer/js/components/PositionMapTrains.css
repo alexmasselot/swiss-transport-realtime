@@ -1,6 +1,6 @@
 rect.masking{
   fill:white;
-  opacity:0.5;
+  opacity:0.75;
 }
 .positionText {
   font-size: 10px;
@@ -15,7 +15,6 @@ rect.masking{
 .trainSymbol {
   fill: white;
   fill-opacity: 0.95;
-  stroke: blue
 }
 
 .trainSymbol:hover {
@@ -33,15 +32,15 @@ rect.masking{
 }
 
 .train-cat_re circle, .train-cat_r circle, .train-cat_s circle {
-  fill: orange;
+  fill: blue;
 }
 
-.train-cat_ic circle, .train-cat_icn circle, .train-cat_ir circle, .train-cat_bat circle {
+.train-cat_ice circle, .train-cat_ic circle, .train-cat_icn circle, .train-cat_ir circle, .train-cat_bat circle {
   fill: blue;
 }
 
 .train-cat_ter circle, .train-cat_tgv circle {
-  fill: pink;
+  fill: blue;
 }
 
 .trainMarker:hover .trainDetails {
@@ -52,4 +51,10 @@ rect.masking{
   stroke: red;
   stroke-width:3;
 
+}
+
+g.station-board-stats circle{
+  fill:green;
+  fill-opacity: 0.7;
+  stroke:red;
 }

@@ -54,36 +54,179 @@ class PositionMapTrains extends Component {
     };
     _this._elements.svg.append('rect')
       .attr({
-        width: _this._dim.width,
-        height: _this._dim.height,
+        width: _this._dim.width * 3,
+        height: _this._dim.height * 3,
+        x: -_this._dim.width,
+        y: -_this._dim.height,
         class: classes.masking
       });
-    _this._elements.gMain = _this._elements.svg.append('g')
+    _this._elements.gMainStationBoardStats = _this._elements.svg.append('g')
       .attr({
-        class: 'PositionMapText',
-      })
-    ;
+        class: 'station-board-stats-main'
+      });
+    _this._elements.gMainTrainPositions = _this._elements.svg.append('g')
+      .attr({
+        class: 'train-positions-main'
+      });
+
 
   }
 
-  _updateData(bounds, trainPositions) {
+  _updateData(bounds, trainPositions, stationBoardStats) {
     let _this = this;
 
     let {lngMin, lngMax, latMin, latMax}  = bounds;
 
     _this._trainPositions = _.chain(trainPositions)
       .map(function (p) {
-        p.x = p.timedPosition.position.lng;
-        p.y = p.timedPosition.position.lat;
+        p.x = p.position_lng;
+        p.y = p.position_lat;
         return p;
       })
       .filter(function (p) {
         return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
       }).value();
 
+    _this._stationBoardStats = _.chain(stationBoardStats)
+      .map(function (p) {
+        p.x = p.stop.location.lng;
+        p.y = p.stop.location.lat;
+        return p;
+      })
+      .filter(function (p) {
+        return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
+      }).value();
+
+    //
+    //console.log('delayed?');
+    //_.chain(stationBoardStats)
+    //  .filter(function (s) {
+    //    return s.delayed;
+    //  })
+    //  .each(function (s) {
+    //    console.log(s.stop.name + ': ' + s.delayed + '/' + s.total);
+    //  })
+    //  .value();
 
     return _this;
   }
+
+  _renderD3TrainPositions(el) {
+    let _this = this;
+
+    let gTrains = _this._elements.gMainTrainPositions
+      .selectAll('g.train-position')
+      .data(_this._trainPositions, function (d) {
+        return d.train_id;
+      });
+
+    let gNew = gTrains.enter()
+      .append('g')
+      .attr({
+        transform: function (p) {
+          return 'translate(' + _this._scales.x(p.x) + ',' + _this._scales.y(p.y) + ')';
+        },
+        class: function (p) {
+          let s = p.train_name.trim();
+          let i = s.indexOf(' ');
+          let clazz = 'train-position ';
+          clazz = clazz + classes['train-cat_' + p.train_category.toLowerCase()];
+          clazz = clazz + ' ' + classes.trainMarker;
+          return clazz;
+        }
+      });
+    gNew.on('mouseover', function (p) {
+      console.log(p.train_name + '->' + p.train_lastStopName);
+    });
+    let gSymbol = gNew.append('g')
+      .attr({
+        class: classes.trainSymbol
+      });
+    gSymbol.append('circle')
+      .attr({
+        cx: 0,
+        cy: 0,
+        r: 2
+      });
+    //gSymbol.append('text')
+    //  .text(function (p) {
+    //    let s = p.train.category;
+    //
+    //    if (p.timedPosition.stop) {
+    //      s = s + " - " + p.timedPosition.stop.name;
+    //    }
+    //    return s;
+    //  });
+
+    gNew.append('g')
+      .attr({
+        class: classes.trainDetails
+      }).append('text')
+      .attr({
+        class: classes.positionText,
+        x: 4
+      })
+      .text(function (p) {
+        return p.train_name.trim() + ' (' + p.train_lastStopName + ')';// +_this.props.coord2point.x(p.x);
+      });
+
+
+    //gTrains.classed(classes.stopped, function (p) {
+    //  return p.timedPosition.stop;
+    //});
+
+    //.transition()
+    //.duration(500)
+    gTrains
+      .attr('transform', function (p) {
+        return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
+      });
+
+
+    gTrains.exit().transition()
+      .duration(300)
+      .style('opacity', 1e-6)
+      .remove();
+    return _this;
+  };
+
+  _renderD3StationBoardStats(el) {
+    let _this = this;
+
+    let gStats = _this._elements.gMainStationBoardStats
+      .selectAll('g.station-board-stats')
+      .data(_this._stationBoardStats, function (d) {
+        return d.stop.id;
+      });
+    let gNew = gStats.enter()
+      .append('g')
+      .attr('class', 'station-board-stats ' + classes['station-board-stats']);
+
+    gNew.append('circle');
+    gNew.on('mouseover', function (s) {
+      console.log(s.stop.name + ':' + s.delayed + '/' + s.total);
+    });
+
+
+    gStats.transition()
+      .attr('transform', function (p) {
+        return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
+      });
+    gStats.select('circle')
+      .attr({
+        r: function (d) {
+          return d.total + 1;
+        }
+
+      })
+      .style({
+        'stroke-width': function (d) {
+          return 5 * d.delayed;
+        }
+      });
+
+    gStats.exit().remove()
+  };
 
   _renderD3(el, newProps) {
     let _this = this;
@@ -96,80 +239,11 @@ class PositionMapTrains extends Component {
     };
 
 
-    _this._updateData(newProps.bounds, newProps.positions);
+    _this._updateData(newProps.bounds, newProps.positions, newProps.stats)
+      ._renderD3TrainPositions(el)
+      ._renderD3StationBoardStats(el);
 
 
-    let gTrains = _this._elements.gMain
-      .selectAll('g.train-position')
-      .data(_this._trainPositions, function (d) {
-        return d.train.id;
-      });
-
-    let gNewTrains = gTrains.enter()
-      .append('g')
-      .attr({
-        transform: function (p) {
-          return 'translate(' + _this._scales.x(p.x) + ',' + _this._scales.y(p.y) + ')';
-        },
-        class: function (p) {
-          let s = p.train.name.trim();
-          let i = s.indexOf(' ');
-          let clazz = 'train-position ';
-          clazz = clazz + classes['train-cat_' + p.train.category.toLowerCase()];
-          clazz = clazz + ' ' + classes.trainMarker;
-          return clazz;
-        }
-      });
-    gNewTrains.on('mouseover', function (p) {
-      console.log(p);
-    });
-    let gSymbol = gNewTrains.append('g')
-      .attr({
-        class: classes.trainSymbol
-      });
-    gSymbol.append('circle')
-      .attr({
-        cx: 0,
-        cy: 0,
-        r: 3
-      });
-    //gSymbol.append('text')
-    //  .text(function (p) {
-    //    let s = p.train.category;
-    //
-    //    if (p.timedPosition.stop) {
-    //      s = s + " - " + p.timedPosition.stop.name;
-    //    }
-    //    return s;
-    //  });
-
-    gNewTrains.append('g')
-      .attr({
-        class: classes.trainDetails
-      }).append('text')
-      .attr({
-        class: classes.positionText,
-        x: 4
-      })
-      .text(function (p) {
-        return p.train.name.trim() + ' (' + p.train.lastStopName + ')';// +_this.props.coord2point.x(p.x);
-      });
-
-
-    gTrains.classed(classes.stopped, function (p) {
-      return p.timedPosition.stop;
-    });
-    gTrains.transition()
-      .duration(500)
-      .attr('transform', function (p) {
-        return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
-      });
-
-
-    gTrains.exit().transition()
-      .duration(300)
-      .style('opacity', 1e-6)
-      .remove();
   }
 
   render() {
