@@ -43,6 +43,7 @@ object StreamLatestApp extends StreamingApp {
       StorageLevel.MEMORY_AND_DISK_SER
     )
       .map(_._2)
+    //.filter(_.current.train.name.trim.startsWith("IR 172"))
 
     val closer = new StopCloser(StopCollection.load(getClass.getResourceAsStream("/stops.txt")), 500)
     lines
@@ -73,7 +74,7 @@ object StreamLatestApp extends StreamingApp {
     val events = KafkaUtils.createStream[String, StationBoardEvent, StringDecoder, StationBoardEventDecoder](
       sparkStreamingContext,
       kafkaConnector.consumerParams,
-      List((getAppConfOrElse("kafka.station_board.consume.topic", ""), numThreads)).toMap,
+      List((getAppConfOrElse("kafka.station_board.consume.topic", "cff_station_board"), numThreads)).toMap,
       StorageLevel.MEMORY_AND_DISK_SER //MEMORY_AND_DISK_SER_2
     )
       .map(_._2)

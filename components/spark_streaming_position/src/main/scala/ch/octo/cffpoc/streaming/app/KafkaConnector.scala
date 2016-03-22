@@ -14,14 +14,14 @@ class KafkaConnector(appConfig: Config, configKey: String, defaultConsumeGroupId
   }
 
   lazy val consumerParams = Map(
-    "zookeeper.connect" -> (getAppConfOrElse("zookeeper.host", "localhost") + ":" + getAppConfOrElse("zookeeper.port", "2181")),
+    "zookeeper.connect" -> (getAppConfOrElse("broker.in.zookeeper.host", "localhost") + ":" + getAppConfOrElse("broker.in.zookeeper.port", "2181")),
     "group.id" -> getAppConfOrElse(s"kafka.$configKey.consume.group.id", defaultConsumeGroupId)
   )
 
   lazy val kafkaProducerParams = {
     Map(
       ProducerConfig.BOOTSTRAP_SERVERS_CONFIG ->
-        (getAppConfOrElse("kafka.host", "localhost") + ":" + getAppConfOrElse("kafka.port", "2181")),
+        (getAppConfOrElse("broker.out.kafka.host", "localhost") + ":" + getAppConfOrElse("broker.out.kafka.port", "2181")),
       ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG ->
         "org.apache.kafka.common.serialization.StringSerializer",
       ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG ->

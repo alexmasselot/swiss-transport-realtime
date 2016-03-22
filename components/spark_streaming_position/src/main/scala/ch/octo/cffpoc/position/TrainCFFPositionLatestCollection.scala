@@ -67,7 +67,7 @@ class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) exte
     new TrainCFFPositionLatestCollection(mCol.filter(!_._2.isBefore(time)))
   }
 
-  override def toString = mCol.values.map(p => s"${p.timeStamp}\t${p.current.train.id}").mkString("\n");
+  override def toString = mCol.values.map(p => s"${p.timeStamp}\t${p.current.train.id}\t${p.current.timedPosition}\t${p.futurePositions.size}").mkString("\n");
 }
 
 object TrainCFFPositionLatestCollection {

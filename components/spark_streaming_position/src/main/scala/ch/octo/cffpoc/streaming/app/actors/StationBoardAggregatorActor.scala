@@ -1,7 +1,7 @@
 package ch.octo.cffpoc.streaming.app.actors
 
 import akka.actor.Actor
-import ch.octo.cffpoc.stationboard.StationBoardsSnapshot
+import ch.octo.cffpoc.stationboard.{ StationBoardsSnapshotStats, StationBoardsSnapshot }
 import ch.octo.cffpoc.streaming.serializers._
 import org.apache.kafka.clients.producer.{ KafkaProducer, ProducerRecord }
 import org.apache.spark.streaming.receiver.ActorHelper
@@ -37,6 +37,7 @@ class StationBoardAggregatorActor(kafkaProducerParams: Map[String, Object], kafk
 
       //println(boards.boards.values.map(_.stop.name).toList.sorted)
       val stats = boards.stats
+
       val messageStr = Json.toJson(stats).toString()
 
       val message = new ProducerRecord[String, String](

@@ -53,7 +53,7 @@ object serializers {
     override def writes(o: StationBoardsSnapshotStats): JsValue = JsObject(
       List(
         ("timestamp" -> JsNumber(o.timestamp.getMillis)),
-        ("boardsstats" -> Json.toJson(o.stats.values.toList.sortBy(_.stop.name)))
+        ("stats" -> Json.toJson(o.stats.values.toList.sortBy(_.stop.name)))
       )
     )
   }
