@@ -1,0 +1,2 @@
+GET        /stationboard/stats        ch.octo.cffpoc.controllers.StationBoardController.stats
+GET        /stationboard/details/:id        ch.octo.cffpoc.controllers.StationBoardController.details(id:Long)

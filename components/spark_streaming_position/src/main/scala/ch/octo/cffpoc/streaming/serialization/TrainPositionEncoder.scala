@@ -1,7 +1,6 @@
-package ch.octo.cffpoc.streaming
+package ch.octo.cffpoc.streaming.serialization
 
 import ch.octo.cffpoc.position.TrainPosition
-import ch.octo.cffpoc.streaming.serializers._
 import kafka.serializer.Encoder
 import kafka.utils.VerifiableProperties
 import play.api.libs.json.Json
@@ -10,6 +9,7 @@ import play.api.libs.json.Json
  * © OCTO Technology
  */
 class TrainPositionEncoder(props: VerifiableProperties = null) extends Encoder[TrainPosition] {
+  import serializers._
 
   val encoding =
     if (props == null)

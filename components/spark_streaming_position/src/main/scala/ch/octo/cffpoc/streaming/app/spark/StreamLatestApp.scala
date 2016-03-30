@@ -1,11 +1,11 @@
-package ch.octo.cffpoc.streaming.app
+package ch.octo.cffpoc.streaming.app.spark
 
 import akka.actor.{ ActorSystem, Props }
 import ch.octo.cffpoc.position.TrainCFFPosition
 import ch.octo.cffpoc.stationboard.StationBoardEvent
 import ch.octo.cffpoc.stops.{ StopCloser, StopCollection }
 import ch.octo.cffpoc.streaming.app.actors.{ SBEventList, StationBoardAggregatorActor, TPList, TrainPositionAggregatorActor }
-import ch.octo.cffpoc.streaming.{ StationBoardEventDecoder, TrainCFFPositionDecoder }
+import ch.octo.cffpoc.streaming.serialization.{ TrainCFFPositionDecoder, StationBoardEventDecoder }
 import kafka.serializer.StringDecoder
 import org.apache.spark.SparkEnv
 import org.apache.spark.storage.StorageLevel

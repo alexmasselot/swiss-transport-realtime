@@ -8,5 +8,4 @@ case class Train(
     category: String,
     name: String,
     lastStopName: String) {
-
 }

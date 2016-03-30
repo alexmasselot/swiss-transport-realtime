@@ -1,4 +1,4 @@
-package ch.octo.cffpoc.streaming.app
+package ch.octo.cffpoc.streaming.app.spark
 
 import java.io.File
 

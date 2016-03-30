@@ -1,10 +1,12 @@
 import play.sbt.PlayImport._
 import com.typesafe.sbt.packager.docker._
-
+import play.sbt.routes.RoutesKeys._
 
 enablePlugins(DockerPlugin)
 
 enablePlugins(JavaAppPackaging)
+
+lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 //
 // http://spark.apache.org/docs/latest/quick-start.html#a-standalone-app-in-scala
@@ -18,15 +20,18 @@ maintainer := "amasselot@octo.com"
 libraryDependencies ++= Dependencies.sparkAkkaHadoop
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-json" % "2.4.2",
+  cache,
+  "com.typesafe.play" %% "play-json" % "2.5.0",
   "com.github.tototoshi" %% "scala-csv" % "1.3.0",
   "com.github.nscala-time" %% "nscala-time" % "2.10.0"
-
 )
 
 dependencyOverrides ++= Set(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
 )
+
+scalaSource in Compile := baseDirectory.value / "src/main/scala"
+
 
 releaseSettings
 
@@ -55,3 +60,4 @@ mappings in Universal += {
   conf -> "conf/application.conf"
 }
 
+routesGenerator := InjectedRoutesGenerator

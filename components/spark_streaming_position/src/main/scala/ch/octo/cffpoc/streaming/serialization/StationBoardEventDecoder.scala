@@ -1,4 +1,4 @@
-package ch.octo.cffpoc.streaming
+package ch.octo.cffpoc.streaming.serialization
 
 import ch.octo.cffpoc.models._
 import ch.octo.cffpoc.stationboard.StationBoardEvent

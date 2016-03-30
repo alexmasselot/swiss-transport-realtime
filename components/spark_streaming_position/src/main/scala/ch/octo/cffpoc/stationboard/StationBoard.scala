@@ -75,3 +75,6 @@ case class StationBoard(timestamp: DateTime, stop: Stop, events: Map[String, Sta
     .mkString("\n")
 
 }
+//object StationBoard {
+//  def apply(stop: Stop) = new StationBoard(DateTime.now(), stop)
+//}

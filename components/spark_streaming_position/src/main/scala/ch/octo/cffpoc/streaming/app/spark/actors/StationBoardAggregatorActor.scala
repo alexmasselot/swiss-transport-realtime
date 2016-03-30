@@ -2,9 +2,11 @@ package ch.octo.cffpoc.streaming.app.actors
 
 import akka.actor.Actor
 import ch.octo.cffpoc.stationboard.{ StationBoardsSnapshotStats, StationBoardsSnapshot }
-import ch.octo.cffpoc.streaming.serializers._
+import ch.octo.cffpoc.streaming.serialization.serializers
+import serializers._
 import org.apache.kafka.clients.producer.{ KafkaProducer, ProducerRecord }
 import org.apache.spark.streaming.receiver.ActorHelper
+import org.joda.time.DateTime
 import play.api.libs.json.Json
 
 import scala.collection.JavaConversions._
@@ -30,9 +32,10 @@ class StationBoardAggregatorActor(kafkaProducerParams: Map[String, Object], kafk
       log.info(s"added ${evts.events.size} events")
 
       if (evts.events.lastOption.isDefined) {
-        val t = evts.events.last.timestamp
-        log.info("removing: " + boards.before(t.minusMinutes(1)).countAll)
-        boards = boards.after(t.minusMinutes(1)).before(t.plusMinutes(15))
+        val t = evts.events.last.timestamp.minusMinutes(1)
+        //val t = DateTime.now.minusMinutes(1)
+        log.info("removing: " + boards.before(t).countAll)
+        boards = boards.after(t).before(t.plusMinutes(15))
       }
 
       //println(boards.boards.values.map(_.stop.name).toList.sorted)

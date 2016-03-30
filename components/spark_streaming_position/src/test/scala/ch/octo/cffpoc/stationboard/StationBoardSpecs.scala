@@ -1,7 +1,7 @@
 package ch.octo.cffpoc.stationboard
 
 import ch.octo.cffpoc.DateMatchers
-import ch.octo.cffpoc.streaming.StationBoardEventDecoder
+import ch.octo.cffpoc.streaming.serialization.StationBoardEventDecoder
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import org.scalatest.{ FlatSpec, Matchers }

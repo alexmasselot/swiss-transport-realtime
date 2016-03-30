@@ -4,11 +4,12 @@ import akka.actor.Actor
 import ch.octo.cffpoc.position.{ TrainPositionSnapshot, TrainCFFPositionLatestCollection }
 import ch.octo.cffpoc.stationboard.StationBoardsSnapshotStats
 import ch.octo.cffpoc.stops.{ StopCloser, StopCollection }
+import ch.octo.cffpoc.streaming.serialization.serializers
 import org.apache.kafka.clients.producer.{ ProducerRecord, KafkaProducer }
 import org.apache.spark.streaming.receiver.ActorHelper
 import org.joda.time.DateTime
 import play.api.libs.json.Json
-import ch.octo.cffpoc.streaming.serializers._
+import serializers._
 import scala.collection.JavaConversions._
 
 /**

@@ -1,10 +1,9 @@
-package ch.octo.cffpoc.streaming
+package ch.octo.cffpoc.streaming.serialization
 
 import ch.octo.cffpoc.models._
 import ch.octo.cffpoc.position._
 import ch.octo.cffpoc.stationboard._
 import ch.octo.cffpoc.stops.Stop
-import org.joda.time.DateTime
 import play.api.libs.json._
 
 /**
