@@ -10,6 +10,18 @@
  * Java 8
  * nodeJS (nvm)
  
+ 
+### Launching a  mock feed (for offline evelopement)
+
+To avoid launching the full stack as described below, or being connected to the amazon kafka, one can cycle through a few historical data. A node js script read those files a send event to a local kafka, as if they where coming from the real cff sniffer. The pace is multiplied a factor (10 is default) to have a more compfortable dev environnment.
+
+A docker compose is ready to be fired
+
+    cd devtools/cff-mock-feeder
+	docker-compose build
+	docker-compose up
+
+ 
 ### Launch the full stack
 
     eval $(docker-machine env default)
@@ -37,7 +49,8 @@ And you should see
 	a1cac8d9b7bc        octoch/elasticsearch               "echo 'Data for ES'"     5 minutes ago       Exited (0) 5 minutes ago                                                    elasticsearch_data
 	a53080435858        octoch/kafka                       "echo 'Data for kafka"   6 minutes ago       Exited (0) 6 minutes ago                                                    kafka_data
 	
-#### Dev hiccups
+
+#### Docker dev troubleshooting
 
 Check the logs to see if a container is running
 
