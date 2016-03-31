@@ -47,7 +47,7 @@ let kwPipe = new KafkaWSPipe({
   intervalMS: config.get('kafka.interval'),
   channels:[
     {wsPort:config.get('ports.ws.train_position'),topic: config.get('kafka.topic.train_position')},
-    {wsPort:config.get('ports.ws.station_board_stats'),topic: config.get('kafka.topic.station_board_stats')}
+    //{wsPort:config.get('ports.ws.station_board_stats'),topic: config.get('kafka.topic.station_board_stats')}
   ],
   groupId: 'web-realtime-viewer-'+Math.round(Math.random()*10000000)
 });

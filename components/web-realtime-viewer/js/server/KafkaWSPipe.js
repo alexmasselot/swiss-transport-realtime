@@ -112,6 +112,10 @@ class KafkaWSPipe {
     _this._lastMessage = msg;
     console.log(`${new Date()} broadcast ${topic} ${msg.length} bytes ${msg.substring(0, 25)}...`);
     _this._wsServers[topic].clients.forEach(function (client) {
+      if(client.readyState !== client.OPEN){
+        console.warn("client readystate is not open for ", topic);
+        return;
+      }
       client.send(msg);
     });
     return _this;

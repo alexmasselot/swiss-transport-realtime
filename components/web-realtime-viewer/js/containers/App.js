@@ -22,12 +22,12 @@ frontendConfig.get().then(function (config) {
       timestamp: new Date().getTime()
     };
   });
-  wsStore.pipe(config.url.ws.station_board_stats, function (event) {
-    return {
-      type: ActionTypes.STATION_BOARD_STATS_RECEIVED,
-      data: JSON.parse(event.data || '{}'),
-      timestamp: new Date().getTime()
-    };
+    wsStore.pipe(config.url.ws.station_board_stats, function (event) {
+      return {
+        type: ActionTypes.STATION_BOARD_STATS_RECEIVED,
+        data: JSON.parse(event.data || '{}'),
+        timestamp: new Date().getTime()
+      };
   });
 }).catch(function (error) {
   console.error('Error getting frontendConfig', error);

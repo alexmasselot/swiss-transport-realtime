@@ -29,7 +29,6 @@ class PositionMapGoogle extends Component {
     let center = location.center;
     let zoom = location.zoom;
 
-
     return (
       <div style={{height:height, width:width}}>
         <GoogleMap
@@ -42,6 +41,7 @@ class PositionMapGoogle extends Component {
             lng={location.bounds.lngMin}
             bounds={location.bounds}
             positions={positions}
+            zoom={zoom}
             stats={stationBoardStats}
             height={height}
             width={width}

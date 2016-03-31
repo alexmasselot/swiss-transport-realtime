@@ -111,7 +111,7 @@ class PositionMapTrains extends Component {
     return _this;
   }
 
-  _renderD3TrainPositions(el) {
+  _renderD3TrainPositions(el, zoom) {
     let _this = this;
 
     let gTrains = _this._elements.gMainTrainPositions
@@ -146,42 +146,71 @@ class PositionMapTrains extends Component {
       .attr({
         cx: 0,
         cy: 0,
-        r: 2
+        r: 1
       });
-    //gSymbol.append('text')
-    //  .text(function (p) {
-    //    let s = p.train.category;
-    //
-    //    if (p.timedPosition.stop) {
-    //      s = s + " - " + p.timedPosition.stop.name;
-    //    }
-    //    return s;
-    //  });
+
 
     gNew.append('g')
       .attr({
-        class: classes.trainDetails
+        class: 'train-details ' + classes.trainDetails
       }).append('text')
       .attr({
-        class: classes.positionText,
-        x: 4
+        class: 'train-details ' + classes.positionText,
+        x: 6
       })
       .text(function (p) {
-        return p.train_name.trim() + ' (' + p.train_lastStopName + ')';// +_this.props.coord2point.x(p.x);
+
+        //return p.train_name.trim() + ' (' + p.train_lastStopName + ')';// +_this.props.coord2point.x(p.x);
       });
 
 
-    //gTrains.classed(classes.stopped, function (p) {
-    //  return p.timedPosition.stop;
-    //});
-
-    //.transition()
-    //.duration(500)
     gTrains
+      .transition()
+      .duration(500)
       .attr('transform', function (p) {
         return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
       });
 
+
+    var radius;
+    if (zoom <= 7) {
+      radius = 1;
+    } else if (radius >= 11) {
+      radius = 4;
+    } else {
+      radius = zoom - 7;
+    }
+    gTrains.select('circle')
+      .attr('r', radius);
+
+
+    let fText_0 = function () {
+      return '';
+    };
+    let fText_1 = function (p) {
+      return p.train_category;
+    };
+    let fText_2 = function (p) {
+      return p.train_name;
+    };
+    let fText_3 = function (p) {
+      return p.train_name.trim() + ' (' + p.train_lastStopName + ')';
+    };
+    var fText;
+    if (zoom < 10) {
+      fText = fText_0;
+    }
+    if (zoom == 10) {
+      fText = fText_1;
+    }
+    if (zoom == 11) {
+      fText = fText_2;
+    }
+    if (zoom >= 12) {
+      fText = fText_3;
+    }
+    gTrains.selectAll('text.train-details')
+      .text(fText);
 
     gTrains.exit().transition()
       .duration(300)
@@ -190,7 +219,7 @@ class PositionMapTrains extends Component {
     return _this;
   };
 
-  _renderD3StationBoardStats(el) {
+  _renderD3StationBoardStats(el, zoom) {
     let _this = this;
 
     let gStats = _this._elements.gMainStationBoardStats
@@ -206,7 +235,23 @@ class PositionMapTrains extends Component {
     gNew.on('mouseover', function (s) {
       console.log(s.stop.name + ':' + s.delayed + '/' + s.total);
     });
+    gNew.append('path')
+      .attr({
+        class: 'delayed ' + classes.stationboard_delayed
+      });
 
+    var factor;
+    if (zoom <= 8) {
+      factor = 0.25;
+    } else if (factor >= 11) {
+      factor = 1;
+    } else {
+      factor = ((zoom - 8) + (11 - zoom) * 0.25) / 3;
+    }
+
+    let fRadius = function (d) {
+      return factor * 5 * (d.total + 1);
+    };
 
     gStats.transition()
       .attr('transform', function (p) {
@@ -214,16 +259,22 @@ class PositionMapTrains extends Component {
       });
     gStats.select('circle')
       .attr({
-        r: function (d) {
-          return d.total + 1;
-        }
-
+        r: fRadius
       })
-      .style({
-        'stroke-width': function (d) {
-          return 5 * d.delayed;
-        }
-      });
+      .style('stroke-width', function (d) {
+        return 0.5 * d.delayed;
+      })
+    ;
+    gStats.selectAll('path.delayed')
+      .attr('d', d3.svg.arc()
+        .innerRadius(0)
+        .outerRadius(fRadius)
+        .startAngle(0)
+        .endAngle(function (d) {
+          return d.total ? (2 * Math.PI * d.delayed / d.total) : 0;
+        })
+      );
+
 
     gStats.exit().remove()
   };
@@ -240,8 +291,8 @@ class PositionMapTrains extends Component {
 
 
     _this._updateData(newProps.bounds, newProps.positions, newProps.stats)
-      ._renderD3TrainPositions(el)
-      ._renderD3StationBoardStats(el);
+      ._renderD3TrainPositions(el, newProps.zoom)
+      ._renderD3StationBoardStats(el, newProps.zoom);
 
 
   }
