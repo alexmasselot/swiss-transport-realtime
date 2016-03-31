@@ -95,7 +95,7 @@ var shootCycle = function (events, kafkaProducer, topic) {
             iEvent++
         }
         return {
-            event: event,
+            event: _.assign({}, event, {timeStamp:new Date().getTime()}),
             wait: wait / speedup
         }
     };
