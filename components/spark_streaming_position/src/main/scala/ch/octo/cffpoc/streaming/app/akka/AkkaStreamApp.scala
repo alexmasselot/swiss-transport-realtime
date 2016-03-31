@@ -1,7 +1,7 @@
 package ch.octo.cffpoc.streaming.app.akka
 
 import ch.octo.cffpoc.streaming.app.akka.actors.MainActor
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.GetGlobalStats
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.StationBoardsSnapshot
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -20,6 +20,6 @@ object AkkaStreamApp extends App {
     MainActor.actorSystem.scheduler.schedule(100 milliseconds,
       1000 milliseconds,
       MainActor(),
-      GetGlobalStats)
+      StationBoardsSnapshot)
 }
 

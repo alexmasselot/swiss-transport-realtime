@@ -4,7 +4,7 @@ import akka.actor.Actor.Receive
 import akka.actor.{ ActorSystem, ActorPath, ActorLogging, Actor }
 import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardEvent }
 import ch.octo.cffpoc.stops.Stop
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ StationBoardDetails, GetGlobalStats }
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ StationBoardDetails, StationBoardsSnapshot }
 import org.joda.time.DateTime
 
 /**

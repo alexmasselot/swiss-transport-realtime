@@ -2,7 +2,7 @@ package ch.octo.cffpoc.streaming.app.akka.actors
 
 import akka.actor.{ Actor, ActorLogging }
 import ch.octo.cffpoc.stationboard.{ StationBoardStats, StationBoardsSnapshotStats }
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.GetGlobalStats
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.StationBoardsSnapshot
 
 /**
  *
@@ -19,7 +19,7 @@ class StationBoardStatsActor extends Actor with ActorLogging {
       snapshot = snapshot + stats
 
     //asks for the the global snapshot state in return
-    case GetGlobalStats => sender ! snapshot
+    case StationBoardsSnapshot => sender ! snapshot
   }
 
 }

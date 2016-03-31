@@ -5,8 +5,10 @@ package ch.octo.cffpoc.streaming.app.akka.actors
  */
 object Messages {
 
-  case object GetGlobalStats
+  case object StationBoardsSnapshot
 
   case class StationBoardDetails(stopId: Long)
+
+  case object PositionSnapshot
 
 }

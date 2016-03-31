@@ -21,14 +21,12 @@ libraryDependencies ++= Dependencies.sparkAkkaHadoop
 
 libraryDependencies ++= Seq(
   cache,
+  filters,
   "com.typesafe.play" %% "play-json" % "2.5.0",
   "com.github.tototoshi" %% "scala-csv" % "1.3.0",
   "com.github.nscala-time" %% "nscala-time" % "2.10.0"
 )
 
-dependencyOverrides ++= Set(
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
-)
 
 scalaSource in Compile := baseDirectory.value / "src/main/scala"
 

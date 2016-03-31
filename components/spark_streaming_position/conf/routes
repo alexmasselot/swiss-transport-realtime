@@ -1,2 +1,3 @@
-GET        /stationboard/stats        ch.octo.cffpoc.controllers.StationBoardController.stats
+GET        /stationboard/snapshot           ch.octo.cffpoc.controllers.StationBoardController.snapshot
 GET        /stationboard/details/:id        ch.octo.cffpoc.controllers.StationBoardController.details(id:Long)
+GET        /position/snapshot           ch.octo.cffpoc.controllers.PositionController.snapshot

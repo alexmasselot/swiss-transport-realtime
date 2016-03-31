@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardEvent }
 import ch.octo.cffpoc.stops.Stop
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ StationBoardDetails, GetGlobalStats }
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ StationBoardDetails, StationBoardsSnapshot }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -39,7 +39,7 @@ class StationBoardMasterActor extends Actor with ActorLogging {
   override def receive: Receive = {
     case evt: StationBoardEvent =>
       stationBoardActor(evt.stop) ! evt
-    case GetGlobalStats => statsActor forward GetGlobalStats
+    case StationBoardsSnapshot => statsActor forward StationBoardsSnapshot
     case StationBoardDetails(stopId) => stationBoardActor(stopId) match {
       case Some(sba) =>
         val origSender = sender

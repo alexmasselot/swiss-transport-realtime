@@ -2,8 +2,9 @@ package ch.octo.cffpoc.controllers
 
 import akka.pattern.ask
 import akka.util.Timeout
+import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardsSnapshotStats }
 import ch.octo.cffpoc.streaming.app.akka.actors.MainActor
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ StationBoardDetails, GetGlobalStats }
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ StationBoardDetails, StationBoardsSnapshot }
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -17,16 +18,16 @@ class StationBoardController extends Controller {
   import ch.octo.cffpoc.streaming.serialization.serializers._
   implicit val timeout = Timeout(5 seconds)
 
-  def stats = Action.async {
-    (MainActor() ? GetGlobalStats).map { message =>
-      Ok(message.toString)
+  def snapshot = Action.async {
+    (MainActor() ? StationBoardsSnapshot).mapTo[StationBoardsSnapshotStats].map { message =>
+      Ok(Json.toJson(message))
     }
   }
 
   def details(id: Long) = Action.async {
-    (MainActor() ? StationBoardDetails(id)).map { message =>
+    (MainActor() ? StationBoardDetails(id)).mapTo[StationBoard].map { message =>
       println(message)
-      Ok(message.toString) //Json.toJson(message))
+      Ok(Json.toJson(message))
     }
   }
 }
