@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.position
 
-import ch.octo.cffpoc.models.GeoLoc
+import ch.octo.cffpoc.models.{ GeoLocBearing, GeoLoc }
 import ch.octo.cffpoc.stops.Stop
 import org.joda.time.DateTime
 
@@ -10,24 +10,24 @@ import org.joda.time.DateTime
 
 sealed trait HasTimedPosition {
   val timestamp: DateTime
-  val position: GeoLoc
+  val position: GeoLocBearing
 }
 
 case class TimedPosition(
     timestamp: DateTime,
-    position: GeoLoc) extends HasTimedPosition {
+    position: GeoLocBearing) extends HasTimedPosition {
 
 }
 
 case class TimedPositionIsMoving(
     timestamp: DateTime,
-    position: GeoLoc,
+    position: GeoLocBearing,
     moving: Boolean) extends HasTimedPosition {
 
 }
 
 case class TimedPositionWithStop(
     timestamp: DateTime,
-    position: GeoLoc,
+    position: GeoLocBearing,
     stop: Option[Stop]) extends HasTimedPosition {
 }

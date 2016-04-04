@@ -21,12 +21,16 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
   /*
     the cff CGI query exports a poly list of the futur planned positions
    */
-  case class PolyPos(location: GeoLoc, msec: Int)
+  case class PolyPos(location: GeoLocBearing, msec: Int)
 
   implicit val readsPolyPos = new Reads[PolyPos] {
     override def reads(json: JsValue): JsResult[PolyPos] = {
       JsSuccess(PolyPos(
-        location = GeoLoc((json \ "y").as[String].toDouble / 1000000, (json \ "x").as[String].toDouble / 1000000),
+        location = GeoLocBearing(
+          (json \ "y").as[String].toDouble / 1000000,
+          (json \ "x").as[String].toDouble / 1000000,
+          (json \ "direction").as[String].toDouble * 10.0
+        ),
         msec = (json \ "msec").as[String].toInt
       ))
     }
@@ -45,7 +49,10 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
           ),
           timedPosition = TimedPosition(
             timestamp = tStamp,
-            position = GeoLoc((json \ "y").as[String].toDouble / 1000000, (json \ "x").as[String].toDouble / 1000000)
+            position = GeoLocBearing((json \ "y").as[String].toDouble / 1000000,
+              (json \ "x").as[String].toDouble / 1000000,
+              (json \ "direction").as[String].toDouble * 10.0
+            )
           )
         ),
         futurePositions = (json \ "poly").as[List[PolyPos]].map(pp => TimedPosition(tStamp.plusMillis(pp.msec), pp.location))

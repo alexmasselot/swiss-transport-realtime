@@ -19,7 +19,8 @@ class StationBoardActor(stop: Stop, statsActorPath: ActorPath) extends Actor wit
 
   override def receive: Receive = {
     case evt: StationBoardEvent =>
-      stationBoard = (stationBoard + evt).after(evt.timestamp.minusMinutes(2)).before(evt.timestamp.plusMinutes(20))
+      val now = DateTime.now()
+      stationBoard = (stationBoard + evt).after(now.minusMinutes(2)).before(now.plusMinutes(20))
       statsActor ! stationBoard.stats
 
     case _: StationBoardDetails => sender ! stationBoard

@@ -21,7 +21,7 @@ class TrainPositionSnapshotSpecs extends FlatSpec with Matchers with DateMatcher
     val re(id, name, time) = str
     TrainPosition(
       train = Train(id = id, name = name, category = "X", lastStopName = "Calgary"),
-      timedPosition = TimedPosition(timestamp = mockDate(time), position = GeoLoc(0, 0))
+      timedPosition = TimedPosition(timestamp = mockDate(time), position = GeoLocBearing(0, 0, 0))
     )
   }
 
@@ -42,9 +42,9 @@ class TrainPositionSnapshotSpecs extends FlatSpec with Matchers with DateMatcher
       |4/x1/12:45:00""".stripMargin)
 
   it should "mock works" in {
-    val t2 = mockTrain("1/x1/12:42:00").at(TimedPosition(mockDate("12:54:00"), GeoLoc(12, 102)))
+    val t2 = mockTrain("1/x1/12:42:00").at(TimedPosition(mockDate("12:54:00"), GeoLocBearing(12, 102, 20)))
     t2.train.id should equal("1")
-    t2.timedPosition should equal(TimedPosition(mockDate("12:54:00"), GeoLoc(12, 102)))
+    t2.timedPosition should equal(TimedPosition(mockDate("12:54:00"), GeoLocBearing(12, 102, 20)))
   }
 
   it should "size with no train dup" in {

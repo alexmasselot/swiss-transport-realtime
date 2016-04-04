@@ -8,10 +8,8 @@ enablePlugins(JavaAppPackaging)
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-//
-// http://spark.apache.org/docs/latest/quick-start.html#a-standalone-app-in-scala
-//
-name := """spark-streaming-position"""
+
+name := """cff-poc-streaming-backend"""
 organization := "ch.octo"
 version := "0.1.0"
 scalaVersion := Version.scala
@@ -29,6 +27,8 @@ libraryDependencies ++= Seq(
 
 
 scalaSource in Compile := baseDirectory.value / "src/main/scala"
+
+scalaSource in Test := baseDirectory.value / "src/test/scala"
 
 
 releaseSettings

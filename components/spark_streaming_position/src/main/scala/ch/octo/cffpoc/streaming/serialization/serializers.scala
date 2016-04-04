@@ -11,8 +11,20 @@ import play.api.libs.json._
  */
 object serializers {
 
-  implicit val formatGeoLoc = Json.format[GeoLoc]
-  implicit val formatStop = Json.format[Stop]
+  implicit object writesGeoLoc extends Writes[GeoLoc] {
+    override def writes(obj: GeoLoc): JsValue = obj match {
+      case o: GeoLocBearing => JsObject {
+        List(
+          "lat" -> JsNumber(o.lat),
+          "lng" -> JsNumber(o.lng),
+          "bearing" -> JsNumber(o.bearing)
+        )
+      }
+      case o: GeoLoc => Json.writes[GeoLoc].writes(o)
+    }
+  }
+
+  implicit val writesStop = Json.writes[Stop]
 
   implicit object formatHasTimedPosition extends Writes[HasTimedPosition] {
     override def writes(o: HasTimedPosition): JsValue =
@@ -48,6 +60,7 @@ object serializers {
       )
     )
   }
+
   implicit object writesSationBoardSnapshotStats extends Writes[StationBoardsSnapshotStats] {
     override def writes(o: StationBoardsSnapshotStats): JsValue = JsObject(
       List(
@@ -61,3 +74,4 @@ object serializers {
   //
   //  }
 }
+

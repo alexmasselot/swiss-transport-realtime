@@ -71,7 +71,6 @@ class StationBoardsSnapshotSpecs extends FlatSpec with Matchers with DateMatcher
 
   it should "stats" in {
     val fBoards = boards.before(DateTime.parse("2016-02-29T17:42:00.000+01:00"))
-    println(fBoards)
     val stats = fBoards.stats
     stats.total should be(60)
     stats.delayed should be(10)

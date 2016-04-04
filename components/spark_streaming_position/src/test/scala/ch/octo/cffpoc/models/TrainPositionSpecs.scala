@@ -17,14 +17,14 @@ class TrainPositionSpecs extends FlatSpec with Matchers {
       lastStopName = "Calgary"),
     timedPosition = TimedPosition(
       timestamp = new DateTime(100L),
-      position = GeoLoc(10, 100)
+      position = GeoLocBearing(10, 100, 40)
     )
   )
 
   it should "at" in {
-    val t2 = trainPos.at(TimedPosition(new DateTime(200L), GeoLoc(12, 102)))
+    val t2 = trainPos.at(TimedPosition(new DateTime(200L), GeoLocBearing(12, 102, 60)))
     t2.train.id should equal("1")
-    t2.timedPosition should equal(TimedPosition(new DateTime(200L), GeoLoc(12, 102)))
+    t2.timedPosition should equal(TimedPosition(new DateTime(200L), GeoLocBearing(12, 102, 60)))
   }
 
 }
