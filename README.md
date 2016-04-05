@@ -30,7 +30,7 @@ That is typically the case when your dev laptop goes out of network for a while.
 And if you're stunned unde LeaderNotAvailable jibber jabber, just ^C and redo...
 
 
-### Develloping the realtim viz
+### Developing the real time viz
 
 Once the mock feeder is up, we must start two components
 
