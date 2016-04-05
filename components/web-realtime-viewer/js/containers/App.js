@@ -15,24 +15,12 @@ const store = configureStore();
  * @type {WSTrainPosition}
  */
 let wsStore = new WSTrainPosition({store});
-//frontendConfig.get().then(function (config) {
-//  wsStore.pipe(config.url.ws.train_position, function (event) {
-//    return {
-//      type: ActionTypes.TRAIN_POSITION_RECEIVED,
-//      tsv: event.data,
-//      timestamp: new Date().getTime()
-//    };
-//  });
-//    wsStore.pipe(config.url.ws.station_board_stats, function (event) {
-//      return {
-//        type: ActionTypes.STATION_BOARD_STATS_RECEIVED,
-//        data: JSON.parse(event.data || '{}'),
-//        timestamp: new Date().getTime()
-//      };
-//  });
-//}).catch(function (error) {
-//  console.error('Error getting frontendConfig', error);
-//});
+
+
+/*
+ Launches the regular GET call to refresh the store.
+ Train positions and station boards have different refresh rates.
+ */
 
 frontendConfig.get().then(function (config) {
   setInterval(function () {
