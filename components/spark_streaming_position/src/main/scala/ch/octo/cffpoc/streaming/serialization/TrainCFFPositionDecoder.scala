@@ -25,18 +25,19 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
 
   implicit val readsPolyPos = new Reads[PolyPos] {
     override def reads(json: JsValue): JsResult[PolyPos] = {
+      val dir = (json \ "direction").as[String] match {
+        case "" => None
+        case s: String => Some(s.toDouble * 10)
+      }
       JsSuccess(PolyPos(
-        location = GeoLocBearing(
-          (json \ "y").as[String].toDouble / 1000000,
-          (json \ "x").as[String].toDouble / 1000000,
-          (json \ "direction").as[String].toDouble * 10.0
-        ),
+        location = GeoLocBearing((json \ "y").as[String].toDouble / 1000000, (json \ "x").as[String].toDouble / 1000000, dir),
         msec = (json \ "msec").as[String].toInt
       ))
     }
   }
 
   implicit val readsTrainCFFPosition = new Reads[TrainCFFPosition] {
+
     override def reads(json: JsValue): JsResult[TrainCFFPosition] = {
       val tStamp = (json \ "timeStamp").as[DateTime]
       JsSuccess(TrainCFFPosition(
@@ -51,7 +52,10 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
             timestamp = tStamp,
             position = GeoLocBearing((json \ "y").as[String].toDouble / 1000000,
               (json \ "x").as[String].toDouble / 1000000,
-              (json \ "direction").as[String].toDouble * 10.0
+              (json \ "direction").as[String] match {
+                case "" => None
+                case s: String => Some(s.toDouble * 10)
+              }
             )
           )
         ),

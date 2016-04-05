@@ -16,7 +16,6 @@ import scala.concurrent.duration._
  * Created by alex on 30/03/16.
  */
 class PositionController extends Controller {
-
   import ch.octo.cffpoc.streaming.serialization.serializers._
 
   implicit val timeout = Timeout(5 seconds)
@@ -24,11 +23,10 @@ class PositionController extends Controller {
   def snapshot = Action.async {
     (MainActor() ? PositionSnapshot).mapTo[TrainPositionSnapshot].map { snapshot =>
       //Ok(Json.toJson(message))
-      Ok("train_id\ttrain_category\ttrain_name\ttrain_lastStopName\tposition_lat\tposition_lng\n" +
+      Ok("train_id\ttrain_category\ttrain_name\ttrain_lastStopName\tposition_lat\tposition_lng\tposition_bearing\n" +
         snapshot.positions.values.map({
           p =>
-
-            s"${p.train.id}\t${p.train.category}\t${p.train.name.trim()}\t${p.train.lastStopName}\t${p.timedPosition.position.lat}\t${p.timedPosition.position.lng}"
+            s"${p.train.id}\t${p.train.category}\t${p.train.name.trim()}\t${p.train.lastStopName}\t${p.timedPosition.position.lat}\t${p.timedPosition.position.lng}\t${p.timedPosition.position.bearing}"
         }).mkString("\n")
       )
     }

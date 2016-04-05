@@ -18,7 +18,7 @@ class TrainCFFPositionLatestCollectionSpecs extends FlatSpec with Matchers {
         lastStopName = "Calgary"),
       timedPosition = TimedPosition(
         timestamp = new DateTime(p._2.toLong),
-        position = GeoLocBearing(1, 2, 10)
+        position = GeoLocBearing(1, 2, Some(10))
       )
     ),
     futurePositions = List()

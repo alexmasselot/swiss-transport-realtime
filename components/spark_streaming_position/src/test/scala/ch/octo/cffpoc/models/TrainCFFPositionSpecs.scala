@@ -20,22 +20,22 @@ class TrainCFFPositionSpecs extends FlatSpec with Matchers {
       ),
       timedPosition = TimedPosition(
         timestamp = new DateTime(100L),
-        position = GeoLocBearing(10, 100, 40)
+        position = GeoLocBearing(10, 100, Some(40))
       )
     ),
     futurePositions = List(
-      TimedPosition(new DateTime(100L), GeoLocBearing(10, 100, 40)),
-      TimedPosition(new DateTime(110L), GeoLocBearing(11, 101, 50)),
-      TimedPosition(new DateTime(120L), GeoLocBearing(12, 102, 70)),
-      TimedPosition(new DateTime(125L), GeoLocBearing(12, 102, 70)),
-      TimedPosition(new DateTime(130L), GeoLocBearing(13, 103, 80))
+      TimedPosition(new DateTime(100L), GeoLocBearing(10, 100, Some(40))),
+      TimedPosition(new DateTime(110L), GeoLocBearing(11, 101, Some(50))),
+      TimedPosition(new DateTime(120L), GeoLocBearing(12, 102, Some(70))),
+      TimedPosition(new DateTime(125L), GeoLocBearing(12, 102, Some(70))),
+      TimedPosition(new DateTime(130L), GeoLocBearing(13, 103, Some(80)))
     )
   )
 
   def check(at: Long, eT: Long, eLat: Double, eLng: Double, eBearing: Double, eMoving: Boolean) = {
     val t = tcff.at(new DateTime(at))
     t.train.id should equal("1")
-    t.timedPosition.position should equal(GeoLocBearing(eLat, eLng, eBearing))
+    t.timedPosition.position should equal(GeoLocBearing(eLat, eLng, Some(eBearing)))
     t.timedPosition.timestamp should equal(new DateTime(eT))
     t.timedPosition.isInstanceOf[TimedPositionIsMoving] should be(true)
     t.timedPosition.asInstanceOf[TimedPositionIsMoving].moving should be(eMoving)

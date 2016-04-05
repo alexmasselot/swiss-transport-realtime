@@ -11,18 +11,8 @@ import play.api.libs.json._
  */
 object serializers {
 
-  implicit object writesGeoLoc extends Writes[GeoLoc] {
-    override def writes(obj: GeoLoc): JsValue = obj match {
-      case o: GeoLocBearing => JsObject {
-        List(
-          "lat" -> JsNumber(o.lat),
-          "lng" -> JsNumber(o.lng),
-          "bearing" -> JsNumber(o.bearing)
-        )
-      }
-      case o: GeoLoc => Json.writes[GeoLoc].writes(o)
-    }
-  }
+  implicit val writesGeoLoc = Json.writes[GeoLoc]
+  implicit val writesGeoLocBearing = Json.writes[GeoLocBearing]
 
   implicit val writesStop = Json.writes[Stop]
 

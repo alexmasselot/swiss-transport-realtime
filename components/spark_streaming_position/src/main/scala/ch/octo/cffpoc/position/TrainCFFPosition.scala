@@ -25,7 +25,7 @@ case class TrainCFFPosition(
    */
   def at(time: DateTime): TrainPosition = {
     val timeEpsilon = time.plusMillis(1)
-    futurePositions.zip(futurePositions.tail :+ TimedPosition(new DateTime(Long.MaxValue), GeoLocBearing(0, 0, 0)))
+    futurePositions.zip(futurePositions.tail :+ TimedPosition(new DateTime(Long.MaxValue), GeoLocBearing(0, 0, None)))
       .takeWhile(_._1.timestamp.isBefore(timeEpsilon)).lastOption match {
         case Some((p1, p2)) => current.at(TimedPositionIsMoving(p1.timestamp, p1.position, p1.position != p2.position))
         case None => current.at(TimedPositionIsMoving(current.timedPosition.timestamp, current.timedPosition.position, true))
