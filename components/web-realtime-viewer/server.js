@@ -42,13 +42,13 @@ app.listen(config.get('ports.http'), 'localhost', function (err, result) {
 console.log(config);
 
 let server = http.createServer(app);
-let kwPipe = new KafkaWSPipe({
-  kafkaBroker: config.get('zookeeper.host') + ':' + config.get('zookeeper.port'),
-  intervalMS: config.get('kafka.interval'),
-  channels:[
-    {wsPort:config.get('ports.ws.train_position'),topic: config.get('kafka.topic.train_position')},
-    //{wsPort:config.get('ports.ws.station_board_stats'),topic: config.get('kafka.topic.station_board_stats')}
-  ],
-  groupId: 'web-realtime-viewer-'+Math.round(Math.random()*10000000)
-});
+//let kwPipe = new KafkaWSPipe({
+//  kafkaBroker: config.get('zookeeper.host') + ':' + config.get('zookeeper.port'),
+//  intervalMS: config.get('kafka.interval'),
+//  channels:[
+//    {wsPort:config.get('ports.ws.train_position'),topic: config.get('kafka.topic.train_position')},
+//    //{wsPort:config.get('ports.ws.station_board_stats'),topic: config.get('kafka.topic.station_board_stats')}
+//  ],
+//  groupId: 'web-realtime-viewer-'+Math.round(Math.random()*10000000)
+//});
 

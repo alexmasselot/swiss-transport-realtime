@@ -48,7 +48,8 @@ class PositionMapTrains extends Component {
           //viewBox: '-' + (_this._dim.width / 2) + ' -' + (_this._dim.height / 2) + ' ' + _this._dim.width + ' ' + _this._dim.height,
           //viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
           width: _this._dim.width,
-          height: _this._dim.height
+          height: _this._dim.height,
+          class:classes.train_overlay
         })
       //.style('overflow', 'visible')
     };
@@ -230,6 +231,9 @@ class PositionMapTrains extends Component {
     let gNew = gStats.enter()
       .append('g')
       .attr('class', 'station-board-stats ' + classes['station-board-stats']);
+    gNew.attr('transform', function (p) {
+      return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
+    });
 
     gNew.append('circle');
     gNew.on('mouseover', function (s) {

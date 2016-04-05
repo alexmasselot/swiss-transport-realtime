@@ -94,8 +94,16 @@ var shootCycle = function (events, kafkaProducer, topic) {
             wait = events[iEvent + 1].timeStamp - events[iEvent].timeStamp
             iEvent++
         }
+        let evt = _.cloneDeep(event);
+        let t0 = event.timeStamp;
+        let t1 = new Date().getTime();
+        evt.timeStamp=t1;
+        if(event.stop !== undefined){
+            evt.stop.departureTimestamp = Math.round(event.stop.departureTimestamp + (t1-t0)/1000);
+            evt.stop.arrivalTimestamp = Math.round(event.stop.arrivalTimestamp + (t1-t0)/1000);
+        }
         return {
-            event: _.assign({}, event, {timeStamp:new Date().getTime()}),
+            event: evt,
             wait: wait / speedup
         }
     };
