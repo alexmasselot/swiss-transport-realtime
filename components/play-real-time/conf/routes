@@ -1,3 +1,0 @@
-GET        /                    com.octo.suisse.cffrealtime.controllers.TrainPositionController.index
-GET        /paf                    com.octo.suisse.cffrealtime.controllers.TrainPositionController.paf
-GET        /pif                    com.octo.suisse.cffrealtime.controllers.TrainPositionController.pif
