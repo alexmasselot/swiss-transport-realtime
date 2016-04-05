@@ -21,6 +21,14 @@ A docker compose is ready to be fired
 	docker-compose build
 	docker-compose up
 
+*But what happens when some container fails?*
+That is typically the case when your dev laptop goes out of network for a while. The code could certainy be more robust, but for the moment:
+
+    docker-compose  restart
+	docker logs --tail=100 -f cffmockfeeder_cff-mock-feeder_1
+	
+And if you're stunned unde LeaderNotAvailable jibber jabber, just ^C and redo...
+
 
 ### Develloping the realtim viz
 
