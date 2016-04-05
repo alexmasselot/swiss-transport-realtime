@@ -21,8 +21,33 @@ A docker compose is ready to be fired
 	docker-compose build
 	docker-compose up
 
+
+### Develloping the realtim viz
+
+Once the mock feeder is up, we must start two components
+
+#### The streaming app
+The scala/akka/kafka/play app that reads the position/station board stream, aggregate, decorate them and expose them via REST API.
+
+    cd components/play-realtime
+	./activator ~run
+	
+
+Check it out via a couple of calls to http://localhost:9000/position/snapshot (let a few seconds to warm up)
+
+
+#### The web frontend
+
+a nodejs + express + react/redux
+
+    cd components/web-realtime-viewer
+	nvm use 4.2 #to use a recent nodejs
+	npm start
+	
+And head to http://localhost:3000
+
  
-### Launch the full stack
+### Launch the full stack (well, without the real time viz yet)
 
     eval $(docker-machine env default)
 	#create at once all the docker containers
