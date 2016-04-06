@@ -1,6 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 
+import SpecsOne from './SpecsOne';
 import data  from '../data/stationboard-8501120';
 import StationBoard from '../../components/StationBoard';
 import configureStore from 'redux-mock-store';
@@ -14,12 +15,16 @@ export default React.createClass({
     return (
       <Provider store={store}>
         <div>
-          <div style={{width:200, height:100}}>
-            <StationBoard/>
-          </div>
-          <div style={{width:300, height:200}}>
-            <StationBoard/>
-          </div>
+          <SpecsOne title="200x100">
+            <div style={{width:200, height:100}}>
+              <StationBoard/>
+            </div>
+          </SpecsOne>
+          <SpecsOne title="300x200">
+            <div style={{width:300, height:200}}>
+              <StationBoard/>
+            </div>
+          </SpecsOne>
         </div>
       </Provider>
     );

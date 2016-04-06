@@ -20,6 +20,10 @@ rect.masking{
   fill: white;
   fill-opacity: 0.95;
 }
+.trainSymbol path.bearingArrow {
+  fill: blue;
+}
+
 
 .trainSymbol:hover {
   fill: white;
@@ -33,7 +37,7 @@ rect.masking{
 }
 
 .trainDetails text {
-  font-size: 120%;
+  //font-size: 120%;
 }
 
 

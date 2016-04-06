@@ -26,7 +26,7 @@ class PositionController extends Controller {
       Ok("train_id\ttrain_category\ttrain_name\ttrain_lastStopName\tposition_lat\tposition_lng\tposition_bearing\n" +
         snapshot.positions.values.map({
           p =>
-            s"${p.train.id}\t${p.train.category}\t${p.train.name.trim()}\t${p.train.lastStopName}\t${p.timedPosition.position.lat}\t${p.timedPosition.position.lng}\t${p.timedPosition.position.bearing}"
+            s"""${p.train.id}\t${p.train.category}\t${p.train.name.trim()}\t${p.train.lastStopName}\t${p.timedPosition.position.lat}\t${p.timedPosition.position.lng}\t${p.timedPosition.position.bearing.map(_.toString).getOrElse("")}"""
         }).mkString("\n")
       )
     }

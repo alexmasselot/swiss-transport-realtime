@@ -20,7 +20,12 @@ export default function (state = defaultState, action) {
           console.error('error parsing train position TSV', parsed.errors);
           pos=[];
         }else{
-          pos = parsed.data;
+          pos = _.map(parsed.data, function(d){
+            if(d.position_bearing === ""){
+              delete d.position_bearing;
+            }
+            return d;
+          });
         }
       }
 
@@ -29,3 +34,4 @@ export default function (state = defaultState, action) {
       return state;
   }
 }
+

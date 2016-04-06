@@ -21,12 +21,10 @@ class PositionMapTrains extends Component {
   componentDidMount() {
     var _this = this;
     _this._setupD3(ReactDOM.findDOMNode(this));
-
   }
 
   shouldComponentUpdate(props) {
     this._renderD3(ReactDOM.findDOMNode(this), props);
-
     // always skip React's render step
     return false;
   }
@@ -49,16 +47,16 @@ class PositionMapTrains extends Component {
           //viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
           width: _this._dim.width,
           height: _this._dim.height,
-          class:classes.train_overlay
+          class: classes.train_overlay
         })
       //.style('overflow', 'visible')
     };
     _this._elements.svg.append('rect')
       .attr({
-        width: _this._dim.width * 3,
-        height: _this._dim.height * 3,
-        x: -_this._dim.width,
-        y: -_this._dim.height,
+        width: _this._dim.width,// * 3,
+        height: _this._dim.height,// * 3,
+        x: 0,//-_this._dim.width,
+        y: 0,//-_this._dim.height,
         class: classes.masking
       });
     _this._elements.gMainStationBoardStats = _this._elements.svg.append('g')
@@ -69,8 +67,7 @@ class PositionMapTrains extends Component {
       .attr({
         class: 'train-positions-main'
       });
-
-
+    _this._renderD3(el, _this.props)
   }
 
   _updateData(bounds, trainPositions, stationBoardStats) {
@@ -141,15 +138,20 @@ class PositionMapTrains extends Component {
     });
     let gSymbol = gNew.append('g')
       .attr({
-        class: classes.trainSymbol
+        class: 'train-symbol '+classes.trainSymbol
       });
+
     gSymbol.append('circle')
       .attr({
         cx: 0,
         cy: 0,
         r: 1
       });
-
+    gSymbol.append('path')
+      .attr({
+        class:'bearing-arrow '+classes.bearingArrow,
+        d:'M0.707,-0.707 L0,-2 L-0.707,-0.707 Z'
+      });
 
     gNew.append('g')
       .attr({
@@ -160,10 +162,8 @@ class PositionMapTrains extends Component {
         x: 6
       })
       .text(function (p) {
-
         //return p.train_name.trim() + ' (' + p.train_lastStopName + ')';// +_this.props.coord2point.x(p.x);
       });
-
 
     gTrains
       .transition()
@@ -176,13 +176,24 @@ class PositionMapTrains extends Component {
     var radius;
     if (zoom <= 7) {
       radius = 1;
-    } else if (radius >= 11) {
+    } else if (zoom >= 11) {
       radius = 4;
     } else {
       radius = zoom - 7;
     }
-    gTrains.select('circle')
-      .attr('r', radius);
+    gTrains.select('g.train-symbol')
+      .attr('transform', function(p){
+        if(p.position_bearing === undefined) {
+          return 'scale(' + radius + ')';
+        }else{
+          return 'scale(' + radius + ') rotate('+ (p.position_bearing)+')';
+        }
+      });
+    gTrains.select('path.bearing-arrow')
+      .style('display', function(p){
+        return (p.position_bearing === undefined)?'none':'block';
+      });
+
 
 
     let fText_0 = function () {
@@ -297,7 +308,6 @@ class PositionMapTrains extends Component {
     _this._updateData(newProps.bounds, newProps.positions, newProps.stats)
       ._renderD3TrainPositions(el, newProps.zoom)
       ._renderD3StationBoardStats(el, newProps.zoom);
-
 
   }
 

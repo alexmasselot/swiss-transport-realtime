@@ -3,18 +3,15 @@ import {Provider} from 'react-redux';
 
 import data  from '../data/train-1';
 import PositionMapTrains from '../../components/PositionMapTrains';
-import configureStore from 'redux-mock-store';
-
-const mockStore = configureStore();
+import SpecsOne from './SpecsOne';
 
 
 export default React.createClass({
   render() {
-    let store = mockStore(data);
     return (
-      <Provider store={store}>
-        <div>
-          <div style={{width:200, height:100}}>
+      <div>
+        <SpecsOne title="zoom=11">
+          <div>
             <PositionMapTrains
               bounds={{
               lngMin:10,
@@ -22,12 +19,46 @@ export default React.createClass({
               latMin:45,
               latMax:45.1
               }}
-              width={200}
-              height={300}
+              zoom={11}
+              width={150}
+              height={150}
+              positions={data}
             />
           </div>
-        </div>
-      </Provider>
+        </SpecsOne>
+        <SpecsOne title="zoom=10">
+          <div>
+            <PositionMapTrains
+              bounds={{
+              lngMin:10,
+              lngMax:10.1,
+              latMin:45,
+              latMax:45.1
+              }}
+              zoom={10}
+              width={150}
+              height={150}
+              positions={data}
+            />
+          </div>
+        </SpecsOne>
+        <SpecsOne title="zoom=9">
+          <div>
+            <PositionMapTrains
+              bounds={{
+              lngMin:10,
+              lngMax:10.1,
+              latMin:45,
+              latMax:45.1
+              }}
+              zoom={9}
+              width={150}
+              height={150}
+              positions={data}
+            />
+          </div>
+        </SpecsOne>
+      </div>
     );
   }
 });
