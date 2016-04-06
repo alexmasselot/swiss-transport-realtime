@@ -41,7 +41,7 @@ The scala/akka/kafka/play app that reads the position/station board stream, aggr
 	./activator ~run
 	
 
-Check it out via a couple of calls to http://localhost:9000/position/snapshot (let a few seconds to warm up)
+Check it out via a couple of calls to http://localhost:9000/position (let a few seconds to warm up)
 
 
 #### The web frontend
