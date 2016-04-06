@@ -1,0 +1,21 @@
+[
+  {
+    train_id:"",
+    train_category:"",
+    train_name:"",
+    train_lastStopName:"",
+    position_lat:45.05,
+    position_lnt:10.02,
+    position_bearing:170
+  },
+  {
+    train_id:"",
+    train_category:"",
+    train_name:"",
+    train_lastStopName:"",
+    position_lat:45.05,
+    position_lnt:10.02,
+    position_bearing:170
+  }
+
+]
