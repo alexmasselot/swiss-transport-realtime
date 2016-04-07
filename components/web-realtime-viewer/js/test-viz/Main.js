@@ -2,7 +2,9 @@ import React from 'react';
 import SpecsGroup from './component-specs/SpecsGroup';
 import StationBoardSpecs from './component-specs/StationBoardSpecs';
 import PositionMapTrainSpecs from './component-specs/PositionMapTrainSpecs';
-import PositionMapStationBoardSpecs from './component-specs/PositionMapStationBoardSpecs';
+import PositionMapStationBoardSpecs from './component-specs/PositionMapStationBoardStatsSpecs';
+
+
 
 export default React.createClass({
   render() {
@@ -21,4 +23,7 @@ export default React.createClass({
       </div>
     );
   }
-});
+
+
+})
+;

@@ -21,4 +21,4 @@ class StationBoard extends Component {
   }
 }
 
-  export default connect(state => state)(Dimensions()(StationBoard));
+export default connect(state => state)(Dimensions()(StationBoard));

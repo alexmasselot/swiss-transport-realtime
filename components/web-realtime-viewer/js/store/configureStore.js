@@ -5,7 +5,6 @@ import MapLocation from '../reducers/MapLocation';
 
 const rootReducer = combineReducers({TrainPosition, MapLocation, StationBoard});
 
-
 export default function configureStore(initialState) {
   return createStore(rootReducer, initialState);
 }

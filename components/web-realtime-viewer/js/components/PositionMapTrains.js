@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
+import * as MapLocationActions from '../actions/MapLocationActions';
 import styles from '../../css/app.css';
 import classes from './PositionMapCFF.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
@@ -51,18 +52,6 @@ class PositionMapTrains extends Component {
         })
       //.style('overflow', 'visible')
     };
-    _this._elements.svg.append('rect')
-      .attr({
-        width: _this._dim.width,// * 3,
-        height: _this._dim.height,// * 3,
-        x: 0,//-_this._dim.width,
-        y: 0,//-_this._dim.height,
-        class: classes.masking
-      });
-    _this._elements.gMainStationBoardStats = _this._elements.svg.append('g')
-      .attr({
-        class: 'station-board-stats-main'
-      });
     _this._elements.gMainTrainPositions = _this._elements.svg.append('g')
       .attr({
         class: 'train-positions-main'
@@ -70,7 +59,7 @@ class PositionMapTrains extends Component {
     _this._renderD3(el, _this.props)
   }
 
-  _updateData(bounds, trainPositions, stationBoardStats) {
+  _updateData(bounds, trainPositions) {
     let _this = this;
 
     let {lngMin, lngMax, latMin, latMax}  = bounds;
@@ -84,32 +73,6 @@ class PositionMapTrains extends Component {
       .filter(function (p) {
         return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
       }).value();
-
-    _this._stationBoardStats = _.chain(stationBoardStats)
-      .map(function (p) {
-        p.x = p.stop.location.lng;
-        p.y = p.stop.location.lat;
-        return p;
-      })
-      .filter(function (p) {
-        return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
-      })
-      .sortBy(function(p){
-        return -p.total;
-      })
-      .value();
-
-    //
-    //console.log('delayed?');
-    //_.chain(stationBoardStats)
-    //  .filter(function (s) {
-    //    return s.delayed;
-    //  })
-    //  .each(function (s) {
-    //    console.log(s.stop.name + ': ' + s.delayed + '/' + s.total);
-    //  })
-    //  .value();
-
     return _this;
   }
 
@@ -237,91 +200,33 @@ class PositionMapTrains extends Component {
     return _this;
   };
 
-  _renderD3StationBoardStats(el, zoom) {
-    let _this = this;
 
-    console.log('_renderD3StationBoardStats')
-
-    let gStats = _this._elements.gMainStationBoardStats
-      .selectAll('g.station-board-stats')
-      .data(_this._stationBoardStats, function (d) {
-        return d.stop.id;
-      });
-    let gNew = gStats.enter()
-      .append('g')
-      .attr('class', 'station-board-stats ' + classes['station-board-stats']);
-    gNew.attr('transform', function (p) {
-      return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
-    });
-
-    gNew.append('circle');
-    gNew.on('mouseover', function (s) {
-      console.log(s.stop.name + ':' + s.delayed + '/' + s.total);
-    });
-    gNew.append('path')
-      .attr({
-        class: 'delayed ' + classes.stationboard_delayed
-      });
-
-    var factor;
-    if (zoom <= 8) {
-      factor = 0.25;
-    } else if (factor >= 11) {
-      factor = 1;
-    } else {
-      factor = ((zoom - 8) + (11 - zoom) * 0.25) / 3;
-    }
-
-    let fRadius = function (d) {
-      return factor * 5 * (d.total + 1);
-    };
-
-    gStats.transition()
-      .attr('transform', function (p) {
-        return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
-      });
-    gStats.select('circle')
-      .attr({
-        r: fRadius
-      })
-    ;
-    gStats.selectAll('path.delayed')
-      .attr('d', d3.svg.arc()
-        .innerRadius(0)
-        .outerRadius(fRadius)
-        .startAngle(0)
-        .endAngle(function (d) {
-          return d.total ? (2 * Math.PI * d.delayed / d.total) : 0;
-        })
-      );
-
-
-    gStats.exit().remove()
-  };
 
   _renderD3(el, newProps) {
     let _this = this;
 
-
-    let {lngMin, lngMax, latMin, latMax}  = newProps.bounds;
+    let {lngMin, lngMax, latMin, latMax}  = newProps.MapLocation.location.bounds;
     _this._scales = {
       x: d3.scale.linear().range([0, _this._dim.width]).domain([lngMin, lngMax]),
       y: d3.scale.linear().range([0, _this._dim.height]).domain([latMax, latMin])
     };
 
-
-    _this._updateData(newProps.bounds, newProps.positions, newProps.stationBoardStats)
-      ._renderD3TrainPositions(el, newProps.zoom)
-      ._renderD3StationBoardStats(el, newProps.zoom);
+    _this._updateData(newProps.MapLocation.location.bounds, newProps.TrainPosition.positions)
+      ._renderD3TrainPositions(el, newProps.zoom);
 
   }
 
   render() {
-    const {count, positions, dispatch} = this.props;
+    const {dispatch} = this.props;
+    const actions = {
+      ...bindActionCreators(TrainPositionActions, dispatch),
+      ...bindActionCreators(MapLocationActions, dispatch)
+    };
+
     return (
       <div></div>
     );
   }
 }
 
-export default PositionMapTrains;
+export default connect(state => state)(PositionMapTrains);

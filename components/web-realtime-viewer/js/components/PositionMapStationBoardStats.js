@@ -8,10 +8,12 @@ import styles from '../../css/app.css';
 import classes from './PositionMapCFF.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import _ from 'lodash'
+import * as StationBoardActions from '../actions/StationBoardActions';
+import * as MapLocationActions from '../actions/MapLocationActions';
 
 let i = 0;
 
-class PositionMapTrains extends Component {
+class PositionMapStationBoardStats extends Component {
   constructor() {
     super();
     let _this = this;
@@ -63,27 +65,14 @@ class PositionMapTrains extends Component {
       .attr({
         class: 'station-board-stats-main'
       });
-    _this._elements.gMainTrainPositions = _this._elements.svg.append('g')
-      .attr({
-        class: 'train-positions-main'
-      });
     _this._renderD3(el, _this.props)
   }
 
-  _updateData(bounds, trainPositions, stationBoardStats) {
+  _updateData(bounds, stationBoardStats) {
     let _this = this;
 
     let {lngMin, lngMax, latMin, latMax}  = bounds;
 
-    _this._trainPositions = _.chain(trainPositions)
-      .map(function (p) {
-        p.x = p.position_lng;
-        p.y = p.position_lat;
-        return p;
-      })
-      .filter(function (p) {
-        return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
-      }).value();
 
     _this._stationBoardStats = _.chain(stationBoardStats)
       .map(function (p) {
@@ -99,143 +88,11 @@ class PositionMapTrains extends Component {
       })
       .value();
 
-    //
-    //console.log('delayed?');
-    //_.chain(stationBoardStats)
-    //  .filter(function (s) {
-    //    return s.delayed;
-    //  })
-    //  .each(function (s) {
-    //    console.log(s.stop.name + ': ' + s.delayed + '/' + s.total);
-    //  })
-    //  .value();
+
 
     return _this;
   }
 
-  _renderD3TrainPositions(el, zoom) {
-    let _this = this;
-
-    console.log('_renderD3TrainPositions');
-
-    let gTrains = _this._elements.gMainTrainPositions
-      .selectAll('g.train-position')
-      .data(_this._trainPositions, function (d) {
-        return d.train_id;
-      });
-
-    let gNew = gTrains.enter()
-      .append('g')
-      .attr({
-        transform: function (p) {
-          return 'translate(' + _this._scales.x(p.x) + ',' + _this._scales.y(p.y) + ')';
-        },
-        class: function (p) {
-          let s = p.train_name.trim();
-          let i = s.indexOf(' ');
-          let clazz = 'train-position ';
-          clazz = clazz + classes['train-cat_' + p.train_category.toLowerCase()];
-          clazz = clazz + ' ' + classes.trainMarker;
-          return clazz;
-        }
-      });
-    gNew.on('mouseover', function (p) {
-      console.log(p.train_name + '->' + p.train_lastStopName);
-    });
-    let gSymbol = gNew.append('g')
-      .attr({
-        class: 'train-symbol '+classes.trainSymbol
-      });
-
-    gSymbol.append('circle')
-      .attr({
-        cx: 0,
-        cy: 0,
-        r: 1
-      });
-    gSymbol.append('path')
-      .attr({
-        class:'bearing-arrow '+classes.bearingArrow,
-        d:'M0.707,-0.707 L0,-2 L-0.707,-0.707 Z'
-      });
-
-    gNew.append('g')
-      .attr({
-        class: 'train-details ' + classes.trainDetails
-      }).append('text')
-      .attr({
-        class: 'train-details ' + classes.positionText,
-        x: 6
-      })
-      .text(function (p) {
-        //return p.train_name.trim() + ' (' + p.train_lastStopName + ')';// +_this.props.coord2point.x(p.x);
-      });
-
-    gTrains
-      .transition()
-      .duration(500)
-      .attr('transform', function (p) {
-        return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
-      });
-
-
-    var radius;
-    if (zoom <= 7) {
-      radius = 1;
-    } else if (zoom >= 11) {
-      radius = 4;
-    } else {
-      radius = zoom - 7;
-    }
-    gTrains.select('g.train-symbol')
-      .attr('transform', function(p){
-        if(p.position_bearing === undefined) {
-          return 'scale(' + radius + ')';
-        }else{
-          return 'scale(' + radius + ') rotate('+ (p.position_bearing)+')';
-        }
-      });
-    gTrains.select('path.bearing-arrow')
-      .style('display', function(p){
-        return (p.position_bearing === undefined)?'none':'block';
-      });
-
-
-
-    let fText_0 = function () {
-      return '';
-    };
-    let fText_1 = function (p) {
-      return p.train_category;
-    };
-    let fText_2 = function (p) {
-      return p.train_name;
-    };
-    let fText_3 = function (p) {
-      return p.train_name.trim() + ' (' + p.train_lastStopName + ')';
-    };
-    var fText;
-    if (zoom < 10) {
-      fText = fText_0;
-    }
-    if (zoom == 10) {
-      fText = fText_1;
-    }
-    if (zoom == 11) {
-      fText = fText_2;
-    }
-    if (zoom >= 12) {
-      fText = fText_3;
-    }
-    gTrains.selectAll('text.train-details')
-      .text(fText);
-
-    gTrains.exit().transition()
-      .duration(300)
-      .style('opacity', 1e-6)
-      .remove();
-    return _this;
-  };
 
   _renderD3StationBoardStats(el, zoom) {
     let _this = this;
@@ -303,25 +160,29 @@ class PositionMapTrains extends Component {
     let _this = this;
 
 
-    let {lngMin, lngMax, latMin, latMax}  = newProps.bounds;
+    let {lngMin, lngMax, latMin, latMax}  = newProps.MapLocation.location.bounds;
     _this._scales = {
       x: d3.scale.linear().range([0, _this._dim.width]).domain([lngMin, lngMax]),
       y: d3.scale.linear().range([0, _this._dim.height]).domain([latMax, latMin])
     };
 
 
-    _this._updateData(newProps.bounds, newProps.positions, newProps.stationBoardStats)
-      ._renderD3TrainPositions(el, newProps.zoom)
+    _this._updateData(newProps.MapLocation.location.bounds, newProps.StationBoard.stats)
       ._renderD3StationBoardStats(el, newProps.zoom);
 
   }
 
   render() {
-    const {count, positions, dispatch} = this.props;
+    const {count, StationBoard, dispatch} = this.props;
+    const actions = {
+       ...bindActionCreators(MapLocationActions, dispatch)
+      , ...bindActionCreators(StationBoardActions, dispatch)
+    };
+
     return (
       <div></div>
     );
   }
 }
 
-export default PositionMapTrains;
+export default connect(state => state)(PositionMapStationBoardStats);

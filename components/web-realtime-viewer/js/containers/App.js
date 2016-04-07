@@ -3,18 +3,15 @@ import {Provider} from 'react-redux';
 import http from 'http';
 import configureStore from '../store/configureStore';
 import Home from '../components/Home';
-import WSTrainPosition from '../store/WSTrainPosition';
 import frontendConfig from '../config/FrontendConfig';
 import  ActionTypes from '../constants/ActionTypes';
 
 const store = configureStore();
 
-
 /**
  * setup the pipe between receiving data via websocket and updating the stores
  * @type {WSTrainPosition}
  */
-let wsStore = new WSTrainPosition({store});
 
 
 /*

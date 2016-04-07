@@ -3,12 +3,13 @@ import ReactDOM  from 'react-dom';
 import {connect} from 'react-redux';
 import d3 from 'd3';
 import {bindActionCreators} from 'redux';
-import * as TrainPositionActions from '../actions/TrainPositionActions';
+import * as MapLocationActions from '../actions/MapLocationActions';
 import styles from '../../css/app.css';
 import classes from './PositionMapGoogle.css'
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import GoogleMap from 'google-map-react';
-import PositionMapCFF from './PositionMapCFF';
+import PositionMapTrain from './PositionMapTrains';
+import PositionMapStationBoardStats from './PositionMapStationBoardStats';
 
 
 class PositionMapGoogle extends Component {
@@ -18,36 +19,46 @@ class PositionMapGoogle extends Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
-  _onBoundsChange(){
+  _onBoundsChange() {
     let _this = this;
   }
 
   render() {
     let _this = this;
-    const {location, height, width, positions, stationBoardStats, onLocationChanged} = _this.props;
-    let center = location.center;
-    let zoom = location.zoom;
+
+
+    const {height, width, dispatch} = _this.props;
+
+    const actions = {
+      ...bindActionCreators(MapLocationActions, dispatch)
+    };
+
+    let {center, zoom, bounds} = _this.props.MapLocation.location;
 
     return (
       <div style={{height:height, width:width}}>
         <GoogleMap
           center={center}
           zoom={zoom}
-          onChange={onLocationChanged}
+          onChange={actions.updateLocation}
         >
-          <PositionMapCFF
-            lat={location.bounds.latMax}
-            lng={location.bounds.lngMin}
-            bounds={location.bounds}
-            positions={positions}
-            zoom={zoom}
-            stationBoardStats={stationBoardStats}
-            height={height}
-            width={width}
-          />
+            <PositionMapStationBoardStats
+              lat={bounds.latMax}
+              lng={bounds.lngMin}
+              zoom={zoom}
+              height={height}
+              width={width}
+            />
+            <PositionMapTrain
+              lat={bounds.latMax}
+              lng={bounds.lngMin}
+              zoom={zoom}
+              height={height}
+              width={width}
+            />
         </GoogleMap></div>
     );
   }
 }
 
-export default PositionMapGoogle;
+export default connect(state => state)(PositionMapGoogle);

@@ -18,18 +18,17 @@ class PositionMap extends Component {
     let _this = this;
     const {positions, stationBoardStats, location, dispatch, containerHeight, containerWidth, onLocationChanged} = this.props;
 
-    console.log(containerWidth+' x '+containerHeight);
     return (
       <div>
         <div className={classes.superposeContainer}>
           <div className={classes.superposeItem}>
             <PositionMapGoogle
-              positions={positions}
-              stationBoardStats={stationBoardStats}
-              location={location}
+//              positions={positions}
+//              stationBoardStats={stationBoardStats}
+//              location={location}
               height={containerHeight}
               width={containerWidth}
-              onLocationChanged={onLocationChanged}
+//              onLocationChanged={onLocationChanged}
             />
           </div>
           <div className={classes.superposeItem}>
