@@ -20,6 +20,11 @@ rect.masking{
   fill: white;
   fill-opacity: 0.95;
 }
+
+g.trainSymbol circle{
+  fill: blue;
+
+}
 .trainSymbol path.bearingArrow {
   fill: blue;
 }
@@ -47,16 +52,14 @@ rect.masking{
   font-weight: bold;
 }
 
+
 .train-cat_re circle, .train-cat_r circle, .train-cat_s circle {
-  fill: blue;
 }
 
 .train-cat_ice circle, .train-cat_ic circle, .train-cat_icn circle, .train-cat_ir circle, .train-cat_bat circle {
-  fill: blue;
 }
 
 .train-cat_ter circle, .train-cat_tgv circle {
-  fill: blue;
 }
 
 
@@ -69,8 +72,12 @@ rect.masking{
 g.station-board-stats circle{
   fill:green;
   fill-opacity: 0.7;
-  stroke:red;
 }
+g.station-board-stats:hover {
+  stroke:gray;
+  stroke-width: 3;
+}
+
 
 path.stationboard_delayed{
   fill:orange;

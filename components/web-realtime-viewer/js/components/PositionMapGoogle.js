@@ -8,8 +8,7 @@ import styles from '../../css/app.css';
 import classes from './PositionMapGoogle.css'
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import GoogleMap from 'google-map-react';
-import PositionMapTrains from './PositionMapTrains';
-import PositionMapStationBoardStats from './PositionMapTrains';
+import PositionMapCFF from './PositionMapCFF';
 
 
 class PositionMapGoogle extends Component {
@@ -36,13 +35,13 @@ class PositionMapGoogle extends Component {
           zoom={zoom}
           onChange={onLocationChanged}
         >
-          <PositionMapTrains
+          <PositionMapCFF
             lat={location.bounds.latMax}
             lng={location.bounds.lngMin}
             bounds={location.bounds}
             positions={positions}
             zoom={zoom}
-            stats={stationBoardStats}
+            stationBoardStats={stationBoardStats}
             height={height}
             width={width}
           />

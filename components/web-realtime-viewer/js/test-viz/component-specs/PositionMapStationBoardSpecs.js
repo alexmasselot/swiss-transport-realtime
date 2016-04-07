@@ -1,7 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 
-import data  from '../data/train-1';
+import data  from '../data/stationboard-1';
 import PositionMapTrains from '../../components/PositionMapCFF';
 import SpecsOne from './SpecsOne';
 
@@ -22,7 +22,7 @@ export default React.createClass({
               zoom={11}
               width={150}
               height={150}
-              positions={data}
+              stationBoardStats={data}
             />
           </div>
         </SpecsOne>
@@ -38,7 +38,7 @@ export default React.createClass({
               zoom={10}
               width={150}
               height={150}
-              positions={data}
+              stationBoardStats={data}
             />
           </div>
         </SpecsOne>
@@ -54,7 +54,7 @@ export default React.createClass({
               zoom={9}
               width={150}
               height={150}
-              positions={data}
+              stationBoardStats={data}
             />
           </div>
         </SpecsOne>

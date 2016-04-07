@@ -21,9 +21,9 @@ let wsStore = new WSTrainPosition({store});
  Launches the regular GET call to refresh the store.
  Train positions and station boards have different refresh rates.
  */
-
 frontendConfig.get().then(function (config) {
-  setInterval(function () {
+
+  const fGetTrainPosition = function () {
     http.get(config.url.train_position_snapshot, function (res) {
         var tsv = '';
         res.on('data', function (data) {
@@ -40,8 +40,9 @@ frontendConfig.get().then(function (config) {
       .on('error', function (err) {
         console.error(err, config.url.train_position_snapshot);
       });
-  }, 2000);
-  setInterval(function () {
+  };
+
+  const fGetStationBoardStats = function () {
     http.get(config.url.station_board_stat_snapshot, function (res) {
         var data = '';
         res.on('data', function (chunk) {
@@ -58,7 +59,13 @@ frontendConfig.get().then(function (config) {
       .on('error', function (err) {
         console.error(err, config.url.train_position_snapshot);
       });
-  }, 5000);
+  };
+
+  fGetTrainPosition();
+  fGetStationBoardStats();
+
+  setInterval(fGetTrainPosition, 2000);
+  setInterval(fGetStationBoardStats, 5000);
 })
 ;
 

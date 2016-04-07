@@ -7,7 +7,6 @@ import styles from '../../css/app.css';
 import classes from './PositionMap.css'
 
 import PositionMapGoogle from './PositionMapGoogle';
-import PositionMapTrains from './PositionMapTrains';
 
 
 class PositionMap extends Component {

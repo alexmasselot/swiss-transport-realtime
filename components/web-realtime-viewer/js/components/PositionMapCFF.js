@@ -5,7 +5,7 @@ import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
 import styles from '../../css/app.css';
-import classes from './PositionMapTrains.css'
+import classes from './PositionMapCFF.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import _ from 'lodash'
 
@@ -93,7 +93,11 @@ class PositionMapTrains extends Component {
       })
       .filter(function (p) {
         return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
-      }).value();
+      })
+      .sortBy(function(p){
+        return -p.total;
+      })
+      .value();
 
     //
     //console.log('delayed?');
@@ -276,9 +280,6 @@ class PositionMapTrains extends Component {
       .attr({
         r: fRadius
       })
-      .style('stroke-width', function (d) {
-        return 0.5 * d.delayed;
-      })
     ;
     gStats.selectAll('path.delayed')
       .attr('d', d3.svg.arc()
@@ -305,7 +306,7 @@ class PositionMapTrains extends Component {
     };
 
 
-    _this._updateData(newProps.bounds, newProps.positions, newProps.stats)
+    _this._updateData(newProps.bounds, newProps.positions, newProps.stationBoardStats)
       ._renderD3TrainPositions(el, newProps.zoom)
       ._renderD3StationBoardStats(el, newProps.zoom);
 
