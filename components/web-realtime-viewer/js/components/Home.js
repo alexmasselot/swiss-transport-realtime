@@ -3,7 +3,7 @@ import ReactDOM  from 'react-dom';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
-import * as StationStatsBoardActions from '../actions/StationBoardStatsActions';
+import * as StationBoardActions from '../actions/StationBoardActions';
 import * as MapLocationActions from '../actions/MapLocationActions';
 import styles from '../../css/app.css';
 
@@ -12,11 +12,11 @@ import Timer from './Timer';
 
 class Home extends Component {
   render() {
-    const {MapLocation, TrainPosition, StationBoardStats, dispatch} = this.props;
+    const {MapLocation, TrainPosition, StationBoard, dispatch} = this.props;
     const actions = {
       ...bindActionCreators(TrainPositionActions, dispatch)
       , ...bindActionCreators(MapLocationActions, dispatch)
-      , ...bindActionCreators(StationStatsBoardActions, dispatch)
+      , ...bindActionCreators(StationBoardActions, dispatch)
     };
     let tTrain = _.chain(TrainPosition.positions)
       .map('timeStamp')
@@ -32,7 +32,7 @@ class Home extends Component {
                      width={900}
                      positions={TrainPosition.positions}
                      location={MapLocation.location}
-                     stationBoardStats={StationBoardStats.stats}
+                     stationBoardStats={StationBoard.stats}
                      onLocationChanged={actions.updateLocation}
         />
       </main>
