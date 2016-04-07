@@ -1,9 +1,10 @@
 import keyMirror from 'fbjs/lib/keyMirror';
 
 export default keyMirror({
-  TRAIN_POSITION_RECEIVED:null,
-  MAP_LOCATION_CHANGED:null,
-  STATION_BOARD_STATS_RECEIVED:null
+  TRAIN_POSITION_RECEIVED: null,
+  MAP_LOCATION_CHANGED: null,
+  STATION_BOARD_STATS_RECEIVED: null,
+  STATION_BOARD_DETAILS_RECEIVED: null
 });
 
 //export const DATA_FETCHED = 'DATA_FETCHED';

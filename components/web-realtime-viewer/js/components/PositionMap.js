@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import ReactDOM  from 'react-dom';
 import {connect} from 'react-redux';
+import Dimensions from 'react-dimensions'
+
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
 import styles from '../../css/app.css';
@@ -14,8 +16,9 @@ class PositionMap extends Component {
 
   render() {
     let _this = this;
-    const {positions, stationBoardStats, location, dispatch, height, width, onLocationChanged} = this.props;
+    const {positions, stationBoardStats, location, dispatch, containerHeight, containerWidth, onLocationChanged} = this.props;
 
+    console.log(containerWidth+' x '+containerHeight);
     return (
       <div>
         <div className={classes.superposeContainer}>
@@ -24,8 +27,8 @@ class PositionMap extends Component {
               positions={positions}
               stationBoardStats={stationBoardStats}
               location={location}
-              height={height}
-              width={width}
+              height={containerHeight}
+              width={containerWidth}
               onLocationChanged={onLocationChanged}
             />
           </div>
@@ -37,4 +40,4 @@ class PositionMap extends Component {
   }
 }
 
-export default PositionMap;
+export default Dimensions()(PositionMap);

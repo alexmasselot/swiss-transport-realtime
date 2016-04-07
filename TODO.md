@@ -13,6 +13,7 @@ WEBRT BUG  AW Snap bug when viewer get's up for some time - train position might
 
 ## Done
 
+WEBRT FEAT the map adapt to screen size
 WEBRT FEAT sort stations by little size pointed forwards
 FEED  IMPR mock feeder must put actual date...
 WEBRT IMPR train pos as dot, bigger, then category, then name (+dest?)

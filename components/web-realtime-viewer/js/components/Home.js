@@ -23,18 +23,19 @@ class Home extends Component {
       .max()
       .value();
 
-
     return (
       <main>
         <h4 className={styles.text}>Positions updated on map <Timer t0={TrainPosition.timestamp}/> ago. Last train
           updated from CFF <Timer t0={tTrain}/> ago</h4>
-        <PositionMap height={600}
-                     width={900}
-                     positions={TrainPosition.positions}
-                     location={MapLocation.location}
-                     stationBoardStats={StationBoard.stats}
-                     onLocationChanged={actions.updateLocation}
-        />
+
+        <div style={{height:global.window.innerHeight*0.8, width:'80%'}}>
+          <PositionMap
+                       positions={TrainPosition.positions}
+                       location={MapLocation.location}
+                       stationBoardStats={StationBoard.stats}
+                       onLocationChanged={actions.updateLocation}
+          />
+        </div>
       </main>
     );
   }
