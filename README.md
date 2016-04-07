@@ -49,7 +49,8 @@ Check it out via a couple of calls to http://localhost:9000/position (let a few 
 a nodejs + express + react/redux
 
     cd components/web-realtime-viewer
-	nvm use 4.2 #to use a recent nodejs
+	nvm use 4.2 # to use a recent nodejs (or more recent)
+	npm install
 	npm start
 	
 And head to http://localhost:3000
