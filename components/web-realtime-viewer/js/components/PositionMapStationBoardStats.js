@@ -51,7 +51,6 @@ class PositionMapStationBoardStats extends Component {
         })
       //.style('overflow', 'visible')
     };
-    console.log(_this._elements.svg.attr())
     _this._elements.svg.append('rect')
       .attr({
         width: _this._dim.width,// * 3,

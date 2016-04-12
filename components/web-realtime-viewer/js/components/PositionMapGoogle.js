@@ -27,7 +27,6 @@ class PositionMapGoogle extends Component {
 
 
     const {height, width, dispatch, store} = _this.props;
-    console.log(_this.props);
 
     const actions = {
       ...bindActionCreators(MapLocationActions, dispatch)

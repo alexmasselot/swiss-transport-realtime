@@ -28,8 +28,6 @@ class PositionMapGoogleOverlayData extends Component {
 
 
     const {lat, lng, height, zoom, width, store, dispatch} = _this.props;
-    console.log(_this.props);
-    console.log(_this);
 
 
     return (
