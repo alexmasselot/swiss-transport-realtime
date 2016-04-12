@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 
 import SpecsOne from './SpecsOne';
 import data  from '../data/stationboard-8501120';
-import StationBoard from '../../components/StationBoard';
+import StationBoard from '../../components/StationBoardDetails';
 import configureStore from 'redux-mock-store';
 
 const mockStore = configureStore();

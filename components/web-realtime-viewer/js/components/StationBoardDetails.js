@@ -3,7 +3,7 @@ import ReactDOM  from 'react-dom';
 import {connect} from 'react-redux';
 import Dimensions from 'react-dimensions'
 
-import styles from './StationBoard.css';
+import styles from './StationBoardDetails.css';
 
 
 class StationBoard extends Component {

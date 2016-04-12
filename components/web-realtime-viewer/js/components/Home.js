@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import styles from '../../css/app.css';
 
 import PositionMap from './PositionMap';
-import StationBoard from './StationBoard';
+import StationBoardDetails from './StationBoardDetails';
 import Timer from './Timer';
 
 class Home extends Component {
@@ -18,7 +18,7 @@ class Home extends Component {
             store={_this.props.store}
           />
         </div>
-        <StationBoard store={_this.props.store}/>
+        <StationBoardDetails store={_this.props.store}/>
       </div>
     );
   }

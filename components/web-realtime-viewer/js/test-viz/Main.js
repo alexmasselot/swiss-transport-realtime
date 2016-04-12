@@ -1,6 +1,6 @@
 import React from 'react';
 import SpecsGroup from './component-specs/SpecsGroup';
-import StationBoardSpecs from './component-specs/StationBoardSpecs';
+import StationBoardDetailsSpecs from './component-specs/StationBoardDetailsSpecs';
 import PositionMapTrainSpecs from './component-specs/PositionMapTrainSpecs';
 import PositionMapStationBoardSpecs from './component-specs/PositionMapStationBoardStatsSpecs';
 
@@ -11,7 +11,7 @@ export default React.createClass({
     return (
       <div>
         <SpecsGroup title="Station boards">
-          <StationBoardSpecs />
+          <StationBoardDetailsSpecs />
         </SpecsGroup>
         <SpecsGroup title="Train positions"
                     comment="3 different trains, 2 categories, 'S x' has no bearing information">
