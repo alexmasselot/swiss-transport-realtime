@@ -40,7 +40,8 @@ frontendConfig.get().then(function (config) {
   };
 
   const fGetStationBoardStats = function () {
-    http.get(config.url.station_board_stat_snapshot, function (res) {
+    console.log(config.url.station_board, config, http)
+    http.get(config.url.station_board, function (res) {
         var data = '';
         res.on('data', function (chunk) {
             data += chunk;
@@ -54,7 +55,7 @@ frontendConfig.get().then(function (config) {
           });
       })
       .on('error', function (err) {
-        console.error(err, config.url.train_position_snapshot);
+        console.error(err, config.url.station_board);
       });
   };
 
@@ -72,7 +73,7 @@ export default React.createClass({
     return (
       <div>
         <Provider store={store}>
-          <Home />
+          <Home store={store}/>
         </Provider>
       </div>
     );

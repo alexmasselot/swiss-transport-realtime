@@ -16,19 +16,17 @@ class PositionMap extends Component {
 
   render() {
     let _this = this;
-    const {positions, stationBoardStats, location, dispatch, containerHeight, containerWidth, onLocationChanged} = this.props;
+    const {positions, stationBoardStats, location, dispatch, containerHeight, containerWidth, store} = this.props;
 
     return (
       <div>
         <div className={classes.superposeContainer}>
           <div className={classes.superposeItem}>
             <PositionMapGoogle
-//              positions={positions}
-//              stationBoardStats={stationBoardStats}
-//              location={location}
+
               height={containerHeight}
               width={containerWidth}
-//              onLocationChanged={onLocationChanged}
+              store={store}
             />
           </div>
           <div className={classes.superposeItem}>
@@ -39,4 +37,4 @@ class PositionMap extends Component {
   }
 }
 
-export default Dimensions()(PositionMap);
+export default  connect(state => state)(Dimensions()(PositionMap));

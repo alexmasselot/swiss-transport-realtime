@@ -42,7 +42,7 @@ class PositionMapTrains extends Component {
 
     d3.select(el).selectAll().empty();
     _this._elements = {
-      svg: d3.select(el).append('svg')
+      svg: d3.select(el)
         .attr({
           //viewBox: '-' + (_this._dim.width / 2) + ' -' + (_this._dim.height / 2) + ' ' + _this._dim.width + ' ' + _this._dim.height,
           //viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
@@ -107,7 +107,7 @@ class PositionMapTrains extends Component {
     });
     let gSymbol = gNew.append('g')
       .attr({
-        class: 'train-symbol '+classes.trainSymbol
+        class: 'train-symbol ' + classes.trainSymbol
       });
 
     gSymbol.append('circle')
@@ -118,8 +118,8 @@ class PositionMapTrains extends Component {
       });
     gSymbol.append('path')
       .attr({
-        class:'bearing-arrow '+classes.bearingArrow,
-        d:'M0.707,-0.707 L0,-2 L-0.707,-0.707 Z'
+        class: 'bearing-arrow ' + classes.bearingArrow,
+        d: 'M0.707,-0.707 L0,-2 L-0.707,-0.707 Z'
       });
 
     gNew.append('g')
@@ -151,18 +151,17 @@ class PositionMapTrains extends Component {
       radius = zoom - 7;
     }
     gTrains.select('g.train-symbol')
-      .attr('transform', function(p){
-        if(p.position_bearing === undefined) {
+      .attr('transform', function (p) {
+        if (p.position_bearing === undefined) {
           return 'scale(' + radius + ')';
-        }else{
-          return 'scale(' + radius + ') rotate('+ (p.position_bearing)+')';
+        } else {
+          return 'scale(' + radius + ') rotate(' + (p.position_bearing) + ')';
         }
       });
     gTrains.select('path.bearing-arrow')
-      .style('display', function(p){
-        return (p.position_bearing === undefined)?'none':'block';
+      .style('display', function (p) {
+        return (p.position_bearing === undefined) ? 'none' : 'block';
       });
-
 
 
     let fText_0 = function () {
@@ -201,9 +200,9 @@ class PositionMapTrains extends Component {
   };
 
 
-
   _renderD3(el, newProps) {
     let _this = this;
+
 
     let {lngMin, lngMax, latMin, latMax}  = newProps.MapLocation.location.bounds;
     _this._scales = {
@@ -224,7 +223,7 @@ class PositionMapTrains extends Component {
     };
 
     return (
-      <div></div>
+      <g></g>
     );
   }
 }

@@ -1,6 +1,7 @@
 #Todos
 
 ##Doing
+WEBRT BUG  both station board & position add their own SVG to google map. this prevents mouse event to go through the lower layer
 WEBRT FEAT mousing over a station show the board. That certainly means an REST service, maybe akka-http
 
 ##Backlog

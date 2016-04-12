@@ -8,8 +8,7 @@ import styles from '../../css/app.css';
 import classes from './PositionMapGoogle.css'
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import GoogleMap from 'google-map-react';
-import PositionMapTrain from './PositionMapTrains';
-import PositionMapStationBoardStats from './PositionMapStationBoardStats';
+import PositionMapGoogleOverlayData from './PositionMapGoogleOverlayData';
 
 
 class PositionMapGoogle extends Component {
@@ -27,7 +26,8 @@ class PositionMapGoogle extends Component {
     let _this = this;
 
 
-    const {height, width, dispatch} = _this.props;
+    const {height, width, dispatch, store} = _this.props;
+    console.log(_this.props);
 
     const actions = {
       ...bindActionCreators(MapLocationActions, dispatch)
@@ -42,20 +42,16 @@ class PositionMapGoogle extends Component {
           zoom={zoom}
           onChange={actions.updateLocation}
         >
-            <PositionMapStationBoardStats
-              lat={bounds.latMax}
-              lng={bounds.lngMin}
-              zoom={zoom}
-              height={height}
-              width={width}
-            />
-            <PositionMapTrain
-              lat={bounds.latMax}
-              lng={bounds.lngMin}
-              zoom={zoom}
-              height={height}
-              width={width}
-            />
+
+          <PositionMapGoogleOverlayData lat={bounds.latMax}
+                                        lng={bounds.lngMin}
+                                        height={height}
+                                        width={width}
+                                        zoom={zoom}
+                                        store={store}
+
+          />
+
         </GoogleMap></div>
     );
   }

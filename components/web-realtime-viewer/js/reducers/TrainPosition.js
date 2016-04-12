@@ -28,7 +28,6 @@ export default function (state = defaultState, action) {
           });
         }
       }
-
       return {...state, positions: pos, timestamp: action.timestamp};
     default:
       return state;

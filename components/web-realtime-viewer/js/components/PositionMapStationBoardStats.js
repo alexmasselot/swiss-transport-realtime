@@ -38,12 +38,10 @@ class PositionMapStationBoardStats extends Component {
       height: parseInt(_this.props.height),
       width: parseInt(_this.props.width)
     };
-    //look_minx=5850000&look_maxx=10540000&look_miny=45850000&look_maxy=47800000
-
 
     d3.select(el).selectAll().empty();
     _this._elements = {
-      svg: d3.select(el).append('svg')
+      svg: d3.select(el)
         .attr({
           //viewBox: '-' + (_this._dim.width / 2) + ' -' + (_this._dim.height / 2) + ' ' + _this._dim.width + ' ' + _this._dim.height,
           //viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
@@ -53,6 +51,7 @@ class PositionMapStationBoardStats extends Component {
         })
       //.style('overflow', 'visible')
     };
+    console.log(_this._elements.svg.attr())
     _this._elements.svg.append('rect')
       .attr({
         width: _this._dim.width,// * 3,
@@ -73,7 +72,6 @@ class PositionMapStationBoardStats extends Component {
 
     let {lngMin, lngMax, latMin, latMax}  = bounds;
 
-
     _this._stationBoardStats = _.chain(stationBoardStats)
       .map(function (p) {
         p.x = p.stop.location.lng;
@@ -83,18 +81,16 @@ class PositionMapStationBoardStats extends Component {
       .filter(function (p) {
         return (p.x >= lngMin) && (p.x <= lngMax) && (p.y >= latMin) && (p.y <= latMax);
       })
-      .sortBy(function(p){
+      .sortBy(function (p) {
         return -p.total;
       })
       .value();
 
 
-
     return _this;
   }
 
-
-  _renderD3StationBoardStats(el, zoom) {
+  _renderD3StationBoardStats(el, zoom, callbacks) {
     let _this = this;
 
     console.log('_renderD3StationBoardStats')
@@ -111,10 +107,11 @@ class PositionMapStationBoardStats extends Component {
       return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
     });
 
+    if (callbacks && callbacks.mouseover) {
+      gNew.on('mouseover', callbacks.mouseover)
+    }
+
     gNew.append('circle');
-    gNew.on('mouseover', function (s) {
-      console.log(s.stop.name + ':' + s.delayed + '/' + s.total);
-    });
     gNew.append('path')
       .attr({
         class: 'delayed ' + classes.stationboard_delayed
@@ -152,13 +149,17 @@ class PositionMapStationBoardStats extends Component {
         })
       );
 
-
     gStats.exit().remove()
   };
 
   _renderD3(el, newProps) {
     let _this = this;
 
+    const {dispatch} = newProps;
+    const actions = {
+      ...bindActionCreators(StationBoardActions, dispatch),
+      ...bindActionCreators(MapLocationActions, dispatch)
+    };
 
     let {lngMin, lngMax, latMin, latMax}  = newProps.MapLocation.location.bounds;
     _this._scales = {
@@ -168,19 +169,21 @@ class PositionMapStationBoardStats extends Component {
 
 
     _this._updateData(newProps.MapLocation.location.bounds, newProps.StationBoard.stats)
-      ._renderD3StationBoardStats(el, newProps.zoom);
-
+      ._renderD3StationBoardStats(el,
+        newProps.zoom,
+        {
+          mouseover: function (p) {
+            actions.getStationBoardDetails(p.id);
+          }
+        }
+      );
   }
 
   render() {
-    const {count, StationBoard, dispatch} = this.props;
-    const actions = {
-       ...bindActionCreators(MapLocationActions, dispatch)
-      , ...bindActionCreators(StationBoardActions, dispatch)
-    };
+
 
     return (
-      <div></div>
+      <g/>
     );
   }
 }

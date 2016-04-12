@@ -1,12 +1,8 @@
 {
   "frontend": {
     "url": {
-      "ws": {
-        "train_position": "ws://localhost:3001",
-        "station_board_stats": "ws://localhost:3002"
-      },
       "train_position_snapshot":"http://localhost:9000/position",
-      "station_board_stat_snapshot":"http://localhost:9000/stationboard"
+      "station_board":"http://localhost:9000/stationboard"
     }
   },
   "ports": {
