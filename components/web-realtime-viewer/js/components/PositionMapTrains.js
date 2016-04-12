@@ -203,7 +203,6 @@ class PositionMapTrains extends Component {
   _renderD3(el, newProps) {
     let _this = this;
 
-
     let {lngMin, lngMax, latMin, latMax}  = newProps.MapLocation.location.bounds;
     _this._scales = {
       x: d3.scale.linear().range([0, _this._dim.width]).domain([lngMin, lngMax]),

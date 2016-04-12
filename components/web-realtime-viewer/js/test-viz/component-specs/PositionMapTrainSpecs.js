@@ -30,34 +30,34 @@ export default React.createClass({
       <Provider store={store}>
         <div>
           <SpecsOne title="zoom=11">
-            <div>
+            <svg>
               <PositionMapTrains
                 zoom={11}
                 width={150}
                 height={150}
                 positions={data}
               />
-            </div>
+            </svg>
           </SpecsOne>
           <SpecsOne title="zoom=10">
-            <div>
+            <svg>
               <PositionMapTrains
                 zoom={10}
                 width={150}
                 height={150}
                 positions={data}
               />
-            </div>
+            </svg>
           </SpecsOne>
           <SpecsOne title="zoom=9">
-            <div>
+            <svg>
               <PositionMapTrains
                 zoom={9}
                 width={150}
                 height={150}
                 positions={data}
               />
-            </div>
+            </svg>
           </SpecsOne>
         </div>
       </Provider>

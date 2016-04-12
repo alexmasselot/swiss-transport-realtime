@@ -40,7 +40,6 @@ frontendConfig.get().then(function (config) {
   };
 
   const fGetStationBoardStats = function () {
-    console.log(config.url.station_board, config, http)
     http.get(config.url.station_board, function (res) {
         var data = '';
         res.on('data', function (chunk) {
@@ -72,10 +71,11 @@ export default React.createClass({
   render() {
     return (
       <div>
-        <Provider store={store}>
-          <Home store={store}/>
-        </Provider>
+        <Home store={store}/>
       </div>
     );
   }
 });
+//        <Provider store={store}>
+//...
+//        </Provider>

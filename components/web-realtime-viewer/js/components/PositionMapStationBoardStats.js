@@ -172,7 +172,7 @@ class PositionMapStationBoardStats extends Component {
         newProps.zoom,
         {
           mouseover: function (p) {
-            actions.getStationBoardDetails(p.id);
+            actions.getStationBoardDetails(p.stop.id);
           }
         }
       );

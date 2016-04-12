@@ -1,5 +1,8 @@
 'use strict';
 import ActionTypes from '../constants/ActionTypes';
+import fetch from 'isomorphic-fetch';
+import frontendConfig from '../config/FrontendConfig';
+
 
 export function updateStationBoardStats(data) {
   return {
@@ -16,9 +19,16 @@ export function updateStationBoardDetails(data) {
   }
 }
 
-export function getStationBoardDetails(id) {
-  return {
-    type: ActionTypes.STATION_BOARD_DETAILS_GET,
-    id:id
+export function getStationBoardDetails(stopId, stopName) {
+  return function (dispatch) {
+    return frontendConfig.get().then(function (config) {
+      let url = config.url.station_board + '/' + stopId;
+      return fetch(url)
+        .then(response => response.json())
+        .then(json => dispatch(updateStationBoardDetails(json)))
+        .catch(function (err) {
+          console.error(err, url);
+        });
+    });
   }
 }

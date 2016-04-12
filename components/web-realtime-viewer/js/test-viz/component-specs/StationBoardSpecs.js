@@ -11,7 +11,7 @@ const mockStore = configureStore();
 
 export default React.createClass({
   render() {
-    let store = mockStore(data);
+    let store = mockStore({StationBoard: {details: {status: 'success', board: data}}});
     return (
       <Provider store={store}>
         <div>
