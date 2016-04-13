@@ -17,7 +17,8 @@ class PositionMapStationBoardStats extends Component {
   constructor() {
     super();
     let _this = this;
-    this;
+
+    _this.lastUpdated = {};
   }
 
   componentDidMount() {
@@ -56,8 +57,16 @@ class PositionMapStationBoardStats extends Component {
     _this._renderD3(el, _this.props)
   }
 
-  _updateData(bounds, stationBoardStats) {
+  /*
+   return true if data is to be rendered
+   */
+  _updateData(bounds, stationBoardStats, timestamp) {
     let _this = this;
+
+    if ((timestamp === _this.lastUpdated.timestamp) && _.isEqual(_this.lastUpdated.bounds, bounds)) {
+      return false;
+    }
+    _this.lastUpdated.timestamp = timestamp;
 
     let {lngMin, lngMax, latMin, latMax}  = bounds;
 
@@ -76,13 +85,16 @@ class PositionMapStationBoardStats extends Component {
       .value();
 
 
-    return _this;
+    return true;
   }
 
-  _renderD3StationBoardStats(el, zoom, callbacks) {
+  _renderD3StationBoardStats(el, bounds, zoom, callbacks) {
     let _this = this;
 
-    console.log('_renderD3StationBoardStats')
+    console.log('_renderD3StationBoardStats');
+
+    let hasBoundMoved = !_.isEqual(bounds, _this.lastUpdated.bounds);
+    _this.lastUpdated.bounds = bounds;
 
     let gStats = _this._elements.gMainStationBoardStats
       .selectAll('g.station-board-stats')
@@ -119,15 +131,15 @@ class PositionMapStationBoardStats extends Component {
       return factor * 5 * (d.total + 1);
     };
 
-    gStats.transition()
-      .attr('transform', function (p) {
+    gStats.attr('transform', function (p) {
         return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
       });
+
     gStats.select('circle')
       .attr({
         r: fRadius
-      })
-    ;
+      });
+
     gStats.selectAll('path.delayed')
       .attr('d', d3.svg.arc()
         .innerRadius(0)
@@ -157,8 +169,12 @@ class PositionMapStationBoardStats extends Component {
     };
 
 
-    _this._updateData(newProps.MapLocation.location.bounds, newProps.StationBoard.stats)
-      ._renderD3StationBoardStats(el,
+    if (_this._updateData(
+        newProps.MapLocation.location.bounds,
+        newProps.StationBoard.stats,
+        newProps.StationBoard.timestamp)) {
+      _this._renderD3StationBoardStats(el,
+        newProps.MapLocation.location.bounds,
         newProps.zoom,
         {
           mouseover: function (p) {
@@ -166,6 +182,7 @@ class PositionMapStationBoardStats extends Component {
           }
         }
       );
+    }
   }
 
   render() {

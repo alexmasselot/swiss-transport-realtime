@@ -16,7 +16,7 @@ class PositionMapTrains extends Component {
   constructor() {
     super();
     let _this = this;
-    this;
+    _this.lastUpdated = {};
   }
 
   componentDidMount() {
@@ -59,8 +59,13 @@ class PositionMapTrains extends Component {
     _this._renderD3(el, _this.props)
   }
 
-  _updateData(bounds, trainPositions) {
+  _updateData(bounds, trainPositions, timestamp) {
     let _this = this;
+
+    if ((timestamp === _this.lastUpdated.timestamp) && _.isEqual(_this.lastUpdated.bounds, bounds)) {
+      return false;
+    }
+    _this.lastUpdated.timestamp = timestamp;
 
     let {lngMin, lngMax, latMin, latMax}  = bounds;
 
@@ -76,10 +81,13 @@ class PositionMapTrains extends Component {
     return _this;
   }
 
-  _renderD3TrainPositions(el, zoom) {
+  _renderD3TrainPositions(el, bounds, zoom) {
     let _this = this;
 
     console.log('_renderD3TrainPositions');
+
+    let hasBoundMoved = !_.isEqual(bounds, _this.lastUpdated.bounds);
+    _this.lastUpdated.bounds = bounds;
 
     let gTrains = _this._elements.gMainTrainPositions
       .selectAll('g.train-position')
@@ -134,13 +142,10 @@ class PositionMapTrains extends Component {
         //return p.train_name.trim() + ' (' + p.train_lastStopName + ')';// +_this.props.coord2point.x(p.x);
       });
 
-    gTrains
-      .transition()
-      .duration(500)
+    (hasBoundMoved ? gTrains : (gTrains.transition().duration(500)))
       .attr('transform', function (p) {
         return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
       });
-
 
     var radius;
     if (zoom <= 7) {
@@ -209,8 +214,13 @@ class PositionMapTrains extends Component {
       y: d3.scale.linear().range([0, _this._dim.height]).domain([latMax, latMin])
     };
 
-    _this._updateData(newProps.MapLocation.location.bounds, newProps.TrainPosition.positions)
-      ._renderD3TrainPositions(el, newProps.zoom);
+    if(_this._updateData(
+        newProps.MapLocation.location.bounds,
+        newProps.TrainPosition.positions,
+        newProps.TrainPosition.timestamp
+      )){
+      _this._renderD3TrainPositions(el, newProps.MapLocation.location.bounds, newProps.zoom);
+    }
 
   }
 

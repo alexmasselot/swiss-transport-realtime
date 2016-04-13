@@ -1,10 +1,10 @@
 #Todos
 
 ##Doing
-WEBRT BUG  positions & stations moves when panning the map. + stations come with a gliding transitions
 
 ##Backlog
 WEBRT FEAT add the clock
+WEBRT IMPR factorize StationBoard & TrainPosition maps. There's a lot in common...
 WEBRT FEAT add back the timer on last data update
 WEBRT FEAT position transition of train with a nice trailing fade out
 KAFKA FEAT kafka station boards. Volme of data is too big for every few seconds. check first how much we reduce the transfer. Can we gzip messages?
@@ -12,6 +12,7 @@ FEED  BUG  kafka send error [ 'LeaderNotAvailable' ]
 WEBRT BUG  AW Snap bug when viewer get's up for some time - train position might be enough
 
 ## Done
+WEBRT BUG  positions & stations moves when panning the map. + stations come with a gliding transitions
 WEBRT BUG  dragging the map is ugly transparency
 WEBRT FEAT mousing over a station show the board. That certainly means an REST service, maybe akka-http
 WEBRT BUG  both station board & position add their own SVG to google map. this prevents mouse event to go through the lower layer
