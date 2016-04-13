@@ -41,7 +41,11 @@ class PositionMapGoogle extends Component {
           zoom={zoom}
           onChange={actions.updateLocation}
         >
-
+          <div className={classes.masking}
+               lat={2*bounds.latMax-bounds.latMin}
+               lng={2*bounds.lngMin-bounds.lngMax}
+               style={{height:height*3, width:width*3}}>
+          </div>
           <PositionMapGoogleOverlayData lat={bounds.latMax}
                                         lng={bounds.lngMin}
                                         height={height}

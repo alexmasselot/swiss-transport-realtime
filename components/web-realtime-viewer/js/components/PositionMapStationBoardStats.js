@@ -43,22 +43,12 @@ class PositionMapStationBoardStats extends Component {
     _this._elements = {
       svg: d3.select(el)
         .attr({
-          //viewBox: '-' + (_this._dim.width / 2) + ' -' + (_this._dim.height / 2) + ' ' + _this._dim.width + ' ' + _this._dim.height,
-          //viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
           width: _this._dim.width,
           height: _this._dim.height,
           class: classes.train_overlay
         })
-      //.style('overflow', 'visible')
     };
-    _this._elements.svg.append('rect')
-      .attr({
-        width: _this._dim.width,// * 3,
-        height: _this._dim.height,// * 3,
-        x: 0,//-_this._dim.width,
-        y: 0,//-_this._dim.height,
-        class: classes.masking
-      });
+
     _this._elements.gMainStationBoardStats = _this._elements.svg.append('g')
       .attr({
         class: 'station-board-stats-main'

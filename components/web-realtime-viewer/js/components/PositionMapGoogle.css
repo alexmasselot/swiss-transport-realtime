@@ -1,4 +1,5 @@
-.positionText{
-  font-size: 10px;
-  color:red
+
+div.masking{
+  background:white;
+  opacity:0.5;
 }

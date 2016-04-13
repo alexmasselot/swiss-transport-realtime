@@ -5,6 +5,8 @@ import configureStore from '../store/configureStore';
 import Home from '../components/Home';
 import frontendConfig from '../config/FrontendConfig';
 import  ActionTypes from '../constants/ActionTypes';
+import matStyles from 'materialize-css/bin/materialize.css';
+
 
 const store = configureStore();
 
@@ -70,7 +72,7 @@ frontendConfig.get().then(function (config) {
 export default React.createClass({
   render() {
     return (
-      <div>
+      <div className={matStyles.container}>
         <Home store={store}/>
       </div>
     );
