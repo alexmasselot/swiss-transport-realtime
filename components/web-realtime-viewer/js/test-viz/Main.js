@@ -3,6 +3,7 @@ import SpecsGroup from './component-specs/SpecsGroup';
 import StationBoardDetailsSpecs from './component-specs/StationBoardDetailsSpecs';
 import PositionMapTrainSpecs from './component-specs/PositionMapTrainSpecs';
 import PositionMapStationBoardSpecs from './component-specs/PositionMapStationBoardStatsSpecs';
+import CFFCLockSpecs from './component-specs/CFFCLockSpecs';
 
 
 
@@ -19,6 +20,9 @@ export default React.createClass({
         </SpecsGroup>
         <SpecsGroup title="station boards stats" comment="3 different station board statistics">
           <PositionMapStationBoardSpecs/>
+        </SpecsGroup>
+        <SpecsGroup title="cff-clock" comment="the cff clock with different sizes">
+          <CFFCLockSpecs/>
         </SpecsGroup>
       </div>
     );

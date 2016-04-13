@@ -6,6 +6,7 @@ import matStyles from 'materialize-css/bin/materialize.css';
 
 import PositionMap from './PositionMap';
 import StationBoardDetails from './StationBoardDetails';
+import CFFCLock from './CFFCLock';
 import Timer from './Timer';
 
 class Home extends Component {
@@ -14,12 +15,13 @@ class Home extends Component {
 
     return (
       <div className={matStyles.row}>
-        <div className={matStyles.col + ' ' + matStyles.s8} style={{height:global.window.innerHeight*0.8}}>
+        <div className={matStyles.col + ' ' + matStyles.s9} style={{height:global.window.innerHeight*0.8}}>
           <PositionMap
             store={_this.props.store}
           />
         </div>
-        <div className={matStyles.col + ' '+matStyles.s4}>
+        <div className={matStyles.col + ' '+matStyles.s3}>
+          <div style={{width:'100%', height:150}}><CFFCLock /></div>
           <StationBoardDetails store={_this.props.store}/>
         </div>
       </div>
