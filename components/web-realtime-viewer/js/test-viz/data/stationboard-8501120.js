@@ -26,7 +26,8 @@ export default {
         "lastStopName": "Brig"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459833247000
+      "departureTimestamp": 1459833247000,
+      "delayMinute": 4
     },
     "RE 3129/Romont/2016-02-29T17:42:00+0100": {
       "timestamp": 1459831794816,
@@ -45,7 +46,8 @@ export default {
         "lastStopName": "Romont"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459832767000
+      "departureTimestamp": 1459832767000,
+      "platform": "2"
     },
     "RE 3226/GenÃ¨ve/2016-02-29T17:51:00+0100": {
       "timestamp": 1459831794843,
@@ -61,10 +63,12 @@ export default {
         "id": "RE 3226/GenÃ¨ve/2016-02-29T17:51:00+0100",
         "category": "RE",
         "name": "RE 3226",
-        "lastStopName": "GenÃ¨ve"
+        "lastStopName": "Genève"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459833307000
+      "departureTimestamp": 1459833307000,
+      "delayMinute": 42,
+      "platform": "12"
     },
     "S 1/Grandson/2016-02-29T17:54:00+0100": {
       "timestamp": 1459831794848,
@@ -83,7 +87,8 @@ export default {
         "lastStopName": "Grandson"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459833487000
+      "departureTimestamp": 1459833487000,
+      "platform": "D"
     },
     "S 3/Villeneuve/2016-02-29T17:36:00+0100": {
       "timestamp": 1459831794806,
@@ -102,7 +107,8 @@ export default {
         "lastStopName": "Villeneuve"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459832407000
+      "departureTimestamp": 1459832407000,
+      "platform": "1"
     },
     "IR 1573/NeuchÃ¢tel/2016-02-29T17:45:00+0100": {
       "timestamp": 1459831794822,
@@ -118,10 +124,11 @@ export default {
         "id": "IR 1573/NeuchÃ¢tel/2016-02-29T17:45:00+0100",
         "category": "IR",
         "name": "IR 1573",
-        "lastStopName": "NeuchÃ¢tel"
+        "lastStopName": "Neuchâtel"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459832947000
+      "departureTimestamp": 1459832947000,
+      "platform": "9 3/4"
     },
     "IR 2531/Luzern/2016-02-29T17:50:00+0100": {
       "timestamp": 1459831794839,
@@ -140,7 +147,8 @@ export default {
         "lastStopName": "Luzern"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459833247000
+      "departureTimestamp": 1459833247000,
+    "platform": "2"
     },
     "IR 1726/GenÃ¨ve-AÃ©roport/2016-02-29T17:48:00+0100": {
       "timestamp": 1459831794828,
@@ -156,10 +164,11 @@ export default {
         "id": "IR 1726/GenÃ¨ve-AÃ©roport/2016-02-29T17:48:00+0100",
         "category": "IR",
         "name": "IR 1726",
-        "lastStopName": "GenÃ¨ve-AÃ©roport"
+        "lastStopName": "Genève-Aéroport"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459833127000
+      "departureTimestamp": 1459833127000,
+      "platform": "2"
     },
     "IC 724/GenÃ¨ve-AÃ©roport/2016-02-29T17:42:00+0100": {
       "timestamp": 1459831794811,
@@ -172,13 +181,14 @@ export default {
         }
       },
       "train": {
-        "id": "IC 724/GenÃ¨ve-AÃ©roport/2016-02-29T17:42:00+0100",
+        "id": "IC 724/Genève-Aéroport/2016-02-29T17:42:00+0100",
         "category": "IC",
         "name": "IC 724",
-        "lastStopName": "GenÃ¨ve-AÃ©roport"
+        "lastStopName": "Genève-Aéroport"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459832767000
+      "departureTimestamp": 1459832767000,
+      "platform": "2"
     },
     "S 12042/Vallorbe/2016-02-29T17:34:00+0100": {
       "timestamp": 1459831794801,
@@ -197,8 +207,8 @@ export default {
         "lastStopName": "Vallorbe"
       },
       "arrivalTimestamp": 3068647000,
-      "departureTimestamp": 1459832287000
+      "departureTimestamp": 1459832287000,
+      "platform": "2"
     }
   }
 };
-

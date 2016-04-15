@@ -20,8 +20,13 @@ export default React.createClass({
               <StationBoard/>
             </div>
           </SpecsOne>
-          <SpecsOne title="300x200">
+          <SpecsOne title="300x300">
             <div style={{width:300, height:200}}>
+              <StationBoard/>
+            </div>
+          </SpecsOne>
+          <SpecsOne title="400x?">
+            <div style={{width:400}}>
               <StationBoard/>
             </div>
           </SpecsOne>

@@ -19,6 +19,13 @@ export function updateStationBoardDetails(data) {
   }
 }
 
+export function emptyStationBoardDetails() {
+  return {
+    type: ActionTypes.STATION_BOARD_DETAILS_EMPTY
+  }
+}
+
+
 export function getStationBoardDetails(stopId, stopName) {
   return function (dispatch) {
     return frontendConfig.get().then(function (config) {

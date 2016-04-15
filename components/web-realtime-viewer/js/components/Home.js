@@ -21,8 +21,12 @@ class Home extends Component {
           />
         </div>
         <div className={matStyles.col + ' '+matStyles.s3}>
-          <div style={{width:'100%', height:150}}><CFFCLock /></div>
-          <StationBoardDetails store={_this.props.store}/>
+          <div style={{width:'100%', height:150}}>
+            <CFFCLock />
+          </div>
+          <div style={{'height': global.window.innerHeight * 0.8 - 150 - 10}}>
+            <StationBoardDetails store={_this.props.store}/>
+          </div>
         </div>
       </div>
     );

@@ -3,31 +3,45 @@ import ReactDOM  from 'react-dom';
 import {connect} from 'react-redux';
 import Dimensions from 'react-dimensions'
 import dateFormat from 'dateformat';
+import StatusTypes from '../constants/StatusTypes';
+
 
 import styles from './StationBoardDetails.css';
 import matStyles from 'materialize-css/bin/materialize.css';
 
 
-const fBoardTR = function(evt){
+const fBoardTR = function (evt) {
   let dep = dateFormat(new Date(evt.departureTimestamp), "HH:MM");
-  return (<tr key={evt.train.id}>
+  var elDep;
+  if (evt.delayMinute) {
+    elDep = <span>{dep} <span className={styles.delayed}>+{evt.delayMinute}</span></span>;
+  } else {
+    elDep = <span>{dep}</span>;
+  }
+  return (<tr key={evt.train.id} className={styles.trainEvent}>
     <td>{evt.train.name}</td>
-    <td>{dep}</td>
+    <td>{elDep}</td>
     <td>{evt.train.lastStopName}</td>
+    <td>{evt.platform}</td>
   </tr>)
 };
 
 const fActualStationBoard = function (board, width, height) {
-  return <div className={styles.station_board} style={{width:width, height:height}}>
-    <div >{board.stop.name}</div>
-    <table className={matStyles.striped}>
+  console.log('height=', height);
+  return <div className={styles.station_board} style={{
+  width:width,
+  height:(height||null),
+  'font-size':Math.round(100*width/400)+'%'
+  }}>
+    <div className={styles.stopName}>Depuis {board.stop.name}</div>
+    <table className={styles.trainEvents}>
       <tbody>
       {_.chain(board.events)
         .values()
-        .sortBy(function(e){
-          return -e.departureTimestamp;
+        .sortBy(function (e) {
+          return e.departureTimestamp;
         })
-        .map(function(e){
+        .map(function (e) {
           return fBoardTR(e);
         })
         .value()
@@ -50,11 +64,11 @@ class StationBoard extends Component {
 
     let details = _this.props.StationBoard.details;
     switch (details.status) {
-      case 'unavailable':
+      case StatusTypes.UNAVAILABLE:
         return <span>-</span>
-      case 'error' :
+      case StatusTypes.ERROR :
         return <span>error</span>
-      case 'success':
+      case StatusTypes.SUCCESS:
         let {stop} = details.board;
         return fActualStationBoard(details.board, containerWidth, containerHeight);
       default:

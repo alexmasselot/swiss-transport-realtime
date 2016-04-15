@@ -120,7 +120,7 @@ class PositionMapStationBoardStats extends Component {
 
     var factor;
     if (zoom <= 8) {
-      factor = 0.25;
+      factor = 0.1;
     } else if (factor >= 11) {
       factor = 1;
     } else {
@@ -128,7 +128,7 @@ class PositionMapStationBoardStats extends Component {
     }
 
     let fRadius = function (d) {
-      return factor * 5 * (d.total + 1);
+      return 1+factor * 2 * (d.total + 1);
     };
 
     gStats.attr('transform', function (p) {

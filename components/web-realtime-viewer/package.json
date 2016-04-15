@@ -11,6 +11,7 @@
   "dependencies": {
     "config": "^1.19.0",
     "d3": "^3.5.13",
+    "dateformat": "^1.0.12",
     "es6-promise": "^3.0.2",
     "express-ws": "^1.0.0-rc.2",
     "file-loader": "^0.8.5",
