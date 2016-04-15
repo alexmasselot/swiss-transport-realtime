@@ -4,7 +4,7 @@ import akka.actor.{ Actor, ActorLogging, ActorPath }
 import ch.octo.cffpoc.position.{ TrainCFFPosition, TrainCFFPositionLatestCollection }
 import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardEvent }
 import ch.octo.cffpoc.stops.Stop
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionSnapshot, StationBoardDetails }
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionDetails, PositionSnapshot, StationBoardDetails }
 import org.joda.time.DateTime
 
 /**
@@ -18,5 +18,7 @@ class PositionAggregatorActor() extends Actor with ActorLogging {
     case tpos: TrainCFFPosition =>
       latestPositions = latestPositions + tpos
     case PositionSnapshot => sender ! latestPositions.snapshot(DateTime.now())
+    case PositionDetails(id) =>
+      sender ! latestPositions.get(id).map(_.current)
   }
 }

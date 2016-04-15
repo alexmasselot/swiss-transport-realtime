@@ -6,7 +6,7 @@ import akka.util.Timeout
 import ch.octo.cffpoc.position.TrainCFFPosition
 import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardEvent }
 import ch.octo.cffpoc.stops.Stop
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionSnapshot, StationBoardsSnapshot, StationBoardDetails }
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionDetails, PositionSnapshot, StationBoardsSnapshot, StationBoardDetails }
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
@@ -28,5 +28,7 @@ class PositionMasterActor extends Actor with ActorLogging {
     case tpos: TrainCFFPosition =>
       positionAggregatorActor ! tpos
     case PositionSnapshot => positionAggregatorActor forward PositionSnapshot
+    case d: PositionDetails => positionAggregatorActor forward (d)
+
   }
 }

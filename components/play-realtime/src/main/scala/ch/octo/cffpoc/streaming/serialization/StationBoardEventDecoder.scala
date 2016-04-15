@@ -34,7 +34,8 @@ class StationBoardEventDecoder(props: VerifiableProperties = null) extends Decod
         ),
         arrivalTimestamp = (json \ "stop" \ "arrivalTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),
         departureTimestamp = (json \ "stop" \ "departureTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),
-        delayMinute = (json \ "stop" \ "delay").asOpt[Int]
+        delayMinute = (json \ "stop" \ "delay").asOpt[Int],
+        platform = (json \ "stop" \ "platform").asOpt[String]
       ))
     }
   }

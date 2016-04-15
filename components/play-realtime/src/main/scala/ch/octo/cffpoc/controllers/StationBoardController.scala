@@ -26,7 +26,6 @@ class StationBoardController extends Controller {
 
   def details(id: Long) = Action.async {
     (MainActor() ? StationBoardDetails(id)).mapTo[StationBoard].map { message =>
-      println(message)
       Ok(Json.toJson(message))
     }
   }

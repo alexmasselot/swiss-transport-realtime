@@ -10,6 +10,25 @@ import org.joda.time.DateTime
 class TrainCFFPositionLatestCollection(mCol: Map[String, TrainCFFPosition]) extends Serializable {
 
   /**
+   * returns the TrainCFFPosition pointed by the given id
+   * @param id
+   * @return
+   */
+  def apply(id: String) = {
+
+    mCol(id)
+  }
+
+  /**
+   * returns the TrainCFFPosition pointed by the given id
+   * @param id
+   * @return
+   */
+  def get(id: String) = {
+    mCol.get(id)
+  }
+
+  /**
    * add a TrainCFFPosition and eventually replace an earlier train with same trainid
    *
    * @param p a new cff train position

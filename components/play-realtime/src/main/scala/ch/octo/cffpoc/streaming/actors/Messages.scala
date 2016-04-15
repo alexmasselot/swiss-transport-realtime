@@ -11,4 +11,6 @@ object Messages {
 
   case object PositionSnapshot
 
+  case class PositionDetails(id: String)
+
 }

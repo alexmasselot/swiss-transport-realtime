@@ -15,7 +15,8 @@ case class StationBoardEvent(
     train: Train,
     arrivalTimestamp: Option[DateTime],
     departureTimestamp: Option[DateTime],
-    delayMinute: Option[Int]) {
+    delayMinute: Option[Int],
+    platform: Option[String]) {
 
   /**
    * return if the train is in the station with the next ?? seconds

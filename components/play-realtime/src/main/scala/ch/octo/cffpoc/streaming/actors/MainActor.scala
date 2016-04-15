@@ -5,7 +5,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{ Sink, Source }
 import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardsSnapshotStats }
 import ch.octo.cffpoc.streaming.actors.PositionMasterActor
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionSnapshot, StationBoardsSnapshot, StationBoardDetails }
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionDetails, PositionSnapshot, StationBoardsSnapshot, StationBoardDetails }
 import ch.octo.cffpoc.streaming.serialization.{ TrainCFFPositionDecoder, StationBoardEventDecoder }
 import com.softwaremill.react.kafka.{ ConsumerProperties, ProducerProperties, ReactiveKafka }
 import kafka.serializer.StringEncoder
@@ -57,6 +57,7 @@ class MainActor extends Actor with ActorLogging {
     case m: StationBoardDetails => stationBoardMasterActor forward (m)
     case StationBoardsSnapshot => stationBoardMasterActor forward (StationBoardsSnapshot)
     case PositionSnapshot => positionMasterActor forward PositionSnapshot
+    case d: PositionDetails => positionMasterActor forward (d)
     case x => log.warning(s"lost message $x")
   }
 }
