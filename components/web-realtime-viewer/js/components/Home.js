@@ -1,6 +1,7 @@
 import React, {Component, Provider} from 'react';
 import ReactDOM  from 'react-dom';
 import {connect} from 'react-redux';
+import Dimensions from 'react-dimensions'
 import styles from '../../css/app.css';
 import matStyles from 'materialize-css/bin/materialize.css';
 
@@ -12,10 +13,9 @@ import Timer from './Timer';
 class Home extends Component {
   render() {
     let _this = this;
-
     return (
-      <div className={matStyles.row}>
-        <div className={matStyles.col + ' ' + matStyles.s9} style={{height:global.window.innerHeight*0.8}}>
+      <div className={matStyles.row} style={{height:this.props.containerHeight, marginBottom:'0px'}}>
+        <div className={matStyles.col + ' ' + matStyles.s9} style={{height:this.props.containerHeight}}>
           <PositionMap
             store={_this.props.store}
           />
@@ -33,4 +33,4 @@ class Home extends Component {
   }
 }
 
-export default connect(state => state)(Home);
+export default connect(state => state)(Dimensions()(Home));

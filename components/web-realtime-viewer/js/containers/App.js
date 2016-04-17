@@ -1,5 +1,8 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Provider} from 'react-redux';
+import Dimensions from 'react-dimensions';
+import ReactDOM  from 'react-dom';
+import d3 from 'd3';
 import http from 'http';
 import configureStore from '../store/configureStore';
 import Home from '../components/Home';
@@ -69,15 +72,22 @@ frontendConfig.get().then(function (config) {
 ;
 
 
-export default React.createClass({
+class App extends Component {
+
   render() {
+    //yeaah, that's ugly, but franky, I'm lost with containerHeight and flex css
+    const h = d3.select('#main').node().getBoundingClientRect().height;
     return (
-      <div className={matStyles.container}>
+      <div className={matStyles.container} style={{height:h}}>
         <Home store={store}/>
       </div>
     );
   }
-});
+}
+;
+
+export default Dimensions()(App);
+
 //        <Provider store={store}>
 //...
 //        </Provider>

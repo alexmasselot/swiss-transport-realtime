@@ -84,7 +84,7 @@ class PositionMapTrains extends Component {
   _renderD3TrainPositions(el, bounds, zoom) {
     let _this = this;
 
-    console.log('_renderD3TrainPositions');
+    console.log('render PositionMapTrain');
 
     let hasBoundMoved = !_.isEqual(bounds, _this.lastUpdated.bounds);
     _this.lastUpdated.bounds = bounds;

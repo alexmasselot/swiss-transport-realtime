@@ -1,4 +1,19 @@
-.PositionMapText{
-  font-size: 10px;
-  color:red
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+header{
+  height:60px;
+  background: lightpink;
+}
+
+footer{
+  height:60px;
+  background: lightpink;
 }

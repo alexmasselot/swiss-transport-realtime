@@ -27,7 +27,7 @@ const fBoardTR = function (evt) {
 };
 
 const fActualStationBoard = function (board, width, height) {
-  console.log('height=', height);
+
   return <div className={styles.station_board} style={{
   width:width,
   height:(height||null),
