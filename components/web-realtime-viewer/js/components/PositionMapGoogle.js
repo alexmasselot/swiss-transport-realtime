@@ -4,8 +4,8 @@ import {connect} from 'react-redux';
 import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as MapLocationActions from '../actions/MapLocationActions';
-import styles from '../../css/app.css';
-import classes from './PositionMapGoogle.css'
+import '../../css/app.css';
+import './PositionMapGoogle.css'
 import shouldPureComponentUpdate from 'react-pure-render/function';
 import GoogleMap from 'google-map-react';
 import PositionMapGoogleOverlayData from './PositionMapGoogleOverlayData';
@@ -41,7 +41,7 @@ class PositionMapGoogle extends Component {
           zoom={zoom}
           onChange={actions.updateLocation}
         >
-          <div className={classes.masking}
+          <div className="masking"
                lat={2*bounds.latMax-bounds.latMin}
                lng={2*bounds.lngMin-bounds.lngMax}
                style={{height:height*3, width:width*3}}>

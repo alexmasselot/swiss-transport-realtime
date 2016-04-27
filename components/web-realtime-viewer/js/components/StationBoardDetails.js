@@ -6,19 +6,19 @@ import dateFormat from 'dateformat';
 import StatusTypes from '../constants/StatusTypes';
 
 
-import styles from './StationBoardDetails.css';
-import matStyles from 'materialize-css/bin/materialize.css';
+import './StationBoardDetails.css';
+import 'materialize-css/bin/materialize.css';
 
 
 const fBoardTR = function (evt) {
   let dep = dateFormat(new Date(evt.departureTimestamp), "HH:MM");
   var elDep;
   if (evt.delayMinute) {
-    elDep = <span>{dep} <span className={styles.delayed}>+{evt.delayMinute}</span></span>;
+    elDep = <span>{dep} <span className="delayed">+{evt.delayMinute}</span></span>;
   } else {
     elDep = <span>{dep}</span>;
   }
-  return (<tr key={evt.train.id} className={styles.trainEvent}>
+  return (<tr key={evt.train.id} className="trainEvent">
     <td>{evt.train.name}</td>
     <td>{elDep}</td>
     <td>{evt.train.lastStopName}</td>
@@ -28,13 +28,13 @@ const fBoardTR = function (evt) {
 
 const fActualStationBoard = function (board, width, height) {
 
-  return <div className={styles.station_board} style={{
+  return <div className="station_board" style={{
   width:width,
   height:(height||null),
-  'font-size':Math.round(100*width/400)+'%'
+  fontSize:Math.round(100*width/400)+'%'
   }}>
-    <div className={styles.stopName}>Depuis {board.stop.name}</div>
-    <table className={styles.trainEvents}>
+    <div className="stopName">Depuis {board.stop.name}</div>
+    <table className="trainEvents">
       <tbody>
       {_.chain(board.events)
         .values()

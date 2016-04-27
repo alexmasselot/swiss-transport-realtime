@@ -2,6 +2,7 @@
 
 ##Doing
 WEBFT FEAT a header/foor w/ some info
+WEBFT FEAT add about (basic info), with scrolling
 
 ##Backlog
 WEBFT gzip the XHR to lower amazon cost
@@ -17,6 +18,7 @@ FEED  BUG  kafka send error [ 'LeaderNotAvailable' ]
 WEBRT BUG  AW Snap bug when viewer get's up for some time - train position might be enough
 
 ## Done
+WEBFT FEAT add some source info on the watch (to avoid get killed in the first minute)
 WEBFT IMPR max-height on station board list (I want ot avoid having the scroll bar appearing on the window, 'cause it's ugly)
 WEBRT FEAT add the clock
 WEBRT BUG  positions & stations moves when panning the map. + stations come with a gliding transitions

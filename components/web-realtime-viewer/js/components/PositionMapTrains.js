@@ -5,8 +5,8 @@ import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
 import * as MapLocationActions from '../actions/MapLocationActions';
-import styles from '../../css/app.css';
-import classes from './PositionMapCFF.css'
+import '../../css/app.css';
+import  './PositionMapCFF.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import _ from 'lodash'
 
@@ -48,7 +48,7 @@ class PositionMapTrains extends Component {
           //viewBox: '0 0 ' + _this._dim.width + ' ' + _this._dim.height,
           width: _this._dim.width,
           height: _this._dim.height,
-          class: classes.train_overlay
+          class: 'train_overlay'
         })
       //.style('overflow', 'visible')
     };
@@ -105,8 +105,8 @@ class PositionMapTrains extends Component {
           let s = p.train_name.trim();
           let i = s.indexOf(' ');
           let clazz = 'train-position ';
-          clazz = clazz + classes['train-cat_' + p.train_category.toLowerCase()];
-          clazz = clazz + ' ' + classes.trainMarker;
+          clazz = clazz + 'train-cat_' + p.train_category.toLowerCase();
+          clazz = clazz + ' trainMarker';
           return clazz;
         }
       });
@@ -115,7 +115,7 @@ class PositionMapTrains extends Component {
     });
     let gSymbol = gNew.append('g')
       .attr({
-        class: 'train-symbol ' + classes.trainSymbol
+        class: 'train-symbol trainSymbol'
       });
 
     gSymbol.append('circle')
@@ -126,16 +126,16 @@ class PositionMapTrains extends Component {
       });
     gSymbol.append('path')
       .attr({
-        class: 'bearing-arrow ' + classes.bearingArrow,
+        class: 'bearing-arrow bearingArrow',
         d: 'M0.707,-0.707 L0,-2 L-0.707,-0.707 Z'
       });
 
     gNew.append('g')
       .attr({
-        class: 'train-details ' + classes.trainDetails
+        class: 'train-details trainDetails'
       }).append('text')
       .attr({
-        class: 'train-details ' + classes.positionText,
+        class: 'train-details positionText',
         x: 6
       })
       .text(function (p) {

@@ -6,6 +6,9 @@ import d3 from 'd3';
 import http from 'http';
 import configureStore from '../store/configureStore';
 import Home from '../components/Home';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+
 import frontendConfig from '../config/FrontendConfig';
 import  ActionTypes from '../constants/ActionTypes';
 import matStyles from 'materialize-css/bin/materialize.css';
@@ -72,11 +75,10 @@ frontendConfig.get().then(function (config) {
 ;
 
 
-class App extends Component {
+class Map extends Component {
 
   render() {
-    //yeaah, that's ugly, but franky, I'm lost with containerHeight and flex css
-    const h = d3.select('#main').node().getBoundingClientRect().height;
+    const h = d3.select('main').node().getBoundingClientRect().height;
     return (
       <div className={matStyles.container} style={{height:h}}>
         <Home store={store}/>
@@ -86,7 +88,7 @@ class App extends Component {
 }
 ;
 
-export default Dimensions()(App);
+export default Dimensions()(Map);
 
 //        <Provider store={store}>
 //...

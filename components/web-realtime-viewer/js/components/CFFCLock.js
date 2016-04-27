@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM  from 'react-dom';
 import d3 from 'd3';
-import classes from './CFFClock.css'
+import  './CFFClock.css'
 import _ from 'lodash'
 import Dimensions from 'react-dimensions'
 
@@ -69,7 +69,7 @@ class CFFClock extends Component {
     _this._rootContainer = gMain;
 
     var gTicks = gMain.append('g').attr({
-      class: classes.ticks
+      class: "ticks"
     });
 
     //transform a angl between 0 and 1 in degree for svg rotation, where 0 is noon
@@ -79,12 +79,12 @@ class CFFClock extends Component {
 
 
     var plotTicks = function (name, number, size) {
-      gTicks.selectAll('g.tick.' + classes[name])
+      gTicks.selectAll('g.tick.' + name)
         .data(_.range(number))
         .enter()
         .append('g')
         .attr({
-          class: 'tick ' + classes[name],
+          class: 'tick ' + name,
           transform: function (t) {
             return 'rotate(' + (t / number * 360) + ') translate(' + 230 + ',0)';
           }
@@ -101,21 +101,21 @@ class CFFClock extends Component {
     var gHands = gMain
       .append('g')
       .datum(getNow())
-      .attr('class', classes.hands);
+      .attr('class', "hands");
 
     var gHandHours = gHands.append('g')
-      .attr('class', classes.hours);
+      .attr('class', "hours");
     gHandHours.append('path')
       .attr('d', `M-54,-15 L-54,15 L152,12.5 L152,-12.5 Z`);
 
     var gHandMinutes = gHands.append('g')
-      .attr('class', classes.minutes);
+      .attr('class', "minutes");
     gHandMinutes.append('path')
       .attr('d', `M-54,-12 L-54,12 L222,8.5 L222,-8.5 Z`);
 
 
     var gHandSeconds = gHands.append('g')
-      .attr('class', classes.seconds);
+      .attr('class', "seconds");
     gHandSeconds.append('path')
       .attr('d', `M-84,0 L146,0`);
     gHandSeconds.append('circle')
@@ -126,7 +126,7 @@ class CFFClock extends Component {
       });
     gHands.append('circle')
       .attr({
-        class: classes.middle_nail,
+        class: "middle_nail",
         r: 2
       });
 
@@ -182,7 +182,7 @@ class CFFClock extends Component {
         .attr({
           width: _this._dim.width,
           height: _this._dim.height,
-          class: classes.cff_clock
+          class: "cff_clock"
         })
       //.style('overflow', 'visible')
     };
@@ -196,7 +196,6 @@ class CFFClock extends Component {
 
   _renderD3(el, newProps) {
     const _this = this;
-
 
     console.log('rendering CFFClock');
     const height = newProps.containerHeight;

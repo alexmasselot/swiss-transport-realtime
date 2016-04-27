@@ -4,8 +4,8 @@ import {connect} from 'react-redux';
 import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
-import styles from '../../css/app.css';
-import classes from './PositionMapCFF.css'
+import  '../../css/app.css';
+import './PositionMapCFF.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import _ from 'lodash'
 import * as StationBoardActions from '../actions/StationBoardActions';
@@ -46,7 +46,7 @@ class PositionMapStationBoardStats extends Component {
         .attr({
           width: _this._dim.width,
           height: _this._dim.height,
-          class: classes.train_overlay
+          class: "train_overlay"
         })
     };
 
@@ -103,7 +103,7 @@ class PositionMapStationBoardStats extends Component {
       });
     let gNew = gStats.enter()
       .append('g')
-      .attr('class', 'station-board-stats ' + classes['station-board-stats']);
+      .attr('class', 'station-board-stats');
     gNew.attr('transform', function (p) {
       return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
     });
@@ -115,7 +115,7 @@ class PositionMapStationBoardStats extends Component {
     gNew.append('circle');
     gNew.append('path')
       .attr({
-        class: 'delayed ' + classes.stationboard_delayed
+        class: 'delayed stationboard_delayed'
       });
 
     var factor;
@@ -128,12 +128,12 @@ class PositionMapStationBoardStats extends Component {
     }
 
     let fRadius = function (d) {
-      return 1+factor * 2 * (d.total + 1);
+      return 1 + factor * 2 * (d.total + 1);
     };
 
     gStats.attr('transform', function (p) {
-        return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
-      });
+      return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
+    });
 
     gStats.select('circle')
       .attr({
