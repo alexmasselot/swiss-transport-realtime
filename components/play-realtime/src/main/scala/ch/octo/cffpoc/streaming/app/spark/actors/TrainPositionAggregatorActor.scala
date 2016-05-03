@@ -20,7 +20,7 @@ class TrainPositionAggregatorActor(kafkaProducerParams: Map[String, Object], kaf
 
   val producer = new KafkaProducer[String, String](kafkaProducerParams)
 
-  val stops = StopCollection.load("src/main/resources/stops.txt")
+  val stops = StopCollection.load("src/main/resources/stops.txt", true)
   val stopCloser = new StopCloser(stops, 300);
 
   override def preStart() = {

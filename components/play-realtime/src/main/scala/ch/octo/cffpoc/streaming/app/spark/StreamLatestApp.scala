@@ -45,7 +45,7 @@ object StreamLatestApp extends StreamingApp {
       .map(_._2)
     //.filter(_.current.train.name.trim.startsWith("IR 172"))
 
-    val closer = new StopCloser(StopCollection.load(getClass.getResourceAsStream("/stops.txt")), 500)
+    val closer = new StopCloser(StopCollection.load(getClass.getResourceAsStream("/stops.txt"), true), 500)
     lines
       .foreachRDD({
         rdd =>

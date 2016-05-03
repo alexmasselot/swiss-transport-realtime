@@ -9,7 +9,7 @@ import org.scalatest.{ FlatSpec, Matchers }
 class StopCloserSpecs extends FlatSpec with Matchers {
   behavior of "StopCloser"
 
-  val closer = new StopCloser(StopCollection.load("src/test/resources/stops.txt"), 500)
+  val closer = new StopCloser(StopCollection.load("src/test/resources/stops.txt", true), 500)
 
   def check(lat: Double, lng: Double, exp: String) = {
 

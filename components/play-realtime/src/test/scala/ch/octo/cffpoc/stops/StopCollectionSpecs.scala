@@ -8,7 +8,7 @@ import org.scalatest.{ FlatSpec, Matchers }
 class StopCollectionSpecs extends FlatSpec with Matchers {
   behavior of "StopCollection"
 
-  val stops = StopCollection.load("src/test/resources/stops.txt")
+  val stops = StopCollection.load("src/test/resources/stops.txt", true)
   it should "size" in {
     stops.size should be(1907)
   }

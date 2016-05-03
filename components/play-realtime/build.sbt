@@ -25,11 +25,9 @@ libraryDependencies ++= Seq(
   "com.github.nscala-time" %% "nscala-time" % "2.10.0"
 )
 
-
 scalaSource in Compile := baseDirectory.value / "src/main/scala"
 
 scalaSource in Test := baseDirectory.value / "src/test/scala"
-
 
 releaseSettings
 
