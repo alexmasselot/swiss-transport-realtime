@@ -1,23 +1,27 @@
 #Todos
 
 ##Doing
-WEBFT FEAT a header/foor w/ some info
-WEBFT FEAT add about (basic info), with scrolling
+ALL  FEAT high speed delivery of all transports (based on schedule)
 
 ##Backlog
-WEBFT gzip the XHR to lower amazon cost
 ALL   FEAT deploy the full stack on amazon
+WEBFT FEAT make it responsive to cell phone (no watch...)
+WEBFT FEAT gzip the XHR to lower amazon cost and bandwith overall usage
+DATA  FEAT extract late history by stations
+WEBRT FEAT add back the timer on last data update
+WEBFT BUG  when height decreases, map is not resized (although it is when it's increased)
 WEBRT FEAT show only limited number of station when zoomed out
 WEBRT FEAT filter on station
 WEBRT FEAT add occupancy prognosis on the station board
 WEBRT IMPR factorize StationBoard & TrainPosition maps. There's a lot in common...
-WEBRT FEAT add back the timer on last data update
 WEBRT FEAT position transition of train with a nice trailing fade out
 KAFKA FEAT kafka station boards. Volme of data is too big for every few seconds. check first how much we reduce the transfer. Can we gzip messages?
 FEED  BUG  kafka send error [ 'LeaderNotAvailable' ]
 WEBRT BUG  AW Snap bug when viewer get's up for some time - train position might be enough
 
 ## Done
+WEBFT FEAT a header/foor w/ some info
+WEBFT FEAT add about (basic info), with scrolling
 WEBFT FEAT add some source info on the watch (to avoid get killed in the first minute)
 WEBFT IMPR max-height on station board list (I want ot avoid having the scroll bar appearing on the window, 'cause it's ugly)
 WEBRT FEAT add the clock
