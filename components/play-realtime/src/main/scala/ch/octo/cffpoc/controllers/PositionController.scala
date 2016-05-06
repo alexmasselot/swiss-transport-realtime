@@ -1,11 +1,14 @@
 package ch.octo.cffpoc.controllers
 
+import javax.inject.{ Singleton, Inject }
+
+import akka.actor.{ Props, ActorSystem }
 import akka.pattern.ask
 import akka.util.Timeout
-import ch.octo.cffpoc.position.{ TrainCFFPosition, TrainPositionSnapshot, TrainPosition }
-import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardsSnapshotStats }
-import ch.octo.cffpoc.streaming.app.akka.actors.MainActor
+import ch.octo.cffpoc.position.{ TrainPosition, TrainPositionSnapshot }
+import ch.octo.cffpoc.streaming.app.akka.actors.{ MainActorGenerator, MainActor }
 import ch.octo.cffpoc.streaming.app.akka.actors.Messages._
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -15,14 +18,19 @@ import scala.concurrent.duration._
 /**
  * Created by alex on 30/03/16.
  */
-class PositionController extends Controller {
+class PositionController @Inject() (configuration: Configuration, actorSystem: ActorSystem, mainActorGenerator: MainActorGenerator) extends Controller {
+  //@Inject() (val environment: play.api.Environment, val configuration: play.api.Configuration) extends AkkaController {
 
   import ch.octo.cffpoc.streaming.serialization.serializers._
 
   implicit val timeout = Timeout(5 seconds)
+  implicit val config = configuration
+
+  val mainActor = mainActorGenerator.mainActor
 
   def snapshot = Action.async {
-    (MainActor() ? PositionSnapshot).mapTo[TrainPositionSnapshot].map { snapshot =>
+
+    (mainActor ? PositionSnapshot).mapTo[TrainPositionSnapshot].map { snapshot =>
       //Ok(Json.toJson(message))
       Ok("train_id\ttrain_category\ttrain_name\ttrain_lastStopName\tposition_lat\tposition_lng\tposition_bearing\n" +
         snapshot.positions.values.map({
@@ -34,7 +42,7 @@ class PositionController extends Controller {
   }
 
   def details(id: String) = Action.async {
-    (MainActor() ? PositionDetails(id.trim)).mapTo[Option[TrainPosition]].map {
+    (mainActor ? PositionDetails(id.trim)).mapTo[Option[TrainPosition]].map {
       _ match {
         case Some(tp) => Ok(Json.toJson(tp))
         case None => NotFound

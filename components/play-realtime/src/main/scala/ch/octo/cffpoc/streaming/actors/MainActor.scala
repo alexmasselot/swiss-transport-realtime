@@ -1,23 +1,21 @@
 package ch.octo.cffpoc.streaming.app.akka.actors
 
+import javax.inject._
+
 import akka.actor._
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{ Sink, Source }
-import ch.octo.cffpoc.stationboard.{ StationBoard, StationBoardsSnapshotStats }
 import ch.octo.cffpoc.streaming.actors.PositionMasterActor
-import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionDetails, PositionSnapshot, StationBoardsSnapshot, StationBoardDetails }
-import ch.octo.cffpoc.streaming.serialization.{ TrainCFFPositionDecoder, StationBoardEventDecoder }
-import com.softwaremill.react.kafka.{ ConsumerProperties, ProducerProperties, ReactiveKafka }
-import kafka.serializer.StringEncoder
-import org.reactivestreams.Subscriber
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
+import ch.octo.cffpoc.streaming.app.akka.actors.Messages.{ PositionDetails, PositionSnapshot, StationBoardDetails, StationBoardsSnapshot }
+import ch.octo.cffpoc.streaming.serialization.{ StationBoardEventDecoder, TrainCFFPositionDecoder }
+import com.softwaremill.react.kafka.{ ConsumerProperties, ReactiveKafka }
+import play.api.Configuration
 
 /**
  * Created by alex on 30/03/16.
  */
-class MainActor extends Actor with ActorLogging {
+
+class MainActor(configuration: Configuration) extends Actor with ActorLogging {
 
   implicit val actorSystem = ActorSystem("ReactiveKafka")
   implicit val materializer = ActorMaterializer()
@@ -27,9 +25,15 @@ class MainActor extends Actor with ActorLogging {
 
   val kafka = new ReactiveKafka()
 
+  val kafkaUrl = configuration.getString("broker.in.kafka.host").get + ":" + configuration.getString("broker.in.kafka.port").getOrElse(9092)
+  val zookeeperUrl = configuration.getString("broker.in.zookeeper.host").get + ":" + configuration.getString("broker.in.zookeeper.port").getOrElse(2181)
+
+  log.info(s"listening to kafka $kafkaUrl")
+  log.info(s"listening to zookeeper $zookeeperUrl")
+
   val publisherStationBoards = kafka.consume(ConsumerProperties(
-    brokerList = "192.168.99.100:9092",
-    zooKeeperHost = "192.168.99.100:2181",
+    brokerList = kafkaUrl,
+    zooKeeperHost = zookeeperUrl,
     topic = "cff_station_board",
     groupId = "cff_streaming_akka",
     decoder = new StationBoardEventDecoder()
@@ -41,8 +45,8 @@ class MainActor extends Actor with ActorLogging {
     })).run()
 
   val publisherPositions = kafka.consume(ConsumerProperties(
-    brokerList = "192.168.99.100:9092",
-    zooKeeperHost = "192.168.99.100:2181",
+    brokerList = kafkaUrl,
+    zooKeeperHost = zookeeperUrl,
     topic = "cff_train_position",
     groupId = "cff_streaming_akka",
     decoder = new TrainCFFPositionDecoder()
@@ -62,11 +66,18 @@ class MainActor extends Actor with ActorLogging {
   }
 }
 
-object MainActor {
-  implicit val actorSystem = ActorSystem("cff-streaming")
-  implicit val materializer = ActorMaterializer()
-
-  lazy val mainActor = actorSystem.actorOf(Props[MainActor], "main")
-
-  def apply() = mainActor
+@Singleton
+class MainActorGenerator @Inject() (configuration: Configuration, actorSystem: ActorSystem) {
+  val mainActor = actorSystem.actorOf(Props(classOf[MainActor], configuration))
 }
+
+//object MainActor {
+//  implicit val actorSystem = ActorSystem("cff-streaming")
+//  implicit val materializer = ActorMaterializer()
+//
+//  //
+//  //
+//  lazy val mainActor = actorSystem.actorOf(Props(classOf[MainActor]))
+//
+//  def apply()(implicit configuration: Configuration) = mainActor
+//}

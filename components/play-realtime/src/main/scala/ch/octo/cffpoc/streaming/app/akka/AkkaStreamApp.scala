@@ -13,13 +13,13 @@ object AkkaStreamApp extends App {
   //    topic = "dummy",
   //    encoder = new StringEncoder()
   //  ))
-
-  MainActor()
-
-  val cancellable =
-    MainActor.actorSystem.scheduler.schedule(100 milliseconds,
-      1000 milliseconds,
-      MainActor(),
-      StationBoardsSnapshot)
+  //
+  //  MainActor()
+  //
+  //  val cancellable =
+  //    MainActor.actorSystem.scheduler.schedule(100 milliseconds,
+  //      1000 milliseconds,
+  //      MainActor(),
+  //      StationBoardsSnapshot)
 }
 
