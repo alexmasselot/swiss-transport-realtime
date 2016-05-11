@@ -26,27 +26,28 @@ var kafkaClient = new KafkaClient(kafkaHost, kafkaPort);
 
 var TrainPositionSniffer = require('./TrainPositionSniffer');
 var StationBoardSniffer = require('./StationBoardSniffer');
+setTimeout(function () {
+    kafkaClient.initProducer()
+        .then(function () {
+            var trainPositionSniffer;
+            var stationBoardSniffer;
 
-kafkaClient.initProducer()
-    .then(function () {
-        var trainPositionSniffer;
-        var stationBoardSniffer;
-
-        if (process.env.MODE === 'DEV') {
-            trainPositionSniffer = new TrainPositionSniffer(kafkaClient, {
-                mode: 'DEV',
-                interval: 30
-            });
-            stationBoardSniffer = new StationBoardSniffer(kafkaClient, {
-                requestPerMinute: 12,
-                stopTypes: ['train_dev', 'ferry_dev']
-            });
-        } else {
-            trainPositionSniffer = new TrainPositionSniffer(kafkaClient);
-            stationBoardSniffer = new StationBoardSniffer(kafkaClient);
-        }
-        trainPositionSniffer.loop();
-        stationBoardSniffer.loop();
-    }).catch(function (err) {
-    console.error(err);
-});
+            if (process.env.MODE === 'DEV') {
+                trainPositionSniffer = new TrainPositionSniffer(kafkaClient, {
+                    mode: 'DEV',
+                    interval: 30
+                });
+                stationBoardSniffer = new StationBoardSniffer(kafkaClient, {
+                    requestPerMinute: 12,
+                    stopTypes: ['train_dev', 'ferry_dev']
+                });
+            } else {
+                trainPositionSniffer = new TrainPositionSniffer(kafkaClient);
+                stationBoardSniffer = new StationBoardSniffer(kafkaClient);
+            }
+            trainPositionSniffer.loop();
+            stationBoardSniffer.loop();
+        }).catch(function (err) {
+        console.error('ERROR in initProducer', err);
+    });
+}, 5000);

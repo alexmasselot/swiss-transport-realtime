@@ -1,0 +1,34 @@
+version: '2'
+services:
+  kafka:
+    image: spotify/kafka
+    ports:
+      - "9092:9092"
+      - "2181:2181"
+    environment:
+      ADVERTISED_PORT: 9092
+      ADVERTISED_HOST: 192.168.99.100
+#      KAFKA_CREATE_TOPICS: cff_train_position:1:1
+      AUTO_CREATE_TOPIC_ENABLE: "true"
+      LOG_RETENTION_HOURS_PER_TOPIC: 0.25
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+  streaming_backend:
+    build: components/play-realtime/
+    #image: octoch/cff-poc-streaming-backend:0.1.2
+    ports:
+      - "81:9000"
+    links:
+      - kafka
+  cff_feeder:
+    build: components/node_cff_sniff
+    environment:
+      KAFKA_HOST: kafka
+    links:
+      - kafka
+  web_realtime_viewer:
+    build: components/web-realtime-viewer
+    links:
+      - streaming_backend
+    ports:
+      - "80:80"

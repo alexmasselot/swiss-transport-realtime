@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "scripts": {
     "start": "DEBUG=true node server.js",
-    "build": "webpack -p --config webpack.production.js",
+    "build": "NODE_ENV=production webpack -p --config webpack.production.js",
+    "build-docker": "NODE_ENV=docker webpack -p --config webpack.docker.js",
     "test-viz": "DEBUG=true NODE_ENV=test-viz node server-test-viz.js",
     "build-dev": "webpack -p",
     "test": "jest"
@@ -14,10 +15,10 @@
     "dateformat": "^1.0.12",
     "es6-promise": "^3.0.2",
     "express-ws": "^1.0.0-rc.2",
+    "fbjs": "^0.6.1",
     "file-loader": "^0.8.5",
     "google-map-react": "^0.11.0",
-    "kafka-node": "^0.3.0",
-    "leaflet": "^0.7.7",
+    "isomorphic-fetch":"^2.2.1",
     "lodash": "^4.0.0",
     "materialize-css": "^0.97.6",
     "papaparse": "^4.1.2",

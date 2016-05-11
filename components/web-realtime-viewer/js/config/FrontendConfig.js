@@ -1,5 +1,6 @@
 'use strict'
 import httpClient from '../core/HttpClient';
+import _ from 'lodash';
 
 class FrontendConfig{
 
@@ -25,8 +26,13 @@ class FrontendConfig{
     var _this = this;
 
     _this._promise = new Promise(function(accept, reject){
-      return httpClient.get("/config")
+      return httpClient.get("/config.json")
         .then(function(cfg){
+          if(cfg.url){
+            _.mapValues(cfg.url, function(u, k){
+                return u.replace(/http:\/\/\-:/, 'http://'+global.location.host+':')
+            });
+          }
           _this._config = cfg;
           accept(cfg);
         })

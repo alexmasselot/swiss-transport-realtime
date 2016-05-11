@@ -11,7 +11,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 name := """cff-poc-streaming-backend"""
 organization := "ch.octo"
-version := "0.1.0"
+version := "0.1.2"
 scalaVersion := Version.scala
 maintainer := "amasselot@octo.com"
 
@@ -49,9 +49,11 @@ packageName in Docker := s"${organization.value}/${name.value}"
 
 dockerBaseImage := "java:8"
 
-dockerExposedPorts := Seq()
+packageName in Docker := "octoch/cff-poc-streaming-backend"
 
-mappings in Universal += {
+dockerExposedPorts := Seq(9000)
+
+mappings in Docker += {
   val conf = baseDirectory.value / "conf" / "application-docker.conf"
   conf -> "conf/application.conf"
 }

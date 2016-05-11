@@ -8,7 +8,7 @@
   "dependencies": {
     "encoding": "^0.1.12",
     "fast-csv": "^1.0.0",
-    "kafka-node": "^0.2.29",
+    "kafka-node": "^0.3.2",
     "lodash": "^3.10.1",
     "promise": "^7.1.1",
     "request-promise": "^1.0.2",

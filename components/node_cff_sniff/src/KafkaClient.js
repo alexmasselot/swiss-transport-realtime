@@ -46,7 +46,7 @@ KafkaClient.prototype.initProducer = function () {
                 //    reject('producer did not reach ready state' + err);
                 //});
             } else {
-                if (tentative > 10) {
+                if (tentative > 32) {
                     clearInterval(intervalId);
                     reject("Kafka failure, too many attemps...");
                 }
@@ -80,7 +80,7 @@ KafkaClient.prototype.produce = function (topic, messages) {
             [{topic: topic, messages: messages}]
             , function (err, data) {
                 if (err) {
-                    console.error(err)
+                    console.error('ERROR in KafkaClient.js', err);
                     reject(err);
                 }
                 resolve(data);

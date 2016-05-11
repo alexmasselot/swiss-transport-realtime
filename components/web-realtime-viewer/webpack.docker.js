@@ -21,10 +21,10 @@ module.exports = {
   ],
   module: {
     loaders: [
-      { test: /\.js$/, loaders: ['babel'], exclude: /node_modules/ },
-      { test: /\.css$/, loader: ExtractTextPlugin.extract('css-loader?module!cssnext-loader') },
+      {test: /\.js$/, loaders: ['babel'], exclude: /node_modules/},
+      {test: /\.css$/, loader: ExtractTextPlugin.extract('css-loader?module!cssnext-loader')},
       {test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000'},
-      { test: /\.md$/, loader: "html!markdown?gfm=false" }
+      {test: /\.md$/, loader: "html!markdown?gfm=false"}
     ]
   },
   resolve: {

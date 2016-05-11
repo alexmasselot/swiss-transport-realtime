@@ -27,7 +27,7 @@ app.get('/', function (req, res) {
 });
 
 //send back the configuration object (the "frontend" subtree of the global config)
-app.get('/config', function (req, res) {
+app.get('/config.json', function (req, res) {
   res.send(config.frontend);
 });
 

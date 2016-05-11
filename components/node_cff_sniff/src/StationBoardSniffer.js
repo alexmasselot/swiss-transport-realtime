@@ -157,7 +157,7 @@ StationBoardSniffer.prototype.loop = function () {
                     if(err.statusCode){
                         console.log('GET ERROR '+err.statusCode+': '+err.options.uri);
                     }else {
-                        console.error(err);
+                        console.error('Error in loadStops', err);
                     }
                 })
             });

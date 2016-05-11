@@ -1,28 +1,11 @@
 {
   "frontend": {
     "url": {
-      "train_position_snapshot":"http://localhost:9000/position",
-      "station_board":"http://localhost:9000/stationboard"
+      "train_position_snapshot":"http://-:9000/position",
+      "station_board":"http://-:9000/stationboard"
     }
   },
   "ports": {
-    "http": 3000,
-    "ws": {
-      "train_position": 3001,
-      "station_board_stats": 3002
-    }
-  },
-  "zookeeper": {
-    "host": "192.168.99.100",
-    "port": 2181
-  },
-  "kafka": {
-    "host": "192.168.99.100",
-    "port": 9092,
-    "interval": 1000,
-    "topic": {
-      "train_position": "train_position_snapshot",
-      "station_board_stats": "sb_stats_snapshot"
-    }
+    "http": 3000
   }
 }

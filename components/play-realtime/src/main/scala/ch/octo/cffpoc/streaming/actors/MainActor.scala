@@ -25,8 +25,8 @@ class MainActor(configuration: Configuration) extends Actor with ActorLogging {
 
   val kafka = new ReactiveKafka()
 
-  val kafkaUrl = configuration.getString("broker.in.kafka.host").get + ":" + configuration.getString("broker.in.kafka.port").getOrElse(9092)
-  val zookeeperUrl = configuration.getString("broker.in.zookeeper.host").get + ":" + configuration.getString("broker.in.zookeeper.port").getOrElse(2181)
+  val kafkaUrl = configuration.getString("kafka.host").get + ":" + configuration.getString("kafka.port").getOrElse(9092)
+  val zookeeperUrl = configuration.getString("zookeeper.host").get + ":" + configuration.getString("zookeeper.port").getOrElse(2181)
 
   log.info(s"listening to kafka $kafkaUrl")
   log.info(s"listening to zookeeper $zookeeperUrl")

@@ -6,7 +6,7 @@ import matStyles from 'materialize-css/bin/materialize.css';
 import ReactTooltip from 'react-tooltip';
 import PositionMap from './PositionMap';
 import StationBoardDetails from './StationBoardDetails';
-import CFFCLock from './CFFCLock';
+import CFFCLock from './CFFClock';
 import Timer from './Timer';
 
 class Home extends Component {
