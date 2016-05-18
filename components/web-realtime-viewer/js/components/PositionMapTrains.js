@@ -111,7 +111,7 @@ class PositionMapTrains extends Component {
         }
       });
     gNew.on('mouseover', function (p) {
-      console.log(p.train_name + '->' + p.train_lastStopName);
+      console.log(p);
     });
     let gSymbol = gNew.append('g')
       .attr({

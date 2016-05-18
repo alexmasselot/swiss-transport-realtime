@@ -3,7 +3,7 @@
 var Kafka = require('kafka-node');
 var _ = require('lodash');
 var Promise = require('promise');
-
+var promiseRetry = require('promise-retry');
 
 /**
  * instanciatte a new Kafka client with connection to a kafka Brokker
@@ -12,9 +12,14 @@ var Promise = require('promise');
  * @returns {KafkaClient}
  * @constructor
  */
-var KafkaClient = function (kafkaHost, kafkaPort) {
+var KafkaClient = function (kafkaHost, kafkaPort, name) {
     var _this = this;
-    _this.client = new Kafka.Client(kafkaHost + ':' + kafkaPort);
+    _this.kafkaConfig={
+        host:kafkaHost,
+        port:kafkaPort
+    };
+    _this.name = name;
+    _this.client = new Kafka.Client(_this.kafkaConfig.host + ':' + _this.kafkaConfig.port);
     return _this;
 
 };
@@ -28,33 +33,27 @@ var KafkaClient = function (kafkaHost, kafkaPort) {
 KafkaClient.prototype.initProducer = function () {
     var _this = this;
 
-    return new Promise(function (resolve, reject) {
-        var tentative = 0;
-        var intervalId = setInterval(function () {
+    return promiseRetry(function (retry, number) {
+        return new Promise(function (resolve, reject) {
             if (_this.client.ready) {
-                console.info("Client ready !");
-                clearInterval(intervalId);
-                var producer = new Kafka.Producer(_this.client);
+                var producer = new Kafka.HighLevelProducer(_this.client);
                 _this.producer = producer;
-                resolve(producer);
-                //producer.on('ready', function () {
-                //    console.info('producer is ready too')
-                //    _this.producer = producer;
-                //    resolve(producer);
-                //})
-                //producer.on('error', function (err) {
-                //    reject('producer did not reach ready state' + err);
-                //});
-            } else {
-                if (tentative > 32) {
-                    clearInterval(intervalId);
-                    reject("Kafka failure, too many attemps...");
-                }
-                tentative = tentative + 1;
-                console.info("Wait for Kafka client initalisation (try=" + tentative + ")...");
-            }
-        }, 1000);
 
+                //resolve(producer);
+                producer.on('ready', function () {
+                    console.info('producer is ready')
+                    _this.producer = producer;
+                    resolve(producer);
+                });
+                producer.on('error', function (err) {
+                    reject('producer did not reach ready state' + err);
+                });
+            } else {
+                console.info("Wait for Kafka client initalisation (try=" + (number+1) + ")...");
+                reject('waiting for kafka client ready '+number)
+            }
+
+        }).catch(retry);
     });
 };
 
@@ -81,7 +80,17 @@ KafkaClient.prototype.produce = function (topic, messages) {
             , function (err, data) {
                 if (err) {
                     console.error('ERROR in KafkaClient.js', err);
-                    reject(err);
+                    if(_.isArray(err) && err[0] === 'LeaderNotAvailable'){
+                        console.error('Caught LeaderNotAvailable');
+                    }
+                    return _this.initProducer()
+                        .then(function(){
+                            reject('LeaderNotAvailable was caught and a new initProducer was solved')
+                        })
+                        .catch(function(err2){
+                            reject('LeaderNotAvailable was caught and a new initProducer was also producing an error: ', err2);
+
+                        });
                 }
                 resolve(data);
             }

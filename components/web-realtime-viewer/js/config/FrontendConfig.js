@@ -2,7 +2,7 @@
 import httpClient from '../core/HttpClient';
 import _ from 'lodash';
 
-class FrontendConfig{
+class FrontendConfig {
 
   constructor() {
     let _this = this;
@@ -12,31 +12,31 @@ class FrontendConfig{
     return _this;
   }
 
-  get(){
+  get() {
     let _this = this;
-    if(_this._config !== undefined){
-      return new Promise(function(accept){
+    if (_this._config !== undefined) {
+      return new Promise(function (accept) {
         accept(_this._config);
       })
     }
     return _this._promise;
   }
 
-  _init(){
+  _init() {
     var _this = this;
 
-    _this._promise = new Promise(function(accept, reject){
+    _this._promise = new Promise(function (accept, reject) {
       return httpClient.get("/config.json")
-        .then(function(cfg){
-          if(cfg.url){
-            _.mapValues(cfg.url, function(u, k){
-                return u.replace(/http:\/\/\-:/, 'http://'+global.location.host+':')
+        .then(function (cfg) {
+          if (cfg.url) {
+            cfg.url = _.mapValues(cfg.url, function (u, k) {
+              return u.replace(/http:\/\/\-:/, 'http://' + global.location.hostname + ':')
             });
           }
           _this._config = cfg;
           accept(cfg);
         })
-        .catch(function(error){
+        .catch(function (error) {
           console.error("ERROR when initializing frontend config", error)
         });
     });
