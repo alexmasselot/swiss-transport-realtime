@@ -26,7 +26,7 @@ var TrainPositionSniffer = function (kafkaClient, options) {
     var _this = this;
 
     options = _.assign({
-        kafkaTopic:'cff_train_position',
+        kafkaTopic:'cfftrainposition',
         mode: 'PROD',
         interval:30
     }, options);

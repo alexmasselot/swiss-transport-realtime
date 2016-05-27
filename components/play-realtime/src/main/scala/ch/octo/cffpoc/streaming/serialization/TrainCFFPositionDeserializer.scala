@@ -1,9 +1,10 @@
 package ch.octo.cffpoc.streaming.serialization
 
+import java.util
+
 import ch.octo.cffpoc.models._
 import ch.octo.cffpoc.position.{ TimedPosition, TrainCFFPosition, TrainPosition }
-import kafka.serializer.Decoder
-import kafka.utils.VerifiableProperties
+import org.apache.kafka.common.serialization.Deserializer
 import org.joda.time.DateTime
 import play.api.libs.json._
 
@@ -11,7 +12,22 @@ import play.api.libs.json._
  * Created by Alexandre Masselot on 02/02/16.
  * © OCTO Technology, 2016
  */
-class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decoder[TrainCFFPosition] {
+class TrainCFFPositionDeserializer extends Deserializer[TrainCFFPosition] {
+  val encoding = "UTF8"
+
+  override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {
+
+  }
+
+  override def close(): Unit = {
+
+  }
+
+  override def deserialize(topic: String, data: Array[Byte]): TrainCFFPosition = {
+    val js: JsValue = Json.parse(new String(data, encoding))
+    Json.fromJson[TrainCFFPosition](js).get
+  }
+
   implicit val readsTimeStamp = new Reads[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] = {
       JsSuccess(new DateTime(json.as[Long]))
@@ -64,15 +80,5 @@ class TrainCFFPositionDecoder(props: VerifiableProperties = null) extends Decode
     }
   }
 
-  val encoding =
-    if (props == null)
-      "UTF8"
-    else
-      props.getString("serializer.encoding", "UTF8")
-
-  def fromBytes(bytes: Array[Byte]): TrainCFFPosition = {
-    val js: JsValue = Json.parse(new String(bytes, encoding))
-    Json.fromJson[TrainCFFPosition](js).get
-  }
 }
 

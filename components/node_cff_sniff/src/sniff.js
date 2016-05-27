@@ -19,8 +19,8 @@ if (!process.env.KAFKA_HOST) {
     console.error('no environment variable KAFKA_HOST passed');
     process.exit(1);
 }
-var kafkaHost = process.env.KAFKA_HOST;
-var kafkaPort = process.env.KAFKA_PORT || '2181';
+var kafkaHost = process.env.KAFKA_HOST || 'kafka';
+var kafkaPort = process.env.KAFKA_PORT || '9092';
 var kafkaClient = new KafkaClient(kafkaHost, kafkaPort);
 
 

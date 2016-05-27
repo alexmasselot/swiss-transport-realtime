@@ -1,9 +1,8 @@
 "use strict";
 
-var Kafka = require('kafka-node');
+var Kafka = require('no-kafka');
 var _ = require('lodash');
 var Promise = require('promise');
-var promiseRetry = require('promise-retry');
 
 /**
  * instanciatte a new Kafka client with connection to a kafka Brokker
@@ -14,12 +13,11 @@ var promiseRetry = require('promise-retry');
  */
 var KafkaClient = function (kafkaHost, kafkaPort, name) {
     var _this = this;
-    _this.kafkaConfig={
-        host:kafkaHost,
-        port:kafkaPort
+    _this.kafkaConfig = {
+        host: kafkaHost,
+        port: kafkaPort
     };
     _this.name = name;
-    _this.client = new Kafka.Client(_this.kafkaConfig.host + ':' + _this.kafkaConfig.port);
     return _this;
 
 };
@@ -33,28 +31,10 @@ var KafkaClient = function (kafkaHost, kafkaPort, name) {
 KafkaClient.prototype.initProducer = function () {
     var _this = this;
 
-    return promiseRetry(function (retry, number) {
-        return new Promise(function (resolve, reject) {
-            if (_this.client.ready) {
-                var producer = new Kafka.HighLevelProducer(_this.client);
-                _this.producer = producer;
-
-                //resolve(producer);
-                producer.on('ready', function () {
-                    console.info('producer is ready')
-                    _this.producer = producer;
-                    resolve(producer);
-                });
-                producer.on('error', function (err) {
-                    reject('producer did not reach ready state' + err);
-                });
-            } else {
-                console.info("Wait for Kafka client initalisation (try=" + (number+1) + ")...");
-                reject('waiting for kafka client ready '+number)
-            }
-
-        }).catch(retry);
-    });
+    _this.producer = new Kafka.Producer({connectionString: _this.kafkaConfig.host + ':' + _this.kafkaConfig.port});
+    return _this.producer.init().then(function () {
+        return _this.producer;
+    })
 };
 
 
@@ -70,33 +50,20 @@ KafkaClient.prototype.produce = function (topic, messages) {
     if (!_.isArray(messages)) {
         messages = [messages];
     }
-    messages = _.map(messages, function (m) {
-        return JSON.stringify(m);
-    });
+    _.chain(messages)
+        .map(function (m) {
+            return JSON.stringify(m);
+        })
+        .forEach(function (message) {
+            _this.producert.send({
+                topic: topic,
+                partition: 0,
+                message: {value: message}
+            });
 
-    return new Promise(function (resolve, reject) {
-        _this.producer.send(
-            [{topic: topic, messages: messages}]
-            , function (err, data) {
-                if (err) {
-                    console.error('ERROR in KafkaClient.js', err);
-                    if(_.isArray(err) && err[0] === 'LeaderNotAvailable'){
-                        console.error('Caught LeaderNotAvailable');
-                    }
-                    return _this.initProducer()
-                        .then(function(){
-                            reject('LeaderNotAvailable was caught and a new initProducer was solved')
-                        })
-                        .catch(function(err2){
-                            reject('LeaderNotAvailable was caught and a new initProducer was also producing an error: ', err2);
+        });
 
-                        });
-                }
-                resolve(data);
-            }
-        )
-        ;
-    });
+
 };
 
 

@@ -1,10 +1,11 @@
 package ch.octo.cffpoc.streaming.serialization
 
+import java.util
+
 import ch.octo.cffpoc.models._
 import ch.octo.cffpoc.stationboard.StationBoardEvent
 import ch.octo.cffpoc.stops.Stop
-import kafka.serializer.Decoder
-import kafka.utils.VerifiableProperties
+import org.apache.kafka.common.serialization.Deserializer
 import org.joda.time.DateTime
 import play.api.libs.json._
 
@@ -12,7 +13,24 @@ import play.api.libs.json._
  * Created by Alexandre Masselot on 02/02/16.
  * © OCTO Technology, 2016
  */
-class StationBoardEventDecoder(props: VerifiableProperties = null) extends Decoder[StationBoardEvent] {
+class StationBoardEventDeserializer extends Deserializer[StationBoardEvent] {
+  val encoding = "UTF8"
+
+  override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {
+
+  }
+
+  override def close(): Unit = {
+
+  }
+
+  override def deserialize(topic: String, data: Array[Byte]): StationBoardEvent = {
+    if (data == null)
+      return null;
+
+    val js: JsValue = Json.parse(new String(data, encoding))
+    Json.fromJson[StationBoardEvent](js).get
+  }
 
   implicit val readsStationBoardEvent = new Reads[StationBoardEvent] {
     override def reads(json: JsValue): JsResult[StationBoardEvent] = {
@@ -40,14 +58,10 @@ class StationBoardEventDecoder(props: VerifiableProperties = null) extends Decod
     }
   }
 
-  val encoding =
-    if (props == null)
-      "UTF8"
-    else
-      props.getString("serializer.encoding", "UTF8")
+  //  val encoding =
+  //    if (props == null)
+  //      "UTF8"
+  //    else
+  //      props.getString("serializer.encoding", "UTF8")
 
-  def fromBytes(bytes: Array[Byte]): StationBoardEvent = {
-    val js: JsValue = Json.parse(new String(bytes, encoding))
-    Json.fromJson[StationBoardEvent](js).get
-  }
 }

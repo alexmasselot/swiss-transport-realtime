@@ -1,19 +1,24 @@
 version: '2'
 services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
   kafka:
-    image: spotify/kafka
+    image: wurstmeister/kafka
     ports:
       - "9092:9092"
-      - "2181:2181"
+    links:
+      - zookeeper:zk
     environment:
-      KAFKA_CREATE_TOPICS: "cff_train_position:2:1,cff_station_board:2:1"
-      ADVERTISED_PORT: 9092
-      ADVERTISED_HOST: 192.168.99.100
-#      KAFKA_CREATE_TOPICS: cff_train_position:1:1
-      AUTO_CREATE_TOPIC_ENABLE: "true"
-      LOG_RETENTION_HOURS_PER_TOPIC: 0.25
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      KAFKA_CREATE_TOPICS: "cfftrainposition:1:1,cffstationboard:1:1"
+      LOG_RETENTION_HOURS_PER_TOPIC: 0.1
+      KAFKA_ZOOKEEPER_CONNECT: zk:2181
     volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
   streaming_backend:
     build: components/play-realtime/
     #image: octoch/cff-poc-streaming-backend:0.1.2
@@ -29,9 +34,9 @@ services:
       KAFKA_HOST: kafka
     links:
       - kafka
-  web_realtime_viewer:
-    build: components/web-realtime-viewer
-    links:
-      - streaming_backend
-    ports:
-      - "80:80"
+#  web_realtime_viewer:
+#    build: components/web-realtime-viewer
+#    links:
+#      - streaming_backend
+#    ports:
+#      - "80:80"

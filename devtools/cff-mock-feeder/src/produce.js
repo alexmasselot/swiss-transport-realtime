@@ -1,18 +1,18 @@
 "use strict";
 
-var Kafka = require('kafka-node');
+var Kafka = require('no-kafka');
 var _ = require('lodash');
 var Promise = require('promise');
 var process = require('process');
 var fs = require('fs');
-var readline= require('readline');
+var readline = require('readline');
 var zlib = require('zlib');
 
 var speedup = 10;
-var kafkaHost = 'kafka';
-var kafkaPort = 2181;
-var topicTrainPositions = 'cff_train_position';
-var topicStops = 'cff_station_board';
+var kafkaHost = process.env.KAFKA_HOST || 'kafka';
+var kafkaPort = process.env.KAFKA_PORT || 9092;
+var topicTrainPositions = 'cfftrainposition';
+var topicStops = 'cffstationboard';
 
 var isMockKafka = process.env.MOCK_KAFKA;
 
@@ -39,41 +39,10 @@ var prmReadEvent = function (file) {
     });
 };
 
-var prmKafkaProducer = new Promise(function (resolve, reject) {
-    if (isMockKafka) {
-        resolve();
-        return;
-    }
-
-    var client = new Kafka.Client(kafkaHost + ':' + kafkaPort);
-    console.log('waiting for producer to come ready');
-    var i = 0;
-    var interv = setInterval(function () {
-        i++;
-        if (i == 20) {
-            reject('stopping after 20 attempt of seeing producer ready');
-        }
-        console.log('kafka client ready?', client.ready, (client.ready ? 'OK' : 'WAIT'));
-
-        if (client.ready) {
-            console.log('clearing timer and creating a producer');
-            clearInterval(interv);
-            var producer = new Kafka.HighLevelProducer(client, {partitionerType: 0});
-            console.log('producer is ready and launching event on');
-            setTimeout(function () {
-                resolve(producer);
-            }, 2000);
-
-            //producer.createTopics([topicTrainPositions], false, function (err, data) {
-            //    if (err) {
-            //        console.error('cannot create topicTrainPositions', err);
-            //        reject(err);
-            //        return;
-            //    }
-            //    console.log('topicTrainPositions created', data)
-            //});
-        }
-    }, 1000);
+console.log('connection to ', kafkaHost + ':' + kafkaPort)
+var producer = new Kafka.Producer({connectionString: kafkaHost + ':' + kafkaPort});
+var prmKafkaProducer = producer.init().then(function () {
+    return producer;
 });
 
 var shootCycle = function (events, kafkaProducer, topic) {
@@ -97,10 +66,10 @@ var shootCycle = function (events, kafkaProducer, topic) {
         let evt = _.cloneDeep(event);
         let t0 = event.timeStamp;
         let t1 = new Date().getTime();
-        evt.timeStamp=t1;
-        if(event.stop !== undefined){
-            evt.stop.departureTimestamp = Math.round(event.stop.departureTimestamp + (t1-t0)/1000);
-            evt.stop.arrivalTimestamp = Math.round(event.stop.arrivalTimestamp + (t1-t0)/1000);
+        evt.timeStamp = t1;
+        if (event.stop !== undefined) {
+            evt.stop.departureTimestamp = Math.round(event.stop.departureTimestamp + (t1 - t0) / 1000);
+            evt.stop.arrivalTimestamp = Math.round(event.stop.arrivalTimestamp + (t1 - t0) / 1000);
         }
         return {
             event: evt,
@@ -121,12 +90,10 @@ var shootCycle = function (events, kafkaProducer, topic) {
             console.log(message);
             return;
         }
-        kafkaProducer.send([{topic: topic, messages: message}], function (err, data) {
-            if (err) {
-                console.error('kafka send error', err);
-                return;
-            }
-            //console.log(data)
+        kafkaProducer.send({
+            topic: topic,
+            partition: 0,
+            message: {value: message}
         });
     });
 };

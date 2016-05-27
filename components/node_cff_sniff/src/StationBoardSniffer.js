@@ -19,7 +19,7 @@ var StationBoardSniffer = function (kafkaClient, options) {
     var _this = this;
 
     options = _.assign({
-        kafkaTopic: 'cff_station_board',
+        kafkaTopic: 'cffstationboard',
         mode: 'PROD',
         transportationsTypes: ["ice_tgv_rj", "ec_ic", "ir", "re_d", "ship", "s_sn_r"],
         stopTypes: ['train', 'ferry'],

@@ -8,8 +8,8 @@
   "dependencies": {
     "encoding": "^0.1.12",
     "fast-csv": "^1.0.0",
-    "kafka-node": "^0.3.2",
     "lodash": "^3.10.1",
+    "no-kafka": "^2.5.0",
     "promise": "^7.1.1",
     "promise-retry": "^1.1.0",
     "request-promise": "^1.0.2",

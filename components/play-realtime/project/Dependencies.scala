@@ -1,8 +1,8 @@
 import sbt._
 
 object Version {
-  val akka = "2.4.2"
-  val reactiveKafka = "0.8.5"
+  val akka = "2.4.3"
+  val reactiveKafka = "0.11-M3"
   val hadoop = "2.7.2"
   val logback = "1.1.3"
   val mockito = "1.10.19"
@@ -10,7 +10,6 @@ object Version {
   val scalaTest = "2.2.5"
   val slf4j = "1.7.6"
   val spark = "1.6.0"
-  val akkaStream = "2.0.3"
 }
 
 object Library {
@@ -22,8 +21,8 @@ object Library {
   val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest
   val slf4jApi = "org.slf4j" % "slf4j-api" % Version.slf4j
   val sparkStreaming = "org.apache.spark" %% "spark-streaming" % Version.spark
-  val sparkStreamingKafka = "org.apache.spark" %% "spark-streaming-kafka" % Version.spark
-  val reactiveKafka  = "com.softwaremill.reactivekafka" %% "reactive-kafka-core" % Version.reactiveKafka
+  //val sparkStreamingKafka = "org.apache.spark" %% "spark-streaming-kafka" % Version.spark
+  val reactiveKafka  = "com.typesafe.akka" %% "akka-stream-kafka" % Version.reactiveKafka
   //  val sparkStreamingAkka = "org.apache.spark"  %% "spark-streaming-akka" % Version.spark
 }
 
@@ -33,7 +32,7 @@ object Dependencies {
 
   val sparkAkkaHadoop = Seq(
     sparkStreaming,
-    sparkStreamingKafka,
+    //sparkStreamingKafka,
     akkaActor,
     akkaTestKit,
     hadoopClient,
