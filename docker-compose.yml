@@ -4,8 +4,6 @@ services:
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
   kafka:
     image: wurstmeister/kafka
     ports:
@@ -32,11 +30,12 @@ services:
     build: components/node_cff_sniff
     environment:
       KAFKA_HOST: kafka
+    dns: 8.8.8.8
     links:
       - kafka
-#  web_realtime_viewer:
-#    build: components/web-realtime-viewer
-#    links:
-#      - streaming_backend
-#    ports:
-#      - "80:80"
+  web_realtime_viewer:
+    build: components/web-realtime-viewer
+    links:
+      - streaming_backend
+    ports:
+      - "80:80"

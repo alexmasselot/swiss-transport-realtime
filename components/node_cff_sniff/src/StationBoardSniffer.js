@@ -23,7 +23,7 @@ var StationBoardSniffer = function (kafkaClient, options) {
         mode: 'PROD',
         transportationsTypes: ["ice_tgv_rj", "ec_ic", "ir", "re_d", "ship", "s_sn_r"],
         stopTypes: ['train', 'ferry'],
-        requestPerMinute:280
+        requestPerMinute: 280
     }, options);
 
     _this.kafkaClient = kafkaClient;
@@ -36,7 +36,7 @@ var StationBoardSniffer = function (kafkaClient, options) {
     _this.maxConcurrentOpenDataRequest = 5;
     _this.stopTypes = options.stopTypes;
 
-    console.info('StationBoardSniffer: kafkaTopic=',_this.kafkaTopic, ' delay (ms)=', _this.interval, 'transportationsTypes=',options.transportationsTypes);
+    console.info('StationBoardSniffer: kafkaTopic=', _this.kafkaTopic, ' delay (ms)=', _this.interval, 'transportationsTypes=', options.transportationsTypes);
     return _this;
 };
 
@@ -61,7 +61,7 @@ StationBoardSniffer.prototype.loadStops = function () {
                             }
                         })
                         .on("end", function () {
-                            console.log("stops "+type+': ' + stops.length);
+                            console.log("stops " + type + ': ' + stops.length);
                             resolve(stops);
                         })
                         .on('error', function (e) {
@@ -144,21 +144,18 @@ StationBoardSniffer.prototype.loop = function () {
         }, delay);
     };
 
-     _this.loadStops()
-        .then(function(stops){
+    _this.loadStops()
+        .then(function (stops) {
             loopHandler(stops, _this.interval, function (stop, callback) {
-                _this.getDashboard(stop.stop_id).
-                then(function (messages) {
+                _this.getDashboard(stop.stop_id).then(function (messages) {
                     return _this.kafkaClient.produce(_this.kafkaTopic, messages);
-                }).
-                then(callback).
-                catch(function (err) {
-                    callback();
-                    if(err.statusCode){
-                        console.log('GET ERROR '+err.statusCode+': '+err.options.uri);
-                    }else {
-                        console.error('Error in loadStops', err);
+                }).then(callback).catch(function (err) {
+                    if (err.name) {
+                        console.log('StationBoardSniffer: Error in loadStops: ' + err.name + ' / ' + err.message);
+                    } else {
+                        console.error('StationBoardSniffer: Error in loadStops', err);
                     }
+                    callback();
                 })
             });
         });

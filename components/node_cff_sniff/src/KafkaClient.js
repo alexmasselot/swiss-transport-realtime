@@ -50,20 +50,22 @@ KafkaClient.prototype.produce = function (topic, messages) {
     if (!_.isArray(messages)) {
         messages = [messages];
     }
-    _.chain(messages)
-        .map(function (m) {
-            return JSON.stringify(m);
-        })
-        .forEach(function (message) {
-            _this.producert.send({
-                topic: topic,
-                partition: 0,
-                message: {value: message}
-            });
+    var kMessages = _.map(messages, function (m) {
+        return {
+            topic: topic,
+            partition: 0,
+            message: {value: JSON.stringify(m)}
+        };
+        //J};
+    });
 
+    _this.producer.send(kMessages,
+        {
+            batch: {
+                size: 1024,
+                maxWait: 100
+            }
         });
-
-
 };
 
 

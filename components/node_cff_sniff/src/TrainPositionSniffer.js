@@ -67,12 +67,12 @@ TrainPositionSniffer.prototype.loop = function () {
             .then(function (messages) {
                 return _this.kafkaClient.produce(_this.kafkaTopic, messages);
             })
-            .then(function (ack) {
-                console.log(new Date(), 'produced', ack);
-            })
-            .catch(function (error) {
-                console.error('ERROR pipe', error);
-                console.error(util.inspect(error));
+            .catch(function (err) {
+                if(err.statusCode){
+                    console.log('TrainPositionSniffer: Error in loadStops: '+err.statusCode+' / '+err.options.uri);
+                }else {
+                    console.error('TrainPositionSniffer: Error in loadStops', err);
+                }
             });
     };
     doIt();
