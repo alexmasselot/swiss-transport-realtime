@@ -5,7 +5,7 @@ services:
     ports:
       - "2181:2181"
   kafka:
-    image: wurstmeister/kafka
+    image: wurstmeister/kafka:0.9.0.1
     ports:
       - "9092:9092"
     links:
@@ -37,5 +37,10 @@ services:
     build: components/web-realtime-viewer
     links:
       - streaming_backend
+  nginx:
+    image: nginx
     ports:
       - "80:80"
+    links:
+      - streaming_backend
+      - web_realtime_viewer
