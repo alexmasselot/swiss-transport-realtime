@@ -1,7 +1,14 @@
-FROM nginx
-COPY index.html /usr/share/nginx/html/
-COPY static /usr/share/nginx/html/static
-COPY docker/docker-fontend.json /usr/share/nginx/html/config.json
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+FROM node:4.2
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
-EXPOSE 80
+# Bundle app source
+COPY . /usr/src/app
+COPY package.json /usr/src/app/
+RUN npm install
+
+RUN npm run build
+EXPOSE 8080
+CMD [ "npm", "start" ]
+
+
