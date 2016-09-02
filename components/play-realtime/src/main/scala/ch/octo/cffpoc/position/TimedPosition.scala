@@ -1,8 +1,8 @@
 package ch.octo.cffpoc.position
 
-import ch.octo.cffpoc.models.{ GeoLocBearing, GeoLoc }
+import ch.octo.cffpoc.models.{GeoLoc, GeoLocBearing}
 import ch.octo.cffpoc.stops.Stop
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 
 /**
  * Created by alex on 01/03/16.
@@ -16,6 +16,8 @@ sealed trait HasTimedPosition {
 case class TimedPosition(
     timestamp: DateTime,
     position: GeoLocBearing) extends HasTimedPosition {
+
+  def toDateTime(dateTimeZone: DateTimeZone) = TimedPosition(timestamp.toDateTime(dateTimeZone), position)
 
 }
 

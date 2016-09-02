@@ -1,10 +1,9 @@
 package ch.octo.cffpoc.stationboard
 
 import ch.octo.cffpoc.DateMatchers
-import ch.octo.cffpoc.streaming.serialization.StationBoardEventDecoder
+import ch.octo.cffpoc.streaming.serialization.StationBoardEventDeserializer
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormat
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.io.Source
 
@@ -14,12 +13,12 @@ import scala.io.Source
 class StationBoardSpecs extends FlatSpec with Matchers with DateMatchers {
   behavior of "StationBoardEvent"
 
-  val decoder = new StationBoardEventDecoder()
+  val decoder = new StationBoardEventDeserializer()
 
   def allEvents: Iterator[StationBoardEvent] = {
     Source.fromFile("src/test/resources/stationboards-laus-gva.jsonl")
       .getLines()
-      .map(l => decoder.fromBytes(l.getBytes))
+      .map(l => decoder.deserialize("pipo", l.getBytes))
   }
 
   def gva2840: StationBoard = {

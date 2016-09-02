@@ -1,9 +1,9 @@
 package ch.octo.cffpoc.stationboard
 
 import ch.octo.cffpoc.DateMatchers
-import ch.octo.cffpoc.streaming.serialization.StationBoardEventDecoder
+import ch.octo.cffpoc.streaming.serialization.StationBoardEventDeserializer
 import org.joda.time.DateTime
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.io.Source
 
@@ -14,12 +14,12 @@ import scala.io.Source
 class StationBoardsSnapshotSpecs extends FlatSpec with Matchers with DateMatchers {
   behavior of "StationBoardsSnapshot"
 
-  val decoder = new StationBoardEventDecoder()
+  val decoder = new StationBoardEventDeserializer()
 
   def allEvents: Iterator[StationBoardEvent] = {
     Source.fromFile("src/test/resources/stationboards-laus-gva.jsonl")
       .getLines()
-      .map(l => decoder.fromBytes(l.getBytes))
+      .map(l => decoder.deserialize("pipo", l.getBytes))
   }
 
   val gva = allEvents.filter(e => e.stop.name == "Genève").next().stop
@@ -31,7 +31,7 @@ class StationBoardsSnapshotSpecs extends FlatSpec with Matchers with DateMatcher
   }
 
   it should "have timestamp with last" in {
-    assertDateEquals(boards.timestamp, DateTime.parse("2016-02-29T17:56:32.320+01:00"))
+    assertDateEquals(DateTime.parse("2016-02-29T17:56:32.320+01:00"), boards.timestamp)
   }
 
   it should "all from gva" in {

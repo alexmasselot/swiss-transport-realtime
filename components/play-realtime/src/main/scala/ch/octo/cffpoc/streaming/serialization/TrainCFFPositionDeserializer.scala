@@ -3,9 +3,9 @@ package ch.octo.cffpoc.streaming.serialization
 import java.util
 
 import ch.octo.cffpoc.models._
-import ch.octo.cffpoc.position.{ TimedPosition, TrainCFFPosition, TrainPosition }
+import ch.octo.cffpoc.position.{TimedPosition, TrainCFFPosition, TrainPosition}
 import org.apache.kafka.common.serialization.Deserializer
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json._
 
 /**
@@ -14,6 +14,7 @@ import play.api.libs.json._
  */
 class TrainCFFPositionDeserializer extends Deserializer[TrainCFFPosition] {
   val encoding = "UTF8"
+  val dateTimeZone = DateTimeZone.forOffsetHours(1)
 
   override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {
 
@@ -30,7 +31,7 @@ class TrainCFFPositionDeserializer extends Deserializer[TrainCFFPosition] {
 
   implicit val readsTimeStamp = new Reads[DateTime] {
     override def reads(json: JsValue): JsResult[DateTime] = {
-      JsSuccess(new DateTime(json.as[Long]))
+      JsSuccess(new DateTime(json.as[Long], dateTimeZone))
     }
   }
 

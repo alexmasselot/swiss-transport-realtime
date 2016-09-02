@@ -6,7 +6,7 @@ import ch.octo.cffpoc.models._
 import ch.octo.cffpoc.stationboard.StationBoardEvent
 import ch.octo.cffpoc.stops.Stop
 import org.apache.kafka.common.serialization.Deserializer
-import org.joda.time.DateTime
+import org.joda.time.{DateTime, DateTimeZone}
 import play.api.libs.json._
 
 /**
@@ -15,6 +15,8 @@ import play.api.libs.json._
  */
 class StationBoardEventDeserializer extends Deserializer[StationBoardEvent] {
   val encoding = "UTF8"
+  val dateTimeZone = DateTimeZone.forOffsetHours(1)
+
 
   override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {
 
@@ -35,7 +37,7 @@ class StationBoardEventDeserializer extends Deserializer[StationBoardEvent] {
   implicit val readsStationBoardEvent = new Reads[StationBoardEvent] {
     override def reads(json: JsValue): JsResult[StationBoardEvent] = {
       JsSuccess(StationBoardEvent(
-        timestamp = new DateTime((json \ "timeStamp").as[Long]),
+        timestamp = new DateTime((json \ "timeStamp").as[Long], dateTimeZone),
         stop = Stop(
           id = (json \ "stop" \ "station" \ "id").as[String].toLong,
           name = (json \ "stop" \ "station" \ "name").as[String],
@@ -50,8 +52,8 @@ class StationBoardEventDeserializer extends Deserializer[StationBoardEvent] {
           lastStopName = (json \ "to").as[String],
           category = (json \ "category").as[String]
         ),
-        arrivalTimestamp = (json \ "stop" \ "arrivalTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),
-        departureTimestamp = (json \ "stop" \ "departureTimestamp").asOpt[Long].map(l => new DateTime(l * 1000)),
+        arrivalTimestamp = (json \ "stop" \ "arrivalTimestamp").asOpt[Long].map(l => new DateTime(l * 1000, dateTimeZone)),
+        departureTimestamp = (json \ "stop" \ "departureTimestamp").asOpt[Long].map(l => new DateTime(l * 1000, dateTimeZone)),
         delayMinute = (json \ "stop" \ "delay").asOpt[Int],
         platform = (json \ "stop" \ "platform").asOpt[String]
       ))
