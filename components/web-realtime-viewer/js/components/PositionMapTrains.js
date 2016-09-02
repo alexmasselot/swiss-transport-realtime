@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
 import * as MapLocationActions from '../actions/MapLocationActions';
 import '../../css/app.css';
-import  './PositionMapCFF.css'
+import  styles from './PositionMapCFF.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import _ from 'lodash'
 
@@ -115,7 +115,7 @@ class PositionMapTrains extends Component {
     });
     let gSymbol = gNew.append('g')
       .attr({
-        class: 'train-symbol trainSymbol'
+        class: 'train-symbol trainSymbol '+styles.trainSymbol
       });
 
     gSymbol.append('circle')

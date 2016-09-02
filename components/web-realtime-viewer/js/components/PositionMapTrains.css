@@ -23,8 +23,8 @@ rect.masking{
 
 g.trainSymbol circle{
   fill: blue;
-
 }
+
 .trainSymbol path.bearingArrow {
   fill: blue;
 }

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM  from 'react-dom';
 import d3 from 'd3';
-import  './CFFClock.css'
+import  styles from './CFFClock.css'
 import _ from 'lodash'
 import Dimensions from 'react-dimensions'
 
@@ -69,7 +69,7 @@ class CFFClock extends Component {
     _this._rootContainer = gMain;
 
     var gTicks = gMain.append('g').attr({
-      class: "ticks"
+      class: styles.ticks
     });
 
     //transform a angl between 0 and 1 in degree for svg rotation, where 0 is noon
@@ -84,7 +84,7 @@ class CFFClock extends Component {
         .enter()
         .append('g')
         .attr({
-          class: 'tick ' + name,
+          class: styles.tick +' ' + styles[name],
           transform: function (t) {
             return 'rotate(' + (t / number * 360) + ') translate(' + 230 + ',0)';
           }
@@ -101,21 +101,21 @@ class CFFClock extends Component {
     var gHands = gMain
       .append('g')
       .datum(getNow())
-      .attr('class', "hands");
+      .attr('class', styles.hands);
 
     var gHandHours = gHands.append('g')
-      .attr('class', "hours");
+      .attr('class', styles.hours);
     gHandHours.append('path')
       .attr('d', `M-54,-15 L-54,15 L152,12.5 L152,-12.5 Z`);
 
     var gHandMinutes = gHands.append('g')
-      .attr('class', "minutes");
+      .attr('class', styles.minutes);
     gHandMinutes.append('path')
       .attr('d', `M-54,-12 L-54,12 L222,8.5 L222,-8.5 Z`);
 
 
     var gHandSeconds = gHands.append('g')
-      .attr('class', "seconds");
+      .attr('class', styles.seconds);
     gHandSeconds.append('path')
       .attr('d', `M-84,0 L146,0`);
     gHandSeconds.append('circle')
@@ -126,7 +126,7 @@ class CFFClock extends Component {
       });
     gHands.append('circle')
       .attr({
-        class: "middle_nail",
+        class: styles.middle_nail,
         r: 2
       });
 

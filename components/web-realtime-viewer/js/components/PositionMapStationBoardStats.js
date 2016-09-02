@@ -5,7 +5,7 @@ import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
 import  '../../css/app.css';
-import './PositionMapCFF.css'
+import styles from './PositionMapCFF.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
 import _ from 'lodash'
 import * as StationBoardActions from '../actions/StationBoardActions';
