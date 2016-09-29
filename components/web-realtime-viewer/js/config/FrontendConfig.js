@@ -26,11 +26,13 @@ class FrontendConfig {
     var _this = this;
 
     _this._promise = new Promise(function (accept, reject) {
-      return httpClient.get("/config.json")
+      return httpClient.get("config.json")
         .then(function (cfg) {
           if (cfg.url) {
             cfg.url = _.mapValues(cfg.url, function (u, k) {
-              return u.replace(/http:\/\/\-:/, 'http://' + global.location.hostname + ':')
+              return u
+                .replace(/http:\/\/\-:/, 'http://' + global.location.hostname + ':')
+                .replace(/http:\/\/\-\//, 'http://' + global.location.hostname + '/');
             });
           }
           _this._config = cfg;
@@ -40,7 +42,6 @@ class FrontendConfig {
           console.error("ERROR when initializing frontend config", error)
         });
     });
-
     return _this;
   }
 }

@@ -12,21 +12,14 @@ const app = global.server = express();
 var http = require("http");
 
 
-var compiler = webpack(webpackConfig);
-
-app.use(require('webpack-dev-middleware')(compiler, {
-  noInfo: true,
-  publicPath: webpackConfig.output.publicPath,
-  historyApiFallback: true
-}));
-
-app.use(require('webpack-hot-middleware')(compiler));
-
-app.use(function(req, res, next) {
+app.use(function(err, req, res, next) {
+  console.log('app.use');
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+app.use('/static', express.static('static'));
 
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -42,7 +35,7 @@ app.listen(config.get('ports.http'), function (err, result) {
     console.log(err);
   }
 
-  console.log('Listening at localhost:', config.get('ports.http'));
+  console.log('Listening on', config.get('ports.http'));
 });
 
 console.log(config);

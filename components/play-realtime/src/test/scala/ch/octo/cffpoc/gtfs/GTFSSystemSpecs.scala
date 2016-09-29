@@ -41,6 +41,7 @@ class GTFSSystemSpecs extends FlatSpec with Matchers {
     system.countTrips should be(4)
   }
 
+
   //  it should "countServiceId" in {
   //    load.countDates should equal(105)
   //  }

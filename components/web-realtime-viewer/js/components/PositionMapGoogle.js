@@ -37,6 +37,9 @@ class PositionMapGoogle extends Component {
     return (
       <div style={{height:height, width:width}}>
         <GoogleMap
+          bootstrapURLKeys={{
+                            key: 'AIzaSyC8NUflwgX3no42ur0wyxDZ2hG68tvmpDA'
+                           }}
           center={center}
           zoom={zoom}
           onChange={actions.updateLocation}

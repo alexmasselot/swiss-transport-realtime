@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "start": "DEBUG=true node server.js",
+    "prod": "NODE_ENV=production node server.js",
     "build": "NODE_ENV=production webpack -p --config webpack.production.js",
     "build-docker": "NODE_ENV=docker webpack -p --config webpack.docker.js",
     "test-viz": "DEBUG=true NODE_ENV=test-viz node server-test-viz.js",
@@ -17,7 +18,7 @@
     "express-ws": "^1.0.0-rc.2",
     "fbjs": "^0.6.1",
     "file-loader": "^0.8.5",
-    "google-map-react": "^0.11.0",
+    "google-map-react": "^0.20.0",
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.0.0",
     "materialize-css": "^0.97.6",

@@ -1,0 +1,11 @@
+{
+  "frontend": {
+    "url": {
+      "train_position_snapshot":"http://192.168.99.104/api/position",
+      "station_board":"http://192.168.99.104/api/stationboard"
+    }
+  },
+  "ports": {
+    "http": 3000
+  }
+}

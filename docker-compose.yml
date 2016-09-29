@@ -20,25 +20,31 @@ services:
   streaming_backend:
     build: components/play-realtime/
     #image: octoch/cff-poc-streaming-backend:0.1.2
-    ports:
-      - "81:9000"
+    #ports:
+    #  - "81:9000"
     links:
       - kafka
-    ports:
-      - "81:81"
   cff_feeder:
-    build: components/node_cff_sniff
+    #build: components/node_cff_sniff
+    #built with cd components/node_cff_sniff && docker build --tag=alexmass/alexmass/cff-node-sniff .
+    #deployed with docker push alexmass/alexmass/cff-node-sniff:xx
+	image: alexmass/cff-node-sniff
     environment:
       KAFKA_HOST: kafka
     dns: 8.8.8.8
     links:
       - kafka
   web_realtime_viewer:
-    build: components/web-realtime-viewer
+    #build: components/web-realtime-viewer
+    #built with cd components/web-realtime-viewer && docker build --tag=alexmass/cff-web-realtime-viewer .
+    #deployed with docker push alexmass/cff-web-realtime-viewer:xx
+    image: alexmass/cff-web-realtime-viewer
     links:
       - streaming_backend
+    ports:
+      - "82:80"
   nginx:
-    image: nginx
+    build: components/nginx
     ports:
       - "80:80"
     links:

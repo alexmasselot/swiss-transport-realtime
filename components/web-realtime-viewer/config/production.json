@@ -1,0 +1,11 @@
+{
+  "frontend": {
+    "url": {
+      "train_position_snapshot":"http://-/api/position",
+      "station_board":"http://-/api/stationboard"
+    }
+  },
+  "ports": {
+    "http": 80
+  }
+}
