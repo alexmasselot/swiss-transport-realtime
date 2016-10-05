@@ -158,7 +158,6 @@ class CFFClock extends Component {
         .ease("linear")
         .attrTween('transform', function (d, i, a) {
           return function (i) {
-            console.log(i)
             var x = d.seconds / 60 + (1 - d.seconds / 60) * i;
             return rotate(x);
           }

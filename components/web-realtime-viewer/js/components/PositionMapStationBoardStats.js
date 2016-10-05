@@ -91,7 +91,6 @@ class PositionMapStationBoardStats extends Component {
   _renderD3StationBoardStats(el, bounds, zoom, callbacks) {
     let _this = this;
 
-    console.log('render PositionMapStationBoardStats');
 
     let hasBoundMoved = !_.isEqual(bounds, _this.lastUpdated.bounds);
     _this.lastUpdated.bounds = bounds;

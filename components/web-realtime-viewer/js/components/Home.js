@@ -19,7 +19,9 @@ class Home extends Component {
     return (
       <div className="row" style={{height:this.props.containerHeight, marginBottom:'0px'}}>
         <div className="col s9" style={{height:this.props.containerHeight}}>
-      
+          <PositionMap
+            store={_this.props.store}
+          />
         </div>
         <div className="col s3">
           <div className="helpButtonContainer" style={{width:'100%', height:150}}>
