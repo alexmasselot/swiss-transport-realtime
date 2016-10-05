@@ -12,7 +12,7 @@ class Home extends Component {
   render() {
     let _this = this;
     return (
-      <div className={matStyles.container} style={{height:'100%'}}>
+      <div className="container" style={{height:'100%'}}>
         <div className="row" style={{height:'100%'}}>
           <div className="col s3"><a href="/">Swiss public transport in real time</a></div>
           <div className="col s6">&nbsp;</div>

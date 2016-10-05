@@ -1,12 +1,12 @@
 import sbt._
 
 object Version {
-  val akka = "2.4.3"
-  val reactiveKafka = "0.11-M3"
-  val hadoop = "2.7.2"
+  val akka = "2.4.11"
+  val reactiveKafka = "0.12"
+  val hadoop = "2.7.3"
   val logback = "1.1.3"
   val mockito = "1.10.19"
-  val scala = "2.11.7"
+  val scala = "2.11.8"
   val scalaTest = "2.2.5"
   val slf4j = "1.7.6"
   val spark = "1.6.0"

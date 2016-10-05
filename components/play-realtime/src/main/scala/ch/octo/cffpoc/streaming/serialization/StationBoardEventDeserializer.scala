@@ -6,7 +6,7 @@ import ch.octo.cffpoc.models._
 import ch.octo.cffpoc.stationboard.StationBoardEvent
 import ch.octo.cffpoc.stops.Stop
 import org.apache.kafka.common.serialization.Deserializer
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 import play.api.libs.json._
 
 /**
@@ -16,7 +16,6 @@ import play.api.libs.json._
 class StationBoardEventDeserializer extends Deserializer[StationBoardEvent] {
   val encoding = "UTF8"
   val dateTimeZone = DateTimeZone.forOffsetHours(1)
-
 
   override def configure(configs: util.Map[String, _], isKey: Boolean): Unit = {
 

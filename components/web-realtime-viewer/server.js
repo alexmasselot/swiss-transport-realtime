@@ -31,6 +31,7 @@ app.use(function(req, res, next) {
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
+app.use('/images', express.static('images'));
 
 //send back the configuration object (the "frontend" subtree of the global config)
 app.get('/config.json', function (req, res) {

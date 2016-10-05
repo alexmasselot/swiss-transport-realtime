@@ -3,9 +3,9 @@ package ch.octo.cffpoc.streaming.serialization
 import java.util
 
 import ch.octo.cffpoc.models._
-import ch.octo.cffpoc.position.{TimedPosition, TrainCFFPosition, TrainPosition}
+import ch.octo.cffpoc.position.{ TimedPosition, TrainCFFPosition, TrainPosition }
 import org.apache.kafka.common.serialization.Deserializer
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 import play.api.libs.json._
 
 /**

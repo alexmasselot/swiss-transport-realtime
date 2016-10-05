@@ -5,7 +5,7 @@ services:
     ports:
       - "2181:2181"
   kafka:
-    image: wurstmeister/kafka:0.9.0.1
+    image: wurstmeister/kafka:0.10.0.1
     ports:
       - "9092:9092"
     links:
@@ -18,17 +18,19 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
   streaming_backend:
-    build: components/play-realtime/
-    #image: octoch/cff-poc-streaming-backend:0.1.2
+    image: alexmass/cff-play-realtime:0.2.5
+    #build: alexmass/cff-play-realtime:0.1
+    #cd components/play-realtime ; ./activator docker:publish ; cd - 
     #ports:
     #  - "81:9000"
     links:
       - kafka
   cff_feeder:
-    #build: components/node_cff_sniff
-    #built with cd components/node_cff_sniff && docker build --tag=alexmass/alexmass/cff-node-sniff .
-    #deployed with docker push alexmass/alexmass/cff-node-sniff:xx
-	image: alexmass/cff-node-sniff
+    #build: components/node-sniff
+    #built & deployed with 
+    #cd components/node-sniff ; docker build --tag=alexmass/cff-node-sniff:0.1.2 . ; cd - ; docker push alexmass/cff-node-sniff:0.1.2
+    #d
+    image: alexmass/cff-node-sniff:0.1.2
     environment:
       KAFKA_HOST: kafka
     dns: 8.8.8.8
@@ -36,15 +38,16 @@ services:
       - kafka
   web_realtime_viewer:
     #build: components/web-realtime-viewer
-    #built with cd components/web-realtime-viewer && docker build --tag=alexmass/cff-web-realtime-viewer .
-    #deployed with docker push alexmass/cff-web-realtime-viewer:xx
-    image: alexmass/cff-web-realtime-viewer
+    #built  & deployed with 
+    #cd components/web-realtime-viewer ; docker build --tag=alexmass/cff-web-realtime-viewer:0.1.4 . ; cd -; docker push alexmass/cff-web-realtime-viewer:0.1.4
+    image: alexmass/cff-web-realtime-viewer:0.1.4
     links:
       - streaming_backend
     ports:
       - "82:80"
   nginx:
-    build: components/nginx
+    image: alexmass/cff-nginx:0.2.2
+    #cd components/nginx ; docker build --tag=alexmass/cff-nginx:0.2.2 . ; cd -; docker push alexmass/cff-nginx:0.2.2
     ports:
       - "80:80"
     links:

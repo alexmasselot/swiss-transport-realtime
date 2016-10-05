@@ -3,13 +3,14 @@ package ch.octo.cffpoc.streaming.app.akka.actors
 import javax.inject._
 
 import akka.actor._
-import akka.kafka.ConsumerSettings
+import akka.kafka.{ ConsumerSettings, Subscriptions }
 import akka.kafka.scaladsl.Consumer
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Sink
 import ch.octo.cffpoc.streaming.actors.PositionMasterActor
 import ch.octo.cffpoc.streaming.app.akka.actors.Messages._
 import ch.octo.cffpoc.streaming.serialization.{ StationBoardEventDeserializer, TrainCFFPositionDeserializer }
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import play.api.Configuration
 
@@ -55,22 +56,29 @@ class MainActor(configuration: Configuration) extends Actor with ActorLogging {
     positionMasterActor = context.actorOf(Props[PositionMasterActor], "position")
 
     log.info("launching cffstationboard pipe")
-    val consumerSettingsStationBoard = ConsumerSettings(actorSystem, new ByteArrayDeserializer, new StationBoardEventDeserializer,
-      Set("cffstationboard"))
+    val consumerSettingsStationBoard = ConsumerSettings(actorSystem, new ByteArrayDeserializer, new StationBoardEventDeserializer)
       .withBootstrapServers(kafkaUrl)
       .withGroupId("cff_streaming_akka_stationboard")
+      .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
 
-    Consumer.committableSource(consumerSettingsStationBoard.withClientId("cff_streaming_akka_stationboard"))
-      .runWith(Sink.foreach(msg => stationBoardMasterActor ! msg.value))
+    Consumer.plainSource(consumerSettingsStationBoard, Subscriptions.topics("cffstationboard"))
+      .map { msg =>
+        stationBoardMasterActor ! msg.value
+      }
+      .runWith(Sink.ignore)
     log.info("launched cffstationboard pipe")
 
     log.info("launching cfftrainposition pipe")
-    val consumerSettingsPosition = ConsumerSettings(actorSystem, new ByteArrayDeserializer, new TrainCFFPositionDeserializer(),
-      Set("cfftrainposition"))
+    val consumerSettingsPosition = ConsumerSettings(actorSystem, new ByteArrayDeserializer, new TrainCFFPositionDeserializer())
       .withBootstrapServers(kafkaUrl)
       .withGroupId("cff_streaming_akka_position")
-    Consumer.committableSource(consumerSettingsPosition.withClientId("cff_streaming_akka_position"))
-      .runWith(Sink.foreach(msg => positionMasterActor ! msg.value))
+      .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
+
+    Consumer.plainSource(consumerSettingsPosition, Subscriptions.topics("cfftrainposition"))
+      .map { msg =>
+        positionMasterActor ! msg.value
+      }
+      .runWith(Sink.ignore)
     log.info("launched cfftrainposition pipe")
 
   }

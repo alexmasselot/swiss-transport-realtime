@@ -69,8 +69,8 @@ frontendConfig.get().then(function (config) {
   fGetTrainPosition();
   fGetStationBoardStats();
 
-  setInterval(fGetTrainPosition, 2000);
-  setInterval(fGetStationBoardStats, 5000);
+  setInterval(fGetTrainPosition, 5000);
+  setInterval(fGetStationBoardStats, 10000);
 })
 ;
 

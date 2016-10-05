@@ -19,16 +19,14 @@ class Home extends Component {
     return (
       <div className="row" style={{height:this.props.containerHeight, marginBottom:'0px'}}>
         <div className="col s9" style={{height:this.props.containerHeight}}>
-          <PositionMap
-            store={_this.props.store}
-          />
+      
         </div>
         <div className="col s3">
           <div className="helpButtonContainer" style={{width:'100%', height:150}}>
             <div className="helpButton"
                  data-tip
                  data-for="tt-cff-clock">
-              <i className="material-icons">live_help</i>
+              <i className="material-icons small">live_help</i>
             </div>
             <ReactTooltip id="tt-cff-clock" place="bottom" type="info" effect="solid">
               <div className="center-align">

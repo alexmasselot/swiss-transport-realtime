@@ -124,11 +124,11 @@ class PositionMapTrains extends Component {
         cy: 0,
         r: 1
       });
-    gSymbol.append('path')
-      .attr({
-        class: 'bearing-arrow bearingArrow',
-        d: 'M0.707,-0.707 L0,-2 L-0.707,-0.707 Z'
-      });
+    // gSymbol.append('path')
+    //   .attr({
+    //     class: 'bearing-arrow bearingArrow',
+    //     d: 'M0.707,-0.707 L0,-2 L-0.707,-0.707 Z'
+    //   });
 
     gNew.append('g')
       .attr({
@@ -157,11 +157,11 @@ class PositionMapTrains extends Component {
     }
     gTrains.select('g.train-symbol')
       .attr('transform', function (p) {
-        if (p.position_bearing === undefined) {
+//        if (p.position_bearing === undefined) {
           return 'scale(' + radius + ')';
-        } else {
-          return 'scale(' + radius + ') rotate(' + (p.position_bearing) + ')';
-        }
+        // } else {
+        //   return 'scale(' + radius + ') rotate(' + (p.position_bearing) + ')';
+        // }
       });
     gTrains.select('path.bearing-arrow')
       .style('display', function (p) {

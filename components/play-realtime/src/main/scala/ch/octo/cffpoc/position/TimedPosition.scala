@@ -1,8 +1,8 @@
 package ch.octo.cffpoc.position
 
-import ch.octo.cffpoc.models.{GeoLoc, GeoLocBearing}
+import ch.octo.cffpoc.models.{ GeoLoc, GeoLocBearing }
 import ch.octo.cffpoc.stops.Stop
-import org.joda.time.{DateTime, DateTimeZone}
+import org.joda.time.{ DateTime, DateTimeZone }
 
 /**
  * Created by alex on 01/03/16.
