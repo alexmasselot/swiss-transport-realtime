@@ -154,7 +154,6 @@ class CFFClock extends Component {
       var remainMillis = (60 - now.seconds) * 1000 - minuteStopMillis;
       gHandSeconds.transition()
         .duration(remainMillis)
-        //.fps(1)
         .ease("linear")
         .attrTween('transform', function (d, i, a) {
           return function (i) {
@@ -198,7 +197,6 @@ class CFFClock extends Component {
   _renderD3(el, newProps) {
     const _this = this;
 
-    console.log('rendering CFFClock');
     const height = newProps.containerHeight;
     const width = newProps.containerWidth;
 

@@ -5,12 +5,19 @@ import d3 from 'd3';
 import {bindActionCreators} from 'redux';
 import * as TrainPositionActions from '../actions/TrainPositionActions';
 import * as MapLocationActions from '../actions/MapLocationActions';
+import frontendConfig from '../config/FrontendConfig';
+
 import '../../css/app.css';
 import  styles from './PositionMapCFF.css'
-import { Map, Marker, Popup, TileLayer } from 'react-leaflet';
+import {Map, Marker, Popup, TileLayer} from 'react-leaflet';
 import _ from 'lodash'
 
 let i = 0;
+
+var trainPositionUpdateDelay = 500;
+frontendConfig.get().then(function (config) {
+  trainPositionUpdateDelay = config.delay.trainPosition;
+});
 
 class PositionMapTrains extends Component {
   constructor() {
@@ -83,7 +90,7 @@ class PositionMapTrains extends Component {
 
   _renderD3TrainPositions(el, bounds, zoom) {
     let _this = this;
-    
+
     let hasBoundMoved = !_.isEqual(bounds, _this.lastUpdated.bounds);
     _this.lastUpdated.bounds = bounds;
 
@@ -113,7 +120,7 @@ class PositionMapTrains extends Component {
     });
     let gSymbol = gNew.append('g')
       .attr({
-        class: 'train-symbol trainSymbol '+styles.trainSymbol
+        class: 'train-symbol trainSymbol ' + styles.trainSymbol
       });
 
     gSymbol.append('circle')
@@ -140,7 +147,9 @@ class PositionMapTrains extends Component {
         //return p.train_name.trim() + ' (' + p.train_lastStopName + ')';// +_this.props.coord2point.x(p.x);
       });
 
-    (hasBoundMoved ? gTrains : (gTrains.transition().duration(500)))
+    var transitionDuration = (zoom<7 || hasBoundMoved) ? 0 : trainPositionUpdateDelay;
+
+    gTrains.transition().duration(transitionDuration).ease("linear")
       .attr('transform', function (p) {
         return 'translate(' + _this._scales.x(p.x) + ',' + (_this._scales.y(p.y)) + ')';
       });
@@ -156,7 +165,7 @@ class PositionMapTrains extends Component {
     gTrains.select('g.train-symbol')
       .attr('transform', function (p) {
 //        if (p.position_bearing === undefined) {
-          return 'scale(' + radius + ')';
+        return 'scale(' + radius + ')';
         // } else {
         //   return 'scale(' + radius + ') rotate(' + (p.position_bearing) + ')';
         // }
@@ -212,11 +221,11 @@ class PositionMapTrains extends Component {
       y: d3.scale.linear().range([0, _this._dim.height]).domain([latMax, latMin])
     };
 
-    if(_this._updateData(
+    if (_this._updateData(
         newProps.MapLocation.location.bounds,
         newProps.TrainPosition.positions,
         newProps.TrainPosition.timestamp
-      )){
+      )) {
       _this._renderD3TrainPositions(el, newProps.MapLocation.location.bounds, newProps.zoom);
     }
 
