@@ -1,10 +1,12 @@
 package ch.octo.cffpoc.gtfs
 
-import org.scalatest.{ FlatSpec, Matchers }
+import ch.octo.cffpoc.gtfs.raw.RawCalendarDateReader
+import org.joda.time.LocalDate
+import org.scalatest.{FlatSpec, Matchers}
 
 /**
- * Created by alex on 17/02/16.
- */
+  * Created by alex on 17/02/16.
+  */
 class GTFSSystemSpecs extends FlatSpec with Matchers {
   behavior of "GTFSSystem"
 
@@ -12,7 +14,7 @@ class GTFSSystemSpecs extends FlatSpec with Matchers {
     val l: List[(String, Int)] = List(("bb", 2), ("x", 42), ("aa", 1))
     val m: Map[Int, String] = Map(1 -> "aa", 2 -> "bb", 42 -> "x")
 
-    GTFSSystem.indexIt(l, { (x: (String, Int)) => x._2 }, { (x: (String, Int)) => x._1 }) should equal(m)
+    GTFSSystem.indexIt(l.toIterator, { (x: (String, Int)) => x._2 }, { (x: (String, Int)) => x._1 }) should equal(m)
 
   }
 
@@ -20,7 +22,7 @@ class GTFSSystemSpecs extends FlatSpec with Matchers {
     val l: List[(String, Int)] = List(("bb", 2), ("x", 42), ("aa", 2))
 
     an[GTFSParsingException] should be thrownBy {
-      GTFSSystem.indexIt(l, { (x: (String, Int)) => x._2 }, { (x: (String, Int)) => x._1 })
+      GTFSSystem.indexIt(l.toIterator, { (x: (String, Int)) => x._2 }, { (x: (String, Int)) => x._1 })
     }
   }
 
@@ -40,7 +42,16 @@ class GTFSSystemSpecs extends FlatSpec with Matchers {
   it should "countTrips" in {
     system.countTrips should be(4)
   }
-
+  it should "get all trip when giving an outside data" in {
+    system.findAllTripsByDate(RawCalendarDateReader.dateFromString("20010116"))
+      .map(_.tripId)
+      .toSet should equal(Set(TripId("3369:1"),TripId("3369:2"),TripId("3369:3"),TripId("3369:4")))
+  }
+  it should "get a trip subset when gicinv an exceptin date" in {
+    system.findAllTripsByDate(RawCalendarDateReader.dateFromString("20160903"))
+      .map(_.tripId)
+      .toSet should equal(Set(TripId("3369:2"),TripId("3369:4")))
+  }
 
   //  it should "countServiceId" in {
   //    load.countDates should equal(105)

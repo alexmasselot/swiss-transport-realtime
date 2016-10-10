@@ -5,11 +5,18 @@ import org.apache.commons.logging.LogFactory
 import org.joda.time.LocalDate
 
 /**
- * Created by alex on 03/05/16.
- */
+  * Created by alex on 03/05/16.
+  */
 class GTFSSystem(trips: TripCollection, exceptionDates: Map[LocalDate, Set[ServiceId]]) {
 
   def countTrips = trips.size
+
+  def findAllTripsByDate(date: LocalDate): TripCollection = {
+    exceptionDates.get(date) match {
+      case None => trips
+      case Some(skipDates) => trips.filter(t => !skipDates.contains(t.serviceId))
+    }
+  }
 }
 
 case class GTFSParsingException(message: String) extends Exception(message)
@@ -42,56 +49,62 @@ object GTFSSystem {
     )
 
   /**
-   * group by date and point to s set of serviceId
-   *
-   * @param rootSrc
-   * @return
-   */
+    * group by date and point to s set of serviceId
+    *
+    * @param rootSrc
+    * @return
+    */
   def loadExceptionDates(rootSrc: String): Map[LocalDate, Set[ServiceId]] = {
     RawCalendarDateReader.load(s"$rootSrc/$FILENAME_CALENDAR_DATES")
+      .toList
       .groupBy(_.date)
       .map({ case (date, l) => date -> l.map(_.serviceId).toSet })
   }
 
   /**
-   * associate a tripId with a list of StopTime (sorted by timeDeparture)
-   *
-   * @param rootSrc where to grab the files
-   * @param stops   a map stopId => Stop
-   * @return
-   */
+    * associate a tripId with a list of StopTime (sorted by timeDeparture)
+    *
+    * @param rootSrc where to grab the files
+    * @param stops   a map stopId => Stop
+    * @return
+    */
   def loadStopTimesByTripId(rootSrc: String, stops: Map[StopId, RawStop]): Map[TripId, List[StopTime]] = {
     RawStopTimeReader.load(s"$rootSrc/$FILENAME_STOP_TIMES")
       .map(rst => StopTime(stops(rst.stopId), rst.tripId, rst.timeArrival, rst.timeDeparture))
+      .toList
       .groupBy(_.tripId)
     //.map({ case (id, l) => (id, l.sortBy(_.timeDeparture.g)) })
   }
 
   /**
-   * load trip and associate them with the routes, serviceId and the list of StopTime
-   *
-   * @param rootSrc
-   * @param stopTimesByTripId
-   * @param routes
-   * @return a map tripId->Trip
-   */
+    * load trip and associate them with the routes, serviceId and the list of StopTime
+    *
+    * @param rootSrc
+    * @param stopTimesByTripId
+    * @param routes
+    * @return a map tripId->Trip
+    */
   def loadTrips(rootSrc: String,
-    stopTimesByTripId: Map[TripId, List[StopTime]],
-    routes: Map[RouteId, RawRoute]): TripCollection = {
+                stopTimesByTripId: Map[TripId, List[StopTime]],
+                routes: Map[RouteId, RawRoute]): TripCollection = {
 
     TripCollection(RawTripReader.load(s"$rootSrc/$FILENAME_TRIPS")
-      .map(rt => rt.tripId -> Trip(rt.tripId, routes(rt.routeId), rt.serviceId, rt.tripHeadSign, rt.tripShortName, stopTimesByTripId(rt.tripId)))
+      .map({
+        rt =>
+
+          rt.tripId -> Trip(rt.tripId, routes(rt.routeId), rt.serviceId, rt.tripHeadSign, rt.tripShortName, stopTimesByTripId(rt.tripId))
+      })
       .toMap
     )
   }
 
   /**
-   * Load the whle system.
-   * This is indded the only function to be called from outside
-   *
-   * @param rootSrc
-   * @return
-   */
+    * Load the whle system.
+    * This is indded the only function to be called from outside
+    *
+    * @param rootSrc
+    * @return
+    */
   def load(rootSrc: String): GTFSSystem = {
     LOGGER.info(s"loading $rootSrc/$FILENAME_CALENDAR_DATES")
     val exceptionDates = loadExceptionDates(rootSrc)
@@ -108,20 +121,21 @@ object GTFSSystem {
   }
 
   /**
-   * take a list of objects and build a map based on the function fIndex towards a value computed by fValue
-   *
-   * @param list   the original list
-   * @param fKey   how to get a key
-   * @param fValue how to get a value
-   * @tparam TO Originla bean type
-   * @tparam TK key type
-   * @tparam TV value type
-   * @return a map TK -> TV
-   * @throws GTFSParsingException if there are duplicated keys
-   */
-  def indexIt[TO, TK, TV](list: List[TO],
-    fKey: (TO) => TK,
-    fValue: (TO) => TV): Map[TK, TV] = {
+    * take a list of objects and build a map based on the function fIndex towards a value computed by fValue
+    *
+    * @param list   the original list
+    * @param fKey   how to get a key
+    * @param fValue how to get a value
+    * @tparam TO Originla bean type
+    * @tparam TK key type
+    * @tparam TV value type
+    * @return a map TK -> TV
+    * @throws GTFSParsingException if there are duplicated keys
+    */
+  def indexIt[TO, TK, TV](iterator: Iterator[TO],
+                          fKey: (TO) => TK,
+                          fValue: (TO) => TV): Map[TK, TV] = {
+    val list = iterator.toList
     val n = list.size
     val map = list
       .map(x => fKey(x) -> fValue(x))

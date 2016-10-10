@@ -7,8 +7,12 @@ import ch.octo.cffpoc.gtfs._
  */
 object RawAgencyReader extends RawDataCollectionReader[RawAgency] {
 
-  override def unmap(row: Map[String, String]): RawAgency = RawAgency(
-    AgencyId(row("agency_id")),
-    AgencyName(row("agency_name"))
-  )
+  override def builReadFunction(header: Array[String]): (Array[String]) => RawAgency ={
+    val h2i = header.zipWithIndex.toMap
+    (line:Array[String]) => RawAgency(
+      AgencyId(line(h2i("agency_id"))),
+      AgencyName(line(h2i("agency_name")))
+    )
+  }
+
 }

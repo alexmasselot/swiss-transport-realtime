@@ -6,3 +6,4 @@ package ch.octo.cffpoc.gtfs
 case class Trip(tripId: TripId, route: RawRoute, serviceId: ServiceId, tripHeadSign: StopName, tripShortName: TripShortName, stopTimes: List[StopTime]) {
   def startsAt = stopTimes.head.timeDeparture
 }
+
