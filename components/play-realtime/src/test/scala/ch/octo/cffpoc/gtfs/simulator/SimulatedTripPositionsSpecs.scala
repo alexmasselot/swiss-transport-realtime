@@ -12,6 +12,7 @@ class SimulatedTripPositionsSpecs extends FlatSpec with Matchers {
   val trip1: Trip = Trip(
     TripId("trip1"),
     RawRoute(RouteId("rt1"), AgencyId("agcy"), RouteShortName("rsn"), RouteLongName("route long name")),
+
     ServiceId("service1"),
     StopName("head stop1"),
     TripShortName("tsn1"),
@@ -53,6 +54,7 @@ class SimulatedTripPositionsSpecs extends FlatSpec with Matchers {
                 toLng: Double
                ): SimulatedTripPositions = {
     val tripId = TripId(id)
+    val agencyId = AgencyId("agcy")
 
 
     val fromTS: Int = ScheduleTime(fromTime).getSecondOfDay
@@ -62,7 +64,7 @@ class SimulatedTripPositionsSpecs extends FlatSpec with Matchers {
       x0 + (t - fromTS).toDouble / (toTS - fromTS) * (x1 - x0)
     }
     val pos = (fromTS to toTS by 60).map({ t =>
-      SimulatedPosition(t, interpolate(t, fromLat, toLat), interpolate(t, fromLng, toLng), tripId)
+      SimulatedPosition(t, interpolate(t, fromLat, toLat), interpolate(t, fromLng, toLng), tripId, agencyId)
     }).toList
 
     new SimulatedTripPositions(pos)
@@ -73,7 +75,7 @@ class SimulatedTripPositionsSpecs extends FlatSpec with Matchers {
     stp.size should be(11)
     stp.positions(2).lat should be(10.2)
     stp.positions(2).lng should be(-5.2)
-    math.floor(stp.positions(2).secondsOfDay/60).toInt % 60 should be(1)
+    math.floor(stp.positions(2).secondsOfDay / 60).toInt % 60 should be(1)
   }
 
   def checkDateAreOrdered(stp: SimulatedTripPositions) = {
@@ -90,8 +92,8 @@ class SimulatedTripPositionsSpecs extends FlatSpec with Matchers {
     stp.size should be(17)
     checkDateAreOrdered(stp)
 
-    stp.positions.map(st=> math.floor(st.secondsOfDay/60).toInt % 60) should equal(List(59, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 9))
-    stp.positions.map(_.secondsOfDay%60) should equal(List(0, 0, 30, 0, 30, 0, 30, 0, 30, 0, 30, 0, 30, 0, 0, 0, 0))
+    stp.positions.map(st => math.floor(st.secondsOfDay / 60).toInt % 60) should equal(List(59, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 9))
+    stp.positions.map(_.secondsOfDay % 60) should equal(List(0, 0, 30, 0, 30, 0, 30, 0, 30, 0, 30, 0, 30, 0, 0, 0, 0))
   }
 
   it should "merge to STP 2 starts after first last" in {

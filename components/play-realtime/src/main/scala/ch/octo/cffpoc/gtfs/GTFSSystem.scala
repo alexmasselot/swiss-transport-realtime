@@ -7,7 +7,7 @@ import org.joda.time.LocalDate
 /**
   * Created by alex on 03/05/16.
   */
-class GTFSSystem(trips: TripCollection, exceptionDates: Map[LocalDate, Set[ServiceId]]) {
+class GTFSSystem(val trips: TripCollection, val agencies:Map[AgencyId, RawAgency], exceptionDates: Map[LocalDate, Set[ServiceId]]) {
 
   def countTrips = trips.size
 
@@ -89,9 +89,12 @@ object GTFSSystem {
                 routes: Map[RouteId, RawRoute]): TripCollection = {
 
     TripCollection(RawTripReader.load(s"$rootSrc/$FILENAME_TRIPS")
+        .zipWithIndex
       .map({
-        rt =>
-
+        case(rt,i) =>
+          if(i>0 && i%10000 == 0){
+            LOGGER.info(s"loaded $i trips")
+          }
           rt.tripId -> Trip(rt.tripId, routes(rt.routeId), rt.serviceId, rt.tripHeadSign, rt.tripShortName, stopTimesByTripId(rt.tripId))
       })
       .toMap
@@ -110,20 +113,22 @@ object GTFSSystem {
     val exceptionDates = loadExceptionDates(rootSrc)
     LOGGER.info(s"loading $rootSrc/$FILENAME_STOPS")
     val stops = loadStops(rootSrc)
+    LOGGER.info(s"loading $rootSrc/$FILENAME_AGENCY")
+    val agencies = loadAgencies(rootSrc)
     LOGGER.info(s"loading $rootSrc/$FILENAME_STOP_TIMES")
     val stopTimesByTripId = loadStopTimesByTripId(rootSrc, stops)
     LOGGER.info(s"loading $rootSrc/$FILENAME_ROUTES")
     val routes = loadRoutes(rootSrc)
     LOGGER.info(s"loading $rootSrc/$FILENAME_TRIPS")
     val trips = loadTrips(rootSrc, stopTimesByTripId = stopTimesByTripId, routes = routes)
-
-    new GTFSSystem(trips, exceptionDates = exceptionDates)
+    LOGGER.info("finished loading")
+    new GTFSSystem(trips, agencies = agencies, exceptionDates = exceptionDates)
   }
 
   /**
     * take a list of objects and build a map based on the function fIndex towards a value computed by fValue
     *
-    * @param list   the original list
+    * @param iterator   the original list
     * @param fKey   how to get a key
     * @param fValue how to get a value
     * @tparam TO Originla bean type

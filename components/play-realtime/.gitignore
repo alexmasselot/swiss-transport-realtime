@@ -19,3 +19,5 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
+/src/main/resources/gtfs_train/
+/src/main/resources/gtfs_complete/

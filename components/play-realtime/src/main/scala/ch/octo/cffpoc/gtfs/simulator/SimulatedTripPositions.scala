@@ -63,7 +63,8 @@ object SimulatedTripPositions {
       st.timeArrival.getSecondOfDay,
       st.stop.lat,
       st.stop.lng,
-      trip.tripId)
+      trip.tripId,
+      trip.route.agencyId)
     )
     new SimulatedTripPositions(positions)
   }
@@ -91,15 +92,16 @@ object SimulatedTripPositions {
         val newPos = SimulatedPosition(newTime,
           currentPosition.lat + x * (targetPosition.lat - currentPosition.lat),
           currentPosition.lng + x * (targetPosition.lng - currentPosition.lng),
-          trip.tripId
+          trip.tripId,
+          trip.route.agencyId
         )
         incrementPosHandler(acc :+ newPos, newPos, targetPosition, deltaSeconds)
       }
     }
 
     val posTurn = trip.stopTimes.flatMap(st => List(
-      SimulatedPosition(st.timeArrival.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId),
-      SimulatedPosition(st.timeDeparture.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId)
+      SimulatedPosition(st.timeArrival.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId, trip.route.agencyId),
+      SimulatedPosition(st.timeDeparture.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId, trip.route.agencyId)
     ))
 
     val headStop = trip.stopTimes.head
@@ -110,7 +112,7 @@ object SimulatedTripPositions {
           incrementPosHandler(Nil, st1, st2, deltaSeconds)
         }
       })
-    val timedPostionPlusStart = timedPositions.+:(SimulatedPosition(headStop.timeArrival.getSecondOfDay, headStop.stop.lat, headStop.stop.lng, trip.tripId))
+    val timedPostionPlusStart = timedPositions.+:(SimulatedPosition(headStop.timeArrival.getSecondOfDay, headStop.stop.lat, headStop.stop.lng, trip.tripId, trip.route.agencyId))
 
     val simPositions: List[SimulatedPosition] =
       timedPostionPlusStart
@@ -140,13 +142,24 @@ object SimulatedTripPositions {
   }
 
   def merge(trips: TripCollection, date: LocalDate, secondIncrement: Double, isRandomIncrement: Boolean = false): SimulatedTripPositions = {
+    val n = trips.size
+    LOGGER.info(s"transforming $n trips into simulated positions")
     val stps = trips.toList
       .sortBy(trip => trip.startsAt.getSecondOfDay)
-      .map(trip => apply(trip, date, secondIncrement, isRandomIncrement))
-      .flatMap(_.positions)
+      .zipWithIndex
+      .map({
+        case (trip, i) =>
+          if (i > 0 && i % 10000 == 0) {
+            LOGGER.info(s"merged $i/$n")
+          }
+          apply(trip, date, secondIncrement, isRandomIncrement)
+      })
+
+    LOGGER.info(s"build a list of ${stps.map(_.size).sum} positions. Sorting them...")
+    val poss = stps.flatMap(_.positions)
       .sortBy(_.secondsOfDay)
 
-    new SimulatedTripPositions(stps)
+    new SimulatedTripPositions(poss)
   }
 
 

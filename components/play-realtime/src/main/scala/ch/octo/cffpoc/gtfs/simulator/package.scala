@@ -8,6 +8,6 @@ import org.joda.time.DateTime
   */
 package object simulator {
 
-  case class SimulatedPosition(secondsOfDay: Int, lat: Double, lng: Double, tripId: TripId)
+  case class SimulatedPosition(secondsOfDay: Int, lat: Double, lng: Double, tripId: TripId, agencyId: AgencyId)
 
 }
