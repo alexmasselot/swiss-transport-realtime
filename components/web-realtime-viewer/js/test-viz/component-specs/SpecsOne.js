@@ -5,7 +5,7 @@ export default React.createClass({
   render() {
     let {title, children, comment} =  this.props;
     return (
-      <div className={styles.specsOne}>
+      <div className="specsOne">
         <strong>{title}</strong>
         <span>{comment}</span>
           <div>

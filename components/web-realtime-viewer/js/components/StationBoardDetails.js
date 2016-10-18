@@ -9,7 +9,6 @@ import StatusTypes from '../constants/StatusTypes';
 import './StationBoardDetails.css';
 import 'materialize-css/bin/materialize.css';
 
-
 const fBoardTR = function (evt) {
   let dep = dateFormat(new Date(evt.departureTimestamp), "HH:MM");
   var elDep;
