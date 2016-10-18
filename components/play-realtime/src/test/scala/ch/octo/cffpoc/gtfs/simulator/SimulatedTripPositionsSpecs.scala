@@ -55,6 +55,7 @@ class SimulatedTripPositionsSpecs extends FlatSpec with Matchers {
                ): SimulatedTripPositions = {
     val tripId = TripId(id)
     val agencyId = AgencyId("agcy")
+    val routeShortName = RouteShortName("rsn")
 
 
     val fromTS: Int = ScheduleTime(fromTime).getSecondOfDay
@@ -64,7 +65,7 @@ class SimulatedTripPositionsSpecs extends FlatSpec with Matchers {
       x0 + (t - fromTS).toDouble / (toTS - fromTS) * (x1 - x0)
     }
     val pos = (fromTS to toTS by 60).map({ t =>
-      SimulatedPosition(t, interpolate(t, fromLat, toLat), interpolate(t, fromLng, toLng), tripId, agencyId)
+      SimulatedPosition(t, interpolate(t, fromLat, toLat), interpolate(t, fromLng, toLng), tripId, agencyId, routeShortName, Some(StopId("stp")))
     }).toList
 
     new SimulatedTripPositions(pos)

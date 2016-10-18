@@ -1,6 +1,8 @@
 package ch.octo.cffpoc.gtfs.simulator
 
-import ch.octo.cffpoc.gtfs.{AgencyName, GTFSSystem}
+import java.io.{File, PrintWriter}
+
+import ch.octo.cffpoc.gtfs.{AgencyName, GTFSSystem, RouteShortName}
 import ch.octo.cffpoc.gtfs.raw.RawCalendarDateReader
 import org.apache.commons.logging.LogFactory
 
@@ -10,19 +12,38 @@ import org.apache.commons.logging.LogFactory
 object SimulatorApp extends App {
   val LOGGER = LogFactory.getLog(SimulatorApp.getClass)
 
-  val system = GTFSSystem.load("src/main/resources/gtfs_complete")
+  val path = "src/main/resources/gtfs_complete"
+  val system = GTFSSystem.load(path)
 
 
-  val agencyIdExclude = system.agencies.filter({ case (id, ra) => !BusAgenciesNotPost.set.contains(ra.agencyName.value) }).keys.toSet
+  //val agencyIdExclude = system.agencies.filter({ case (id, ra) =>  }).keys.toSet
+  val agencyIdInclude = system.agencies.filter({ case (id, ra) =>
+    //ra.agencyName == AgencyName("SBB (Schweizerische Bundesbahnen SBB)")
+    !BusAgenciesNotPost.set.contains(ra.agencyName.value)
+    //true
+  }).keys.toSet
 
-  val date = RawCalendarDateReader.dateFromString("20161007")
+  val date = RawCalendarDateReader.dateFromString("20161005")
+  LOGGER.info(s"total number of trips ${system.trips.size}")
   LOGGER.info(s"findAllTripsByDate($date)")
-  val trips = system.findAllTripsByDate(date).filter(x => agencyIdExclude.contains(x.route.agencyId))
-  LOGGER.info(s"transforming ${trips.size} trips into simulated positions")
+  val tripsForDate = system.findAllTripsByDate(date)
+  LOGGER.info(s"total number of trips filtered by date ${tripsForDate.size}")
 
-  val simPos = SimulatedTripPositions.merge(trips, date, 60, false)
+  val tripsFiltered = tripsForDate
+    .filter(x => agencyIdInclude.contains(x.route.agencyId))
+  LOGGER.info(s"total number of trips filtered by agencies ${tripsFiltered.size}")
+  LOGGER.info(s"transforming ${tripsFiltered.size} trips into simulated positions")
+
+  val simPos = SimulatedTripPositions.merge(tripsFiltered, date, 30, true)
   LOGGER.info(s"build a list of ${simPos.size} simulated positions")
 
+  private val outFile: String = s"$path/gtfs-simulated-pos.txt"
+  val writer = new PrintWriter(new File(outFile))
+  writer.append(s"secondOfDay\tlat\tlng\ttripId\tagencyId\trouteShortName\tstopId\n")
+  simPos.positions.foreach(sp =>
+    writer.append(s"""${sp.secondsOfDay}\t${sp.lat}\t${sp.lng}\t${sp.tripId.value}\t${sp.agencyId.value}\t${sp.routeShortName.value}\t${sp.stopId.getOrElse("")}\n""")
+  )
+  LOGGER.info(s"simulated position saved to $outFile")
 }
 
 

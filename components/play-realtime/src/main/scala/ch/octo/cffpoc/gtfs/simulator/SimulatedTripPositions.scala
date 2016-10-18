@@ -64,7 +64,10 @@ object SimulatedTripPositions {
       st.stop.lat,
       st.stop.lng,
       trip.tripId,
-      trip.route.agencyId)
+      trip.route.agencyId,
+      trip.route.routeShortName,
+      Some(st.stop.stopId)
+    )
     )
     new SimulatedTripPositions(positions)
   }
@@ -93,15 +96,19 @@ object SimulatedTripPositions {
           currentPosition.lat + x * (targetPosition.lat - currentPosition.lat),
           currentPosition.lng + x * (targetPosition.lng - currentPosition.lng),
           trip.tripId,
-          trip.route.agencyId
+          trip.route.agencyId,
+          trip.route.routeShortName,
+          None
         )
         incrementPosHandler(acc :+ newPos, newPos, targetPosition, deltaSeconds)
       }
     }
 
     val posTurn = trip.stopTimes.flatMap(st => List(
-      SimulatedPosition(st.timeArrival.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId, trip.route.agencyId),
-      SimulatedPosition(st.timeDeparture.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId, trip.route.agencyId)
+      SimulatedPosition(st.timeArrival.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId, trip.route.agencyId,
+        trip.route.routeShortName, Some(st.stop.stopId)),
+      SimulatedPosition(st.timeDeparture.getSecondOfDay, st.stop.lat, st.stop.lng, trip.tripId, trip.route.agencyId,
+        trip.route.routeShortName, Some(st.stop.stopId))
     ))
 
     val headStop = trip.stopTimes.head
@@ -112,11 +119,18 @@ object SimulatedTripPositions {
           incrementPosHandler(Nil, st1, st2, deltaSeconds)
         }
       })
-    val timedPostionPlusStart = timedPositions.+:(SimulatedPosition(headStop.timeArrival.getSecondOfDay, headStop.stop.lat, headStop.stop.lng, trip.tripId, trip.route.agencyId))
+    val timedPostionPlusStart = timedPositions.+:(SimulatedPosition(headStop.timeArrival.getSecondOfDay,
+      headStop.stop.lat,
+      headStop.stop.lng,
+      trip.tripId,
+      trip.route.agencyId,
+      trip.route.routeShortName,
+      Some(headStop.stop.stopId)
+    ))
 
     val simPositions: List[SimulatedPosition] =
       timedPostionPlusStart
-        .foldLeft(List[SimulatedPosition]())((acc, a) => if (acc.size > 0 && acc.last == a) acc else acc :+ a)
+        .foldLeft(List[SimulatedPosition]())((acc, a) => if (acc.size == 0 || acc.last != a) acc :+ a else acc )
     new SimulatedTripPositions(simPositions)
   }
 
