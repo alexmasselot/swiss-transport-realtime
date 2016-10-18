@@ -39,8 +39,8 @@ services:
   web_realtime_viewer:
     #build: components/web-realtime-viewer
     #built  & deployed with 
-    #cd components/web-realtime-viewer ; docker build --tag=alexmass/cff-web-realtime-viewer:0.1.7 . ; cd -; docker push alexmass/cff-web-realtime-viewer:0.1.7
-    image: alexmass/cff-web-realtime-viewer:0.1.7
+    #cd components/web-realtime-viewer ; docker build --tag=alexmass/cff-web-realtime-viewer:0.1.9 . ; cd -; docker push alexmass/cff-web-realtime-viewer:0.1.9
+    image: alexmass/cff-web-realtime-viewer:0.1.9
     links:
       - streaming_backend
     ports:
