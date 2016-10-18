@@ -14,7 +14,7 @@ class GTFSSystem(val trips: TripCollection, val agencies:Map[AgencyId, RawAgency
   def findAllTripsByDate(date: LocalDate): TripCollection = {
     exceptionDates.get(date) match {
       case None => trips
-      case Some(skipDates) => trips.filter(t => !skipDates.contains(t.serviceId))
+      case Some(skipDates) => trips.filter(t => skipDates.contains(t.serviceId))
     }
   }
 }
