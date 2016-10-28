@@ -9,41 +9,42 @@ import org.apache.commons.logging.LogFactory
 /**
   * Created by alex on 07.10.16.
   */
-object SimulatorApp extends App {
-  val LOGGER = LogFactory.getLog(SimulatorApp.getClass)
+class SimulatorToFileApp extends SimulatorAppTrait {
+  val LOGGER = LogFactory.getLog(SimulatorToFileApp.getClass)
+  val path = "src/main/resources/gtfs_train"
 
-  val path = "src/main/resources/gtfs_complete"
-  val system = GTFSSystem.load(path)
+  def run() = {
+    val date = RawCalendarDateReader.dateFromString("20161005")
+
+    //val agencyIdExclude = system.agencies.filter({ case (id, ra) =>  }).keys.toSet
+    val agencyIdInclude = system.agencies.filter({ case (id, ra) =>
+      //ra.agencyName == AgencyName("SBB (Schweizerische Bundesbahnen SBB)")
+      !BusAgenciesNotPost.set.contains(ra.agencyName.value)
+      //true
+    }).keys.toSet
 
 
-  //val agencyIdExclude = system.agencies.filter({ case (id, ra) =>  }).keys.toSet
-  val agencyIdInclude = system.agencies.filter({ case (id, ra) =>
-    //ra.agencyName == AgencyName("SBB (Schweizerische Bundesbahnen SBB)")
-    !BusAgenciesNotPost.set.contains(ra.agencyName.value)
-    //true
-  }).keys.toSet
+    val tripsFiltered = loadTripsForDate(date)
+      .filter(x => agencyIdInclude.contains(x.route.agencyId))
+    LOGGER.info(s"total number of trips filtered by agencies ${tripsFiltered.size}")
+    LOGGER.info(s"transforming ${tripsFiltered.size} trips into simulated positions")
 
-  val date = RawCalendarDateReader.dateFromString("20161005")
-  LOGGER.info(s"total number of trips ${system.trips.size}")
-  LOGGER.info(s"findAllTripsByDate($date)")
-  val tripsForDate = system.findAllTripsByDate(date)
-  LOGGER.info(s"total number of trips filtered by date ${tripsForDate.size}")
+    val simPos = SimulatedTripPositions.merge(tripsFiltered, date, 30, true)
+    LOGGER.info(s"build a list of ${simPos.size} simulated positions")
 
-  val tripsFiltered = tripsForDate
-    .filter(x => agencyIdInclude.contains(x.route.agencyId))
-  LOGGER.info(s"total number of trips filtered by agencies ${tripsFiltered.size}")
-  LOGGER.info(s"transforming ${tripsFiltered.size} trips into simulated positions")
+    val outFile: String = s"$path/gtfs-simulated-pos.txt"
+    val writer = new PrintWriter(new File(outFile))
+    writer.append(s"secondOfDay\tlat\tlng\ttripId\tagencyId\trouteShortName\tstopId\n")
+    simPos.positions.foreach(sp =>
+      writer.append(s"""${sp.secondsOfDay}\t${sp.lat}\t${sp.lng}\t${sp.tripId.value}\t${sp.agencyId.value}\t${sp.routeShortName.value}\t${sp.stopId.getOrElse("")}\n""")
+    )
+    LOGGER.info(s"simulated position saved to $outFile")
+  }
+}
 
-  val simPos = SimulatedTripPositions.merge(tripsFiltered, date, 30, true)
-  LOGGER.info(s"build a list of ${simPos.size} simulated positions")
-
-  private val outFile: String = s"$path/gtfs-simulated-pos.txt"
-  val writer = new PrintWriter(new File(outFile))
-  writer.append(s"secondOfDay\tlat\tlng\ttripId\tagencyId\trouteShortName\tstopId\n")
-  simPos.positions.foreach(sp =>
-    writer.append(s"""${sp.secondsOfDay}\t${sp.lat}\t${sp.lng}\t${sp.tripId.value}\t${sp.agencyId.value}\t${sp.routeShortName.value}\t${sp.stopId.getOrElse("")}\n""")
-  )
-  LOGGER.info(s"simulated position saved to $outFile")
+object SimulatorToFileApp extends App {
+  val app = new SimulatorToFileApp()
+  app.run()
 }
 
 

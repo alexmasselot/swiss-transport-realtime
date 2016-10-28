@@ -1,7 +1,6 @@
 package ch.octo.cffpoc.gtfs
 
 import ch.octo.cffpoc.gtfs.raw.RawCalendarDateReader
-import org.joda.time.LocalDate
 import org.scalatest.{FlatSpec, Matchers}
 
 /**
