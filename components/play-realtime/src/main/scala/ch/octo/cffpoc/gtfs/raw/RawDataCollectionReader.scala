@@ -2,16 +2,15 @@ package ch.octo.cffpoc.gtfs.raw
 
 import java.io.File
 
-import ch.octo.cffpoc.gtfs.{RawCalendarDate, ServiceId}
+import ch.octo.cffpoc.gtfs.{ RawCalendarDate, ServiceId }
 import com.github.tototoshi.csv.CSVReader
 
 import scala.io.Source
 
 /**
-  * Created by alex on 03/05/16.
-  */
+ * Created by alex on 03/05/16.
+ */
 trait RawDataCollectionReader[T] {
-
 
   def builReadFunction(header: Array[String]): (Array[String]) => T
 
@@ -30,10 +29,10 @@ trait RawDataCollectionReader[T] {
 
 object RawDataCollectionReader {
   val reCommaOut = """,(?=([^\"]*\"[^\"]*\")*[^\"]*$)""".r
-  val reQuote= """^"(.*)"$""".r
+  val reQuote = """^"(.*)"$""".r
   def splitLine(line: String): Array[String] = {
     reCommaOut.split(line).map(_ match {
-      case reQuote(x)=> x
+      case reQuote(x) => x
       case x => x
     })
   }

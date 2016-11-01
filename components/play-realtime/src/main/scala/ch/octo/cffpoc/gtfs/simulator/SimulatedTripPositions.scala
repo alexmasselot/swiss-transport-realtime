@@ -1,6 +1,6 @@
 package ch.octo.cffpoc.gtfs.simulator
 
-import ch.octo.cffpoc.gtfs.{Trip, TripCollection}
+import ch.octo.cffpoc.gtfs.{ Trip, TripCollection }
 import ch.octo.cffpoc.models.GeoLocBearing
 import ch.octo.cffpoc.position.TimedPosition
 import org.apache.commons.logging.LogFactory
@@ -10,24 +10,24 @@ import scala.annotation.tailrec
 import scala.util.Random
 
 /**
-  * List of position with datetime & a tripId.
-  * If the deault constructor is called directly, it is the responsibility of the user to provide.
-  * us companion object method to build, interpolating trips
-  */
+ * List of position with datetime & a tripId.
+ * If the deault constructor is called directly, it is the responsibility of the user to provide.
+ * us companion object method to build, interpolating trips
+ */
 class SimulatedTripPositions(val positions: List[SimulatedPosition] = Nil) {
   def size = positions.size
 
   def +(simulatedPosition: SimulatedPosition): SimulatedTripPositions = ???
 
   /**
-    * add another SimulatedTripPositions.
-    * the two are merged, with the datetime sorted.
-    *
-    * Please remind both SimulatedTripPositions input list are time sorted
-    *
-    * @param other the other list to be merged
-    * @return
-    */
+   * add another SimulatedTripPositions.
+   * the two are merged, with the datetime sorted.
+   *
+   * Please remind both SimulatedTripPositions input list are time sorted
+   *
+   * @param other the other list to be merged
+   * @return
+   */
   def ++(other: SimulatedTripPositions): SimulatedTripPositions = {
     @tailrec
     def fHandler(acc: List[SimulatedPosition], l1: List[SimulatedPosition], l2: List[SimulatedPosition]): List[SimulatedPosition] = {
@@ -46,18 +46,16 @@ class SimulatedTripPositions(val positions: List[SimulatedPosition] = Nil) {
 
 }
 
-
 object SimulatedTripPositions {
   val LOGGER = LogFactory.getLog(SimulatedTripPositions.getClass)
 
-
   /**
-    * Converts a trip into a list of
-    *
-    * @param trip
-    * @param date
-    * @return
-    */
+   * Converts a trip into a list of
+   *
+   * @param trip
+   * @param date
+   * @return
+   */
   def apply(trip: Trip, date: LocalDate): SimulatedTripPositions = {
     val positions = trip.stopTimes.map(st => SimulatedPosition(
       st.timeArrival.getSecondOfDay,
@@ -73,20 +71,19 @@ object SimulatedTripPositions {
   }
 
   /**
-    * a hadler function to interpolate SimulatedPosition. Is for local object use
-    *
-    * @param trip         : the reference trip
-    * @param date         : the date to start the trip with
-    * @param deltaSeconds : a function to get the net increment of time (can be fix, random or whatever)
-    * @return
-    */
+   * a hadler function to interpolate SimulatedPosition. Is for local object use
+   *
+   * @param trip         : the reference trip
+   * @param date         : the date to start the trip with
+   * @param deltaSeconds : a function to get the net increment of time (can be fix, random or whatever)
+   * @return
+   */
   def tripToSimulatedPositions(trip: Trip, date: LocalDate, deltaSeconds: () => Double): SimulatedTripPositions = {
     @tailrec
     def incrementPosHandler(acc: List[SimulatedPosition],
-                            currentPosition: SimulatedPosition,
-                            targetPosition: SimulatedPosition,
-                            deltaSeconds: () => Double
-                           ): List[SimulatedPosition] = {
+      currentPosition: SimulatedPosition,
+      targetPosition: SimulatedPosition,
+      deltaSeconds: () => Double): List[SimulatedPosition] = {
       val newTime = currentPosition.secondsOfDay + deltaSeconds().toInt
       if (newTime >= targetPosition.secondsOfDay) {
         acc :+ targetPosition
@@ -130,21 +127,21 @@ object SimulatedTripPositions {
 
     val simPositions: List[SimulatedPosition] =
       timedPostionPlusStart
-        .foldLeft(List[SimulatedPosition]())((acc, a) => if (acc.size == 0 || acc.last != a) acc :+ a else acc )
+        .foldLeft(List[SimulatedPosition]())((acc, a) => if (acc.size == 0 || acc.last != a) acc :+ a else acc)
     new SimulatedTripPositions(simPositions)
   }
 
   /**
-    * take a trip a nd a list of simulated position, by interpolating positiong avery x seconds.
-    * It can be either with fix increment (isRandomIncrement=false) or not.
-    * In the latter case, increments are pseudo-random, distributed between 0 and 2*secondIncrement)
-    *
-    * @param trip
-    * @param date
-    * @param secondIncrement
-    * @param isRandomIncrement
-    * @return
-    */
+   * take a trip a nd a list of simulated position, by interpolating positiong avery x seconds.
+   * It can be either with fix increment (isRandomIncrement=false) or not.
+   * In the latter case, increments are pseudo-random, distributed between 0 and 2*secondIncrement)
+   *
+   * @param trip
+   * @param date
+   * @param secondIncrement
+   * @param isRandomIncrement
+   * @return
+   */
   def apply(trip: Trip, date: LocalDate, secondIncrement: Double, isRandomIncrement: Boolean = false): SimulatedTripPositions = {
     val fInc: () => Double = if (!isRandomIncrement) {
       () => secondIncrement
@@ -176,14 +173,13 @@ object SimulatedTripPositions {
     new SimulatedTripPositions(poss)
   }
 
-
   /**
-    * merges a list of SimulatedTripPositions.
-    * break recursively the sublist in two to achieve log_2(n) fusion
-    *
-    * @param stps
-    * @return
-    */
+   * merges a list of SimulatedTripPositions.
+   * break recursively the sublist in two to achieve log_2(n) fusion
+   *
+   * @param stps
+   * @return
+   */
   def merge(stps: Seq[SimulatedTripPositions]): SimulatedTripPositions = {
     stps match {
       case x1 :: Nil => x1

@@ -1,31 +1,30 @@
 package ch.octo.cffpoc.gtfs.simulator
 
-import java.io.{File, PrintWriter}
+import java.io.{ File, PrintWriter }
 
-import akka.actor.{ActorRef, ActorSystem, Props}
+import akka.actor.{ ActorRef, ActorSystem, Props }
 import akka.kafka.ProducerSettings
 import akka.kafka.scaladsl.Producer
 import akka.stream.ActorMaterializer
 import akka.stream.OverflowStrategy._
-import akka.stream.scaladsl.{Flow, Source}
-import ch.octo.cffpoc.gtfs.{AgencyName, GTFSSystem, RouteShortName}
+import akka.stream.scaladsl.{ Flow, Source }
+import ch.octo.cffpoc.gtfs.{ AgencyName, GTFSSystem, RouteShortName }
 import ch.octo.cffpoc.gtfs.raw.RawCalendarDateReader
-import ch.octo.cffpoc.gtfs.simulator.actors.{ActorSimulatedTrips, ActorSinkPositions}
+import ch.octo.cffpoc.gtfs.simulator.actors.{ ActorSimulatedTrips, ActorSinkPositions }
 import org.apache.commons.logging.LogFactory
 import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.{ByteArraySerializer, StringSerializer}
+import org.apache.kafka.common.serialization.{ ByteArraySerializer, StringSerializer }
 
 import scala.concurrent.ExecutionContext
 
 /**
-  * Created by alex on 07.10.16.
-  */
+ * Created by alex on 07.10.16.
+ */
 class SimulatorToSinkApp extends SimulatorAppTrait {
   val LOGGER = LogFactory.getLog(SimulatorToFileApp.getClass)
   val path = "src/main/resources/gtfs_complete"
 
-
-  def actorRefKafkaSink(system: ActorSystem)(implicit executioncontext:ExecutionContext, materilizer:ActorMaterializer): ActorRef = {
+  def actorRefKafkaSink(system: ActorSystem)(implicit executioncontext: ExecutionContext, materilizer: ActorMaterializer): ActorRef = {
 
     val producerSettings = ProducerSettings(system, new ByteArraySerializer, new StringSerializer)
       .withBootstrapServers("localhost:9092")
@@ -42,7 +41,7 @@ class SimulatorToSinkApp extends SimulatorAppTrait {
     ref
   }
 
-  def ActorRefPrintSink(system: ActorSystem)(implicit executioncontext:ExecutionContext) = {
+  def ActorRefPrintSink(system: ActorSystem)(implicit executioncontext: ExecutionContext) = {
     system.actorOf(Props(new ActorSinkPositions()), "position-sink")
   }
 
@@ -66,5 +65,4 @@ object SimulatorToSinkApp extends App {
   val app = new SimulatorToSinkApp()
   app.run()
 }
-
 

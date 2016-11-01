@@ -22,7 +22,7 @@ case class ScheduleTime(hours: Int, minutes: Int, seconds: Int) {
       .plusMinutes(minutes)
       .plusSeconds(seconds)
 
-  def getSecondOfDay = seconds + 60 *minutes + 3600*hours
+  def getSecondOfDay = seconds + 60 * minutes + 3600 * hours
 
 }
 

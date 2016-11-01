@@ -1,23 +1,22 @@
 package ch.octo.cffpoc.gtfs.simulator.actors
 
-import akka.actor.{Actor, ActorLogging, ActorRef}
+import akka.actor.{ Actor, ActorLogging, ActorRef }
 import ch.octo.cffpoc.gtfs.Trip
-import ch.octo.cffpoc.gtfs.simulator.actors.SimulatorMessages.{EndOfTripSimulation, StartSimultationSchedule}
-import ch.octo.cffpoc.gtfs.simulator.{SimulatedTripPositions, TimeAccelerator}
+import ch.octo.cffpoc.gtfs.simulator.actors.SimulatorMessages.{ EndOfTripSimulation, StartSimultationSchedule }
+import ch.octo.cffpoc.gtfs.simulator.{ SimulatedTripPositions, TimeAccelerator }
 import org.joda.time.LocalDate
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 
 /**
-  * Created by alex on 25.10.16.
-  */
+ * Created by alex on 25.10.16.
+ */
 class ActorDelayedSimulatedTrip(actorSink: ActorRef,
-                                timeAccelerator: TimeAccelerator,
-                                trip: Trip,
-                                date: LocalDate,
-                                averagSecondIncrement: Double
-                               )(implicit ec: ExecutionContext) extends Actor with ActorLogging {
+    timeAccelerator: TimeAccelerator,
+    trip: Trip,
+    date: LocalDate,
+    averagSecondIncrement: Double)(implicit ec: ExecutionContext) extends Actor with ActorLogging {
   val stp = SimulatedTripPositions(trip, date, averagSecondIncrement, true)
 
   val scheduler = context.system.scheduler

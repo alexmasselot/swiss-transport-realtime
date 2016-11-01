@@ -1,14 +1,14 @@
 package ch.octo.cffpoc.gtfs.simulator
 
-import java.io.{File, PrintWriter}
+import java.io.{ File, PrintWriter }
 
-import ch.octo.cffpoc.gtfs.{AgencyName, GTFSSystem, RouteShortName}
+import ch.octo.cffpoc.gtfs.{ AgencyName, GTFSSystem, RouteShortName }
 import ch.octo.cffpoc.gtfs.raw.RawCalendarDateReader
 import org.apache.commons.logging.LogFactory
 
 /**
-  * Created by alex on 07.10.16.
-  */
+ * Created by alex on 07.10.16.
+ */
 class SimulatorToFileApp extends SimulatorAppTrait {
   val LOGGER = LogFactory.getLog(SimulatorToFileApp.getClass)
   val path = "src/main/resources/gtfs_train"
@@ -17,12 +17,12 @@ class SimulatorToFileApp extends SimulatorAppTrait {
     val date = RawCalendarDateReader.dateFromString("20161005")
 
     //val agencyIdExclude = system.agencies.filter({ case (id, ra) =>  }).keys.toSet
-    val agencyIdInclude = system.agencies.filter({ case (id, ra) =>
-      //ra.agencyName == AgencyName("SBB (Schweizerische Bundesbahnen SBB)")
-      !BusAgenciesNotPost.set.contains(ra.agencyName.value)
+    val agencyIdInclude = system.agencies.filter({
+      case (id, ra) =>
+        //ra.agencyName == AgencyName("SBB (Schweizerische Bundesbahnen SBB)")
+        !BusAgenciesNotPost.set.contains(ra.agencyName.value)
       //true
     }).keys.toSet
-
 
     val tripsFiltered = loadTripsForDate(date)
       .filter(x => agencyIdInclude.contains(x.route.agencyId))
@@ -46,7 +46,6 @@ object SimulatorToFileApp extends App {
   val app = new SimulatorToFileApp()
   app.run()
 }
-
 
 object BusAgenciesNotPost {
   val set = List("TRN/Auto (Service d'automobiles TRN(vr))",

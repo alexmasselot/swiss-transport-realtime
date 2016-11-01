@@ -1,4 +1,1 @@
-GET        /stationboard            ch.octo.cffpoc.controllers.StationBoardController.snapshot
-GET        /stationboard/:id        ch.octo.cffpoc.controllers.StationBoardController.details(id:Long)
-GET        /position                ch.octo.cffpoc.controllers.PositionController.snapshot
-GET        /position/:id             ch.octo.cffpoc.controllers.PositionController.details(id)
+GET        /simulator/agency        ch.octo.cffpoc.controllers.SimulationController.agencies

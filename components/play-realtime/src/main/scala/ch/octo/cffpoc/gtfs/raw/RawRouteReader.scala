@@ -7,15 +7,14 @@ import ch.octo.cffpoc.gtfs._
  */
 object RawRouteReader extends RawDataCollectionReader[RawRoute] {
 
-
   override def builReadFunction(header: Array[String]): (Array[String]) => RawRoute = {
     val h2i = header.zipWithIndex.toMap
-    (line:Array[String]) =>
+    (line: Array[String]) =>
       RawRoute(
         RouteId(line(h2i("route_id"))),
         AgencyId(line(h2i("agency_id"))),
         RouteShortName(line(h2i("route_short_name"))),
         RouteLongName(line(h2i("route_long_name")))
       )
-    }
+  }
 }

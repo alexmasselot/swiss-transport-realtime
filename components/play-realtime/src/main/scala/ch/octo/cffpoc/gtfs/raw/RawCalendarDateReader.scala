@@ -19,9 +19,9 @@ object RawCalendarDateReader extends RawDataCollectionReader[RawCalendarDate] {
     LocalDate.parse(s, dateFormatter)
   }
 
-  override def builReadFunction(header: Array[String]): (Array[String]) => RawCalendarDate ={
+  override def builReadFunction(header: Array[String]): (Array[String]) => RawCalendarDate = {
     val h2i = header.zipWithIndex.toMap
-    (line:Array[String]) => RawCalendarDate(ServiceId(line(h2i("service_id"))), dateFromString(line(h2i("date"))))
+    (line: Array[String]) => RawCalendarDate(ServiceId(line(h2i("service_id"))), dateFromString(line(h2i("date"))))
   }
 
 }

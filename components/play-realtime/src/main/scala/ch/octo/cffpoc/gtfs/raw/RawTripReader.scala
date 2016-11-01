@@ -6,11 +6,10 @@ import ch.octo.cffpoc.gtfs._
 import com.github.tototoshi.csv.CSVReader
 
 /**
-  * Created by alex on 02/05/16.
-  */
+ * Created by alex on 02/05/16.
+ */
 
 object RawTripReader extends RawDataCollectionReader[RawTrip] {
-
 
   override def builReadFunction(header: Array[String]): (Array[String]) => RawTrip = {
     val h2i = header.zipWithIndex.toMap
