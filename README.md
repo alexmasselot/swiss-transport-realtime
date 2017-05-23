@@ -1,12 +1,39 @@
 #CFF Big Data POC
 
+## Deploy
+
+### Locally 
+    #create a docker-machine (virtualbox, local ...)
+    docker-compose-up
+
+### Google cloud engine
+
+    gcloud auth login
+    export GOOGLE_APPLICATION_CREDENTIALS=/path/to/you/credentials.json
+    docker-machine create --driver google \
+                          --google-project  swiss-transport-realtime \
+                          --google-zone europe-west1-b \
+                          --google-disk-size 30 \
+                          --google-machine-type n1-standard-1 \
+                          cff-poc
+    eval $(docker-machine env cff-poc)
+    docker-compose up -d
+    #go to GCE console, edit the machine and "allow http traffic"
+
+
+============================    
+
+## Deploy the app
+
+The application consist of several modules, all deployed as docker containers
+
 ##Dev
 
 ### Install
 
 #### pre requisites
 
- * Docker toolbox (1.10) - the terminal version is enough
+ * Docker toolbox (1.11) 
  * Java 8
  * nodeJS (nvm)
  

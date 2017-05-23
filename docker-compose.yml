@@ -2,10 +2,12 @@ version: '2'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
+    restart: always
     ports:
       - "2181:2181"
   kafka:
     image: wurstmeister/kafka:0.10.0.1
+    restart: always
     ports:
       - "9092:9092"
     links:
@@ -13,7 +15,8 @@ services:
     environment:
       KAFKA_ADVERTISED_HOST_NAME: "kafka"
       KAFKA_CREATE_TOPICS: "cfftrainposition:1:1,cffstationboard:1:1"
-      LOG_RETENTION_HOURS_PER_TOPIC: 0.1
+      LOG_RETENTION_MINUTES: 30
+      LOG_ROLL_HOURS: 1
       KAFKA_ZOOKEEPER_CONNECT: zk:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -23,9 +26,11 @@ services:
     #cd components/play-realtime ; ./activator docker:publish ; cd - 
     #ports:
     #  - "81:9000"
+    restart: always
     links:
       - kafka
   cff_feeder:
+    restart: always
     #build: components/node-sniff
     #built & deployed with 
     #cd components/node-sniff ; docker build --tag=alexmass/cff-node-sniff:0.1.2 . ; cd - ; docker push alexmass/cff-node-sniff:0.1.2
@@ -37,6 +42,7 @@ services:
     links:
       - kafka
   web_realtime_viewer:
+    restart: always
     #build: components/web-realtime-viewer
     #built  & deployed with 
     #cd components/web-realtime-viewer ; docker build --tag=alexmass/cff-web-realtime-viewer:0.1.9 . ; cd -; docker push alexmass/cff-web-realtime-viewer:0.1.9
@@ -46,10 +52,14 @@ services:
     ports:
       - "82:80"
   nginx:
+    restart: always
     image: alexmass/cff-nginx:0.2.2
     #cd components/nginx ; docker build --tag=alexmass/cff-nginx:0.2.2 . ; cd -; docker push alexmass/cff-nginx:0.2.2
     ports:
-      - "80:80"
+      - "83:80"
     links:
       - streaming_backend
       - web_realtime_viewer
+networks:
+  cffPocNetwork:
+    external: true
